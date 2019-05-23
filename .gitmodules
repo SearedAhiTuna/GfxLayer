@@ -10,3 +10,7 @@
 	path = test/external/glfw-3.3
 	url = https://github.com/glfw/glfw.git
 	branch = 3.3-stable
+[submodule "test/external/glm-0.9.7"]
+	path = test/external/glm-0.9.7
+	url = https://github.com/g-truc/glm.git
+	branch = 0.9.7
