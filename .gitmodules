@@ -1,0 +1,4 @@
+[submodule "ogl"]
+	path = ogl
+	url = https://github.com/opengl-tutorials/ogl.git
+	branch = master
