@@ -2,10 +2,6 @@
 	path = ogl
 	url = https://github.com/opengl-tutorials/ogl.git
 	branch = master
-[submodule "test/external/glew-1.13.0"]
-	path = test/external/glew-1.13.0
-	url = https://github.com/nigels-com/glew.git
-	branch = glew-1.13
 [submodule "test/external/glfw-3.3"]
 	path = test/external/glfw-3.3
 	url = https://github.com/glfw/glfw.git
