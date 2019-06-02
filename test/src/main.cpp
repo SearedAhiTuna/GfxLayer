@@ -1,18 +1,21 @@
 
+#include <cstring>
 #include <iostream>
 
-#include "Graphics.h"
+#include "Libs.h"
+#include "Controller.h"
 
-Graphics g;
+Controller c;
 
 int main(void)
 {
-	ScreenID scr1 = g.createWindow(1000,1000,"Yo");
-	ScreenID scr2 = g.createWindow();
+	Window* w = c.createWindow();
+	c.createWindow();
 
-	g.setClearColor(vec4(0.0f, 0.0f, 0.4f, 1.0f));
-	g.redraw();
+	c.updateWindow(w);
 
-	g.loop();
+	c.loop();
+
+	return 0;
 }
 

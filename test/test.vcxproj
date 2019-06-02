@@ -11,11 +11,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="inc\Graphics.cpp" />
+    <ClCompile Include="src\Controller.cpp" />
+    <ClCompile Include="src\Libs.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Renderer.cpp" />
+    <ClCompile Include="src\Shape.cpp" />
+    <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="inc\Graphics.h" />
+    <ClInclude Include="inc\Controller.h" />
+    <ClInclude Include="inc\Libs.h" />
+    <ClInclude Include="inc\Renderer.h" />
+    <ClInclude Include="inc\Shape.h" />
+    <ClInclude Include="inc\Window.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
