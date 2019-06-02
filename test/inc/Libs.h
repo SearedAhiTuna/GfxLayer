@@ -19,6 +19,12 @@ public:
 	}
 };
 
+extern const GLfloat PI;
+
+extern void glfwInitialize();
+
+extern void glewInitialize();
+
 extern void glStartBufferTX(const GLuint& vbo);
 extern void glEndBufferTX();
 extern bool glOngoingBufferTX();
@@ -31,3 +37,4 @@ extern void glfwStartWindowTX(GLFWwindow* window);
 extern void glfwEndWindowTX();
 extern bool glfwOngoingWindowTX();
 
+extern void sleepMS(unsigned int t);

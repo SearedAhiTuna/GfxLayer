@@ -16,6 +16,8 @@ public:
 
 	bool shouldClose();
 
+	Renderer* getRenderer() { return pRenderer.get(); }
+
 private:
 	GLFWwindow* window;
 

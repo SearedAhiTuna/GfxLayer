@@ -3,8 +3,8 @@
 
 Window::Window()
 {
-	if (!glfwInit())
-		throw GraphicsError("Failed to initialize GLFW");
+	// Initialize GLFW
+	glfwInitialize();
 
 	window = glfwCreateWindow(1024, 768, "Tutorial 02 - Red triangle", NULL, NULL);
 	if (!window)
@@ -14,15 +14,16 @@ Window::Window()
 	glfwStartWindowTX(window);
 
 	// Initialize GLEW
-	glewExperimental = true;
-	if (glewInit() != GLEW_OK)
-		throw GraphicsError("Failed to initialize GLEW");
+	glewInitialize();
 
 	// Set sticky
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
 	// Dark blue background
 	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+
+	// Create renderer
+	pRenderer = std::make_unique<Renderer>();
 
 	// End transaction
 	glfwEndWindowTX();

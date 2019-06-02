@@ -1,21 +1,55 @@
 
+#include <atomic>
 #include <cstring>
 #include <iostream>
+#include <thread>
 
 #include "Libs.h"
 #include "Controller.h"
+#include "TFShape.h"
 
 Controller c;
+TFShape* t;
+Window* w;
+
+void bgThreadCB();
+std::atomic<bool> bgThreadDone;
 
 int main(void)
 {
-	Window* w = c.createWindow();
-	c.createWindow();
+	// Create a window
+	w = c.createWindow();
 
-	c.updateWindow(w);
+	// Create background thread
+	std::thread bgThread(bgThreadCB);
 
+	// Loop
 	c.loop();
+
+	// End the background thread
+	bgThreadDone.store(true);
+	bgThread.join();
 
 	return 0;
 }
 
+void bgThreadCB()
+{
+	// Create a triangle
+	t = new TFShape({ vec2(-0.1f,0.0f), vec2(0.1f,0.0f), vec2(0.0f,1.0f) });
+
+	// Add the triangle to the window
+	w->getRenderer()->addShape(t);
+
+	while (!bgThreadDone.load())
+	{
+		// Rotate the triangle
+		t->rot(PI / 50.0f);
+
+		// Mark the window to be updated
+		c.updateWindow(w);
+
+		// Sleep the thread for a bit
+		sleepMS(20);
+	}
+}

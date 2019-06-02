@@ -1,6 +1,8 @@
 
 #include "Controller.h"
 
+#include <iostream>
+
 Controller::Controller()
 {
 
@@ -28,6 +30,8 @@ void Controller::updateWindow(Window* w)
 			break;
 		}
 	}
+
+	glfwPostEmptyEvent();
 }
 
 void Controller::tick()

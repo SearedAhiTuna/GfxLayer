@@ -3,7 +3,9 @@
 
 #include "Libs.h"
 
+#include <atomic>
 #include <list>
+#include <mutex>
 
 class Shape
 {
@@ -17,6 +19,8 @@ private:
 
 		GLfloat* data;
 		size_t size;
+
+		bool init{};
 
 		Buffer(const size_t& _nverts, const size_t& _ndims);
 		~Buffer();
@@ -34,5 +38,9 @@ public:
 
 private:
 	GLenum mode;
+
 	std::list<Buffer> buffers;
+	std::mutex buffersMutex;
+
+	bool needsUpdate;
 };
