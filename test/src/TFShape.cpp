@@ -74,6 +74,7 @@ void TFShape::update()
 	{
 		for (size_t i = 0; i < 4; ++i)
 		{
+#pragma warning(suppress: 4267)
 			vertBuf[v * 4 + i] = verts[v][i];
 		}
 	}
