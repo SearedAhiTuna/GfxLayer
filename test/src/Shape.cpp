@@ -96,7 +96,7 @@ void Shape::draw()
 		throw GraphicsError("Attetmpted to draw outside of vertex array transaction");
 
 	// For each buffer
-	size_t index = 0;
+	GLuint index = 0;
 	for (Buffer& buf : buffers)
 	{
 		// Enable this attribute array
@@ -108,7 +108,7 @@ void Shape::draw()
 		// Set the attribute pointer
 		glVertexAttribPointer(
 			index,              // attribute.
-			buf.ndims,			// size
+			(GLint)buf.ndims,	// size
 			GL_FLOAT,           // type
 			GL_FALSE,           // normalized?
 			0,                  // stride
@@ -123,10 +123,10 @@ void Shape::draw()
 	}
 
 	// Draw the arrays
-	glDrawArrays(mode, 0, buffers.front().nverts);
+	glDrawArrays(mode, 0, (GLsizei)buffers.front().nverts);
 
 	// Disable the attribute arrays
-	for (size_t i = 0; i < index; ++i)
+	for (GLuint i = 0; i < index; ++i)
 	{
 		glDisableVertexAttribArray(i);
 	}

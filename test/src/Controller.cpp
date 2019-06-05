@@ -5,12 +5,10 @@
 
 Controller::Controller()
 {
-
 }
 
 Controller::~Controller()
 {
-
 }
 
 Window* Controller::createWindow()

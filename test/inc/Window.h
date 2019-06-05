@@ -10,7 +10,10 @@ class Window
 {
 public:
 	Window();
+	Window(const Window& other) = delete;
 	virtual ~Window();
+
+	Window& operator=(const Window& rhs) = delete;
 
 	void update();
 
