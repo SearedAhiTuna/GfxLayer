@@ -41,7 +41,7 @@ public:
 
 	bool usesProgram() { return programIndex >= 0; }
 	const int& getProgramIndex() { return programIndex; }
-	Shape& setProgramIndex(const int& _programIndex) { programIndex = _programIndex; }
+	Shape& setProgramIndex(const int& _programIndex) { programIndex = _programIndex; return *this; }
 
 private:
 	GLenum mode;

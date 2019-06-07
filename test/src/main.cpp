@@ -20,6 +20,9 @@ int main(void)
 	// Create a window
 	w = c.createWindow();
 
+	// Add shaders
+	w->getRenderer().addProgram("shaders/simple.vs", "shaders/simple.fs");
+
 	// Create background thread
 	std::thread bgThread(bgThreadCB);
 
@@ -37,9 +40,10 @@ void bgThreadCB()
 {
 	// Create a triangle
 	t = new TFShape({ vec2(-0.1f,0.0f), vec2(0.1f,0.0f), vec2(0.0f,1.0f) });
+	//t->setProgramIndex(0);
 
 	// Add the triangle to the window
-	w->getRenderer()->addShape(t);
+	w->getRenderer().addShape(t);
 
 	while (!bgThreadDone.load())
 	{

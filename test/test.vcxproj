@@ -31,6 +31,10 @@
     <ClInclude Include="inc\TFShape.h" />
     <ClInclude Include="inc\Window.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\simple.fs" />
+    <None Include="shaders\simple.vs" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{0DC2C608-224A-4FC8-B3F1-CFE1A9AFAB80}</ProjectGuid>
