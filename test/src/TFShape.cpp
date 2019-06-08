@@ -4,51 +4,55 @@
 #include <glm/gtx/transform.hpp>
 
 TFShape::TFShape(const std::vector<vec4>& _verts, const GLenum& mode):
-	Shape(mode),
-	verts(_verts)
+	Shape(mode)
 {
-	vertBuf = genBuffer(verts.size(), 4);
-	update();
+	bufferCreate<vec4>(_verts);
 }
 
 TFShape::TFShape(const std::vector<vec3>& _verts, const GLenum& mode) :
 	Shape(mode)
 {
+	std::vector<vec4> tempVerts;
+
 	// Reserve space for all vertices
-	verts.reserve(_verts.size());
+	tempVerts.reserve(_verts.size());
 
 	// Copy the vertices
 	for (const vec3& v3 : _verts)
 	{
-		verts.emplace_back(v3.x, v3.y, v3.z, 1.0f);
+		tempVerts.emplace_back(v3, 1);
 	}
 
-	vertBuf = genBuffer(verts.size(), 4);
-	update();
+	bufferCreate<vec4>(tempVerts);
 }
 
 TFShape::TFShape(const std::vector<vec2>& _verts, const GLenum& mode) :
 	Shape(mode)
 {
+	std::vector<vec4> tempVerts;
+
 	// Reserve space for all vertices
-	verts.reserve(_verts.size());
+	tempVerts.reserve(_verts.size());
 
 	// Copy the vertices
 	for (const vec2& v2 : _verts)
 	{
-		verts.emplace_back(v2.x, v2.y, 0.0f, 1.0f);
+		tempVerts.emplace_back(v2, 0, 1);
 	}
 
-	vertBuf = genBuffer(verts.size(), 4);
-	update();
+	bufferCreate<vec4>(tempVerts);
 }
 
 void TFShape::tfInt(const mat4& mat)
 {
-	for (vec4& v : verts)
+	Vert4Buffer& geoBuf = *(Vert4Buffer*)buffers.front().get();
+
+	for (vec4& v : geoBuf.verts)
 	{
 		v = mat * v;
 	}
+
+	geoBuf.update();
 	update();
 }
 
@@ -86,20 +90,4 @@ void TFShape::tlExt(const bool& rel, const vec2& d)
 void TFShape::rotExt(const bool& rel, const GLfloat& angle, const vec3& axis)
 {
 	tfExt(rel, glm::rotate(mat4(), angle, axis));
-}
-
-void TFShape::update()
-{
-	// Copy from the vertex array to the float array
-	for (size_t v = 0; v < verts.size(); ++v)
-	{
-		for (size_t i = 0; i < 4; ++i)
-		{
-#pragma warning(suppress: 4267)
-			vertBuf[v * 4 + i] = verts[v][i];
-		}
-	}
-
-	// Copy from the float array to the buffer
-	Shape::update();
 }

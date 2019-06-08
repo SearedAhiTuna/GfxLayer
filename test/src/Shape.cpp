@@ -2,13 +2,33 @@
 #include "Shape.h"
 
 #include <iostream>
+#include <list>
+
+static std::list<GLuint> used{};
 
 Shape::Buffer::Buffer(const size_t& _nverts, const size_t& _ndims):
 	nverts(_nverts),
 	ndims(_ndims)
 {
+	GLuint temp;
+
 	// Generate a VBO
 	glGenBuffers(1, &vbo);
+
+	// For some reason it sometimes gives the same one twice
+	// and the weird thing is it doesn't give the same one twice
+	// if I use a local variable, but if I use the struct variable it does
+	// I seriously don't understand
+	for (const GLuint& id : used)
+	{
+		if (vbo == id)
+		{
+			glGenBuffers(1, &temp);
+			vbo = temp;
+		}
+	}
+
+	used.push_back(vbo);
 
 	// Generate the data
 	data = new GLfloat[nverts * ndims];
@@ -19,6 +39,17 @@ Shape::Buffer::~Buffer()
 {
 	// Delete the VBO
 	glDeleteBuffers(1, &vbo);
+
+	// Pull it out of the used list
+	// that I have to maintain for some reason
+	for (auto it = used.begin(); it != used.end(); ++it)
+	{
+		if (*it == vbo)
+		{
+			used.erase(it);
+			break;
+		}
+	}
 
 	// Delete the data
 	delete[] data;

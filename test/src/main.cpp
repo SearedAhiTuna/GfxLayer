@@ -43,6 +43,7 @@ void bgThreadCB()
 {
 	// Create a triangle
 	t = new TFShape({ vec2(-0.1f,0.0f), vec2(0.1f,0.0f), vec2(0.0f,1.0f) });
+	t->bufferCreate<vec3>({ vec3(1,0,0), vec3(0,1,0), vec3(0,0,1) });
 	t->setProgramIndex(0);
 
 	// Add the triangle to the window

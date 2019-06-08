@@ -31,6 +31,7 @@
     <ClInclude Include="inc\Shader.h" />
     <ClInclude Include="inc\Shape.h" />
     <ClInclude Include="inc\TFShape.h" />
+    <ClInclude Include="inc\Triangle.h" />
     <ClInclude Include="inc\Window.h" />
   </ItemGroup>
   <ItemGroup>
