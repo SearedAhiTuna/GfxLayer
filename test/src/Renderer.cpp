@@ -18,16 +18,16 @@ Renderer::~Renderer()
 	glDeleteVertexArrays(1, &vao);
 }
 
-void Renderer::addShape(Shape* shape)
+void Renderer::addShape(Shape& shape)
 {
 	std::lock_guard<std::mutex> lk(shapesMutex);
-	shapes.emplace(shape);
+	shapes.emplace(&shape);
 }
 
-void Renderer::removeShape(Shape* shape)
+void Renderer::removeShape(Shape& shape)
 {
 	std::lock_guard<std::mutex> lk(shapesMutex);
-	shapes.erase(shape);
+	shapes.erase(&shape);
 }
 
 void Renderer::render()

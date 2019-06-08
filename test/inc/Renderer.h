@@ -21,8 +21,8 @@ public:
 
 	Renderer& operator=(const Renderer& rhs) = delete;
 
-	void addShape(Shape* shape);
-	void removeShape(Shape* shape);
+	void addShape(Shape& shape);
+	void removeShape(Shape& shape);
 
 	void render();
 

@@ -47,7 +47,7 @@ void bgThreadCB()
 	t->setProgramIndex(0);
 
 	// Add the triangle to the window
-	w->getRenderer().addShape(t);
+	w->getRenderer().addShape(*t);
 
 	// Move the camera a bit
 	//w->getRenderer().getCamera().tl(true, VEC3_BACKWARDS * 1.0f);
