@@ -40,7 +40,7 @@ void bgThreadCB()
 {
 	// Create a triangle
 	t = new TFShape({ vec2(-0.1f,0.0f), vec2(0.1f,0.0f), vec2(0.0f,1.0f) });
-	//t->setProgramIndex(0);
+	t->setProgramIndex(0);
 
 	// Add the triangle to the window
 	w->getRenderer().addShape(t);
@@ -48,7 +48,7 @@ void bgThreadCB()
 	while (!bgThreadDone.load())
 	{
 		// Rotate the triangle
-		t->rot(PI / 50.0f);
+		t->rotExt(RELATIVE, PI / 50.0f);
 
 		// Mark the window to be updated
 		c.updateWindow(w);

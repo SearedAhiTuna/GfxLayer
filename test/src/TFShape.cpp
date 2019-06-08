@@ -43,7 +43,7 @@ TFShape::TFShape(const std::vector<vec2>& _verts, const GLenum& mode) :
 	update();
 }
 
-void TFShape::tf(const mat4& mat)
+void TFShape::tfInt(const mat4& mat)
 {
 	for (vec4& v : verts)
 	{
@@ -52,19 +52,40 @@ void TFShape::tf(const mat4& mat)
 	update();
 }
 
-void TFShape::tl(const vec3& d)
+void TFShape::tlInt(const vec3& d)
 {
-	tf(glm::translate(glm::mat4(), d));
+	tfInt(glm::translate(glm::mat4(), d));
 }
-void TFShape::tl(const vec2& d)
+void TFShape::tlInt(const vec2& d)
 {
-
-	tf(glm::translate(mat4(), vec3(d.x, d.y, 0.0f)));
+	tfInt(glm::translate(mat4(), vec3(d.x, d.y, 0.0f)));
 }
 
-void TFShape::rot(const GLfloat& angle, const vec3& axis)
+void TFShape::rotInt(const GLfloat& angle, const vec3& axis)
 {
-	tf(glm::rotate(mat4(), angle, axis));
+	tfInt(glm::rotate(mat4(), angle, axis));
+}
+
+void TFShape::tfExt(const bool& rel, const mat4& mat)
+{
+	if (rel)
+		tfMat = mat * tfMat;
+	else
+		tfMat = mat;
+}
+
+void TFShape::tlExt(const bool& rel, const vec3& d)
+{
+	tfExt(rel, glm::translate(glm::mat4(), d));
+}
+void TFShape::tlExt(const bool& rel, const vec2& d)
+{
+	tfExt(rel, glm::translate(mat4(), vec3(d.x, d.y, 0.0f)));
+}
+
+void TFShape::rotExt(const bool& rel, const GLfloat& angle, const vec3& axis)
+{
+	tfExt(rel, glm::rotate(mat4(), angle, axis));
 }
 
 void TFShape::update()

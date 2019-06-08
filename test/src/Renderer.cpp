@@ -1,6 +1,8 @@
 
 #include "Renderer.h"
 
+#define MVP_MATRIX "MVP"
+
 Renderer::Renderer()
 {
 	glGenVertexArrays(1, &vao);
@@ -37,12 +39,25 @@ void Renderer::render()
 	{
 		if (shape->usesProgram())
 		{
-			const GLuint& id = programs[shape->getProgramIndex()]->getID();
-			glUseProgram(id);
+			GLuint progID = useProgram(shape->getProgramIndex());
+
+			if (progID)
+			{
+				GLint mvpID = glGetUniformLocation(progID, MVP_MATRIX);
+
+				if (mvpID != -1)
+				{
+					mat4 mvpMat{};
+
+					mvpMat = shape->getTF() * mvpMat;
+
+					glUniformMatrix4fv(mvpID, 1, GL_FALSE, &mvpMat[0][0]);
+				}
+			}
 		}
 		else
 		{
-			glUseProgram(0);
+			useProgram(-1);
 		}
 
 		shape->draw();
@@ -55,4 +70,28 @@ void Renderer::render()
 void Renderer::addProgram(const std::string& vert, const std::string& frag)
 {
 	programs.push_back(std::make_unique<Program>(vert, frag));
+}
+
+GLuint Renderer::useProgram(const int& index)
+{
+	if (index == -1)
+	{
+		if (index != curProgram)
+		{
+			curProgram = -1;
+			glUseProgram(0);
+		}
+		
+		return 0;
+	}
+	else
+	{
+		if (index != curProgram)
+		{
+			curProgram = index;
+			glUseProgram(programs[curProgram]->getID());
+		}
+		
+		return programs[curProgram]->getID();
+	}
 }

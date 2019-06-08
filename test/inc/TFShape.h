@@ -6,6 +6,9 @@
 
 #include <vector>
 
+#define RELATIVE true
+#define ABSOLUTE false
+
 class TFShape : public Shape
 {
 public:
@@ -13,12 +16,19 @@ public:
 	TFShape(const std::vector<vec3>& _verts, const GLenum& mode = GL_TRIANGLES);
 	TFShape(const std::vector<vec2>& _verts, const GLenum& mode = GL_TRIANGLES);
 
-	void tf(const mat4& mat);
+	void tfInt(const mat4& mat);
 
-	void tl(const vec3& d);
-	void tl(const vec2& d);
+	void tlInt(const vec3& d);
+	void tlInt(const vec2& d);
 
-	void rot(const GLfloat& angle, const vec3& axis = vec3(0.0f, 0.0f, 1.0f));
+	void rotInt(const GLfloat& angle, const vec3& axis = vec3(0.0f, 0.0f, 1.0f));
+
+	void tfExt(const bool& rel, const mat4& mat);
+
+	void tlExt(const bool& rel, const vec3& d);
+	void tlExt(const bool& rel, const vec2& d);
+
+	void rotExt(const bool& rel, const GLfloat& angle, const vec3& axis = vec3(0.0f, 0.0f, 1.0f));
 protected:
 	virtual void update();
 

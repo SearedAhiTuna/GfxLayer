@@ -43,6 +43,11 @@ public:
 	const int& getProgramIndex() { return programIndex; }
 	Shape& setProgramIndex(const int& _programIndex) { programIndex = _programIndex; return *this; }
 
+	const mat4& getTF() { return tfMat; }
+
+protected:
+	mat4 tfMat{};
+
 private:
 	GLenum mode;
 
