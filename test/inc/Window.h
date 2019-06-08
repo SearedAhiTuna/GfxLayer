@@ -9,7 +9,7 @@
 class Window
 {
 public:
-	Window();
+	Window(const int& w, const int& h, const std::string& title = "");
 	Window(const Window& other) = delete;
 	virtual ~Window();
 

@@ -1,12 +1,12 @@
 
 #include "Window.h"
 
-Window::Window()
+Window::Window(const int& w, const int& h, const std::string& title)
 {
 	// Initialize GLFW
 	glfwInitialize();
 
-	window = glfwCreateWindow(1024, 768, "Tutorial 02 - Red triangle", NULL, NULL);
+	window = glfwCreateWindow(w, h, title.c_str(), NULL, NULL);
 	if (!window)
 		throw GraphicsError("Failed to create GLFW window");
 

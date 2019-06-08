@@ -13,7 +13,7 @@ public:
 	Controller();
 	virtual ~Controller();
 
-	Window* createWindow();
+	Window* createWindow(const int& w, const int& h, const std::string& title = "");
 	void updateWindow(Window* w);
 
 	void tick();

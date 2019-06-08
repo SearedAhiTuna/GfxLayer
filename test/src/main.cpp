@@ -18,7 +18,7 @@ std::atomic<bool> bgThreadDone;
 int main(void)
 {
 	// Create a window
-	w = c.createWindow();
+	w = c.createWindow(1028, 1028, "Test");
 
 	// Add shaders
 	w->getRenderer().addProgram("shaders/simple.vs", "shaders/simple.fs");

@@ -11,11 +11,11 @@ Controller::~Controller()
 {
 }
 
-Window* Controller::createWindow()
+Window* Controller::createWindow(const int& w, const int& h, const std::string& title)
 {
-	Window* w = new Window();
-	windows.emplace_back(w);
-	return w;
+	Window* window = new Window(w, h, title);
+	windows.emplace_back(window);
+	return window;
 }
 
 void Controller::updateWindow(Window* w)
