@@ -21,7 +21,7 @@ std::atomic<bool> bgThreadDone;
 int main(void)
 {
 	// Create a window
-	w = c.createWindow(1028, 1028, "Test");
+	w = &c.createWindow(1028, 1028, "Test");
 
 	// Add shaders
 	w->getRenderer().addProgram("shaders/simple.vs", "shaders/simple.fs");
@@ -67,7 +67,7 @@ void bgThreadCB()
 		w->getRenderer().getCamera().rot(true, PI / 100.0f, VEC3_UP);
 
 		// Mark the window to be updated
-		c.updateWindow(w);
+		c.updateWindow(*w);
 
 		// Sleep the thread for a bit
 		sleepMS(20);

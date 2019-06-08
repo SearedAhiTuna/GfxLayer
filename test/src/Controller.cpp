@@ -12,18 +12,18 @@ Controller::~Controller()
 {
 }
 
-Window* Controller::createWindow(const int& w, const int& h, const std::string& title)
+Window& Controller::createWindow(const int& w, const int& h, const std::string& title)
 {
 	Window* window = new Window(w, h, title);
 	windows.emplace_back(window);
-	return window;
+	return *window;
 }
 
-void Controller::updateWindow(Window* w)
+void Controller::updateWindow(Window& w)
 {
 	for (WindowData& wd : windows)
 	{
-		if (wd.window.get() == w)
+		if (wd.window.get() == &w)
 		{
 			wd.needsUpdate = true;
 			break;

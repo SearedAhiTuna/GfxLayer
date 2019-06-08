@@ -14,8 +14,8 @@ public:
 	Controller();
 	virtual ~Controller();
 
-	Window* createWindow(const int& w, const int& h, const std::string& title = "");
-	void updateWindow(Window* w);
+	Window& createWindow(const int& w, const int& h, const std::string& title = "");
+	void updateWindow(Window& w);
 
 	void tick();
 	void loop();
