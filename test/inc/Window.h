@@ -2,9 +2,10 @@
 #pragma once
 
 #include "Libs.h"
-#include "Renderer.h"
 
 #include <memory>
+
+class Renderer;
 
 class Window
 {

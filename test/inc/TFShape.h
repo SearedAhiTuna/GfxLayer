@@ -6,9 +6,6 @@
 
 #include <vector>
 
-#define RELATIVE true
-#define ABSOLUTE false
-
 class TFShape : public Shape
 {
 public:

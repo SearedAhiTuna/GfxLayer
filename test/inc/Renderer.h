@@ -3,12 +3,14 @@
 
 #include "Libs.h"
 #include "Program.h"
-#include "Shape.h"
 
 #include <memory>
 #include <mutex>
 #include <unordered_set>
 #include <vector>
+
+class Camera;
+class Shape;
 
 class Renderer
 {
@@ -26,6 +28,8 @@ public:
 
 	void addProgram(const std::string& vert, const std::string& frag);
 
+	Camera& getCamera() { return *camera; }
+
 private:
 	GLuint useProgram(const int& index);
 
@@ -37,4 +41,6 @@ private:
 
 	std::vector<std::unique_ptr<Program>> programs;
 	int curProgram{ -1 };
+
+	std::unique_ptr<Camera> camera;
 };

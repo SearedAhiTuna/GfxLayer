@@ -1,11 +1,16 @@
 
 #include "Renderer.h"
 
+#include "Camera.h"
+#include "Shape.h"
+
 #define MVP_MATRIX "MVP"
 
 Renderer::Renderer()
 {
 	glGenVertexArrays(1, &vao);
+
+	camera = std::make_unique<Camera>();
 }
 
 Renderer::~Renderer()
@@ -50,6 +55,10 @@ void Renderer::render()
 					mat4 mvpMat{};
 
 					mvpMat = shape->getTF() * mvpMat;
+
+					mvpMat = camera->getV() * mvpMat;
+
+					mvpMat = camera->getP() * mvpMat;
 
 					glUniformMatrix4fv(mvpID, 1, GL_FALSE, &mvpMat[0][0]);
 				}

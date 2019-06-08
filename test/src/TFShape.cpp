@@ -69,7 +69,7 @@ void TFShape::rotInt(const GLfloat& angle, const vec3& axis)
 void TFShape::tfExt(const bool& rel, const mat4& mat)
 {
 	if (rel)
-		tfMat = mat * tfMat;
+		tfMat = tfMat * mat;
 	else
 		tfMat = mat;
 }

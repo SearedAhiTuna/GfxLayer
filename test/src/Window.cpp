@@ -1,6 +1,8 @@
 
 #include "Window.h"
 
+#include "Renderer.h"
+
 Window::Window(const int& w, const int& h, const std::string& title)
 {
 	// Initialize GLFW

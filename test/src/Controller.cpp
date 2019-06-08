@@ -1,5 +1,6 @@
 
 #include "Controller.h"
+#include "Window.h"
 
 #include <iostream>
 

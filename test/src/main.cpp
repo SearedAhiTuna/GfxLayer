@@ -5,8 +5,11 @@
 #include <thread>
 
 #include "Libs.h"
+#include "Camera.h"
 #include "Controller.h"
+#include "Renderer.h"
 #include "TFShape.h"
+#include "Window.h"
 
 Controller c;
 TFShape* t;
@@ -45,10 +48,22 @@ void bgThreadCB()
 	// Add the triangle to the window
 	w->getRenderer().addShape(t);
 
+	// Move the camera a bit
+	//w->getRenderer().getCamera().tl(true, VEC3_BACKWARDS * 1.0f);
+	//w->getRenderer().getCamera().lookAt(VEC3_ORIGIN, false);
+	w->getRenderer().getCamera().follow(true, 2.0f);
+	//w->getRenderer().getCamera().follow(true, VEC3_UP * .5f);
+
+	// Set the perspective
+	w->getRenderer().getCamera().perspective(60.0f, 1.0f, .1f, 100.0f);
+
 	while (!bgThreadDone.load())
 	{
 		// Rotate the triangle
-		t->rotExt(RELATIVE, PI / 50.0f);
+		t->rotExt(true, PI / 50.0f);
+
+		// Move the camera
+		w->getRenderer().getCamera().rot(true, PI / 100.0f, VEC3_UP);
 
 		// Mark the window to be updated
 		c.updateWindow(w);

@@ -10,6 +10,14 @@
 
 const GLfloat PI = pi<GLfloat>();
 
+const vec3 VEC3_ORIGIN = vec3(0, 0, 0);
+const vec3 VEC3_UP = vec3(0, 1, 0);
+const vec3 VEC3_DOWN = vec3(0, -1, 0);
+const vec3 VEC3_LEFT = vec3(-1, 0, 0);
+const vec3 VEC3_RIGHT = vec3(1, 0, 0);
+const vec3 VEC3_FORWARDS = vec3(0, 0, -1);
+const vec3 VEC3_BACKWARDS = vec3(0, 0, 1);
+
 void glfwInitialize()
 {
 	glfwInit();

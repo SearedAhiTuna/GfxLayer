@@ -2,10 +2,11 @@
 #pragma once
 
 #include "Libs.h"
-#include "Window.h"
 
 #include <list>
 #include <memory>
+
+class Window;
 
 class Controller
 {
