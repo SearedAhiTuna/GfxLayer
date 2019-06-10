@@ -7,6 +7,7 @@
 #include "Libs.h"
 #include "Camera.h"
 #include "Controller.h"
+#include "Model.h"
 #include "Renderer.h"
 #include "TFShape.h"
 #include "Window.h"
@@ -14,12 +15,21 @@
 Controller c;
 TFShape* t;
 Window* w;
+Model m;
 
 void bgThreadCB();
 std::atomic<bool> bgThreadDone;
 
 int main(void)
 {
+	// Create a mode
+	int v1 = m.vert_create(vec2(-0.1f, 0.0f));
+	int v2 = m.vert_create(vec2(0.1f, 0.0f));
+	int v3 = m.vert_create(vec2(0.1f, 1.0f));
+	int v4 = m.vert_create(vec2(-0.1f, 1.0f));
+	m.face_create_from_nodes({ v1, v2, v3, v4 });
+	std::cout << m << std::endl;
+
 	// Create a window
 	w = &c.createWindow(1028, 1028, "Test");
 
@@ -41,9 +51,10 @@ int main(void)
 
 void bgThreadCB()
 {
-	// Create a triangle
-	t = new TFShape({ vec2(-0.1f,0.0f), vec2(0.1f,0.0f), vec2(0.0f,1.0f) });
-	t->bufferCreate<vec3>({ vec3(1,0,0), vec3(0,1,0), vec3(0,0,1) });
+	// Create a triangle from the model
+	//t = new TFShape({ vec2(-0.1f,0.0f), vec2(0.1f,0.0f), vec2(0.0f,1.0f) });
+	//t->bufferCreate<vec3>({ vec3(1,0,0), vec3(0,1,0), vec3(0,0,1) });
+	t = dynamic_cast<TFShape*>(m.genShape());
 	t->setProgramIndex(0);
 
 	// Add the triangle to the window

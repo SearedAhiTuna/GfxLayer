@@ -36,12 +36,19 @@ private:
 		std::vector<vec> verts;
 		GLfloat* vertBuf;
 		const size_t vertSize;
+		TFShape* parent;
 
-		VertBuffer(TFShape* parent, const std::vector<vec>& _verts):
+		VertBuffer(TFShape* _parent, const std::vector<vec>& _verts):
 			verts(_verts),
-			vertSize(_verts[0].length())
+			vertSize(_verts[0].length()),
+			parent(_parent)
 		{
 			vertBuf = parent->genBuffer(verts.size(), vertSize);
+		}
+
+		~VertBuffer()
+		{
+			parent->deleteBuffer(vertBuf);
 		}
 
 		void update()
