@@ -3,27 +3,37 @@
 
 #include "Libs.h"
 
+#include <atomic>
 #include <memory>
+#include <string>
 
 class Renderer;
 
 class Window
 {
+private:
+    Window(GLFWwindow* window);
+
 public:
-	Window(const int& w, const int& h, const std::string& title = "");
-	Window(const Window& other) = delete;
-	virtual ~Window();
+    
+    Window(const Window& other) = delete;
+    virtual ~Window();
 
-	Window& operator=(const Window& rhs) = delete;
+    Window& operator=(const Window& rhs) = delete;
 
-	void update();
+    void update();
+    void markForUpdate();
 
-	bool shouldClose();
+    bool shouldClose();
 
-	Renderer& getRenderer() { return *pRenderer; }
+    Renderer& getRenderer() { return *_pRenderer; }
 
 private:
-	GLFWwindow* window;
+    GLFWwindow* _window;
+    std::unique_ptr<Renderer> _pRenderer;
 
-	std::unique_ptr<Renderer> pRenderer;
+    std::atomic<bool> extShouldClose{};
+    std::atomic<bool> needsUpdate{};
+
+    friend class Graphics;
 };

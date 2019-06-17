@@ -15,32 +15,32 @@ class Shape;
 class Renderer
 {
 public:
-	Renderer();
-	Renderer(const Renderer& other) = delete;
-	virtual ~Renderer();
+    Renderer();
+    Renderer(const Renderer& other) = delete;
+    virtual ~Renderer();
 
-	Renderer& operator=(const Renderer& rhs) = delete;
+    Renderer& operator=(const Renderer& rhs) = delete;
 
-	void addShape(Shape& shape);
-	void removeShape(Shape& shape);
+    void addShape(Shape& shape);
+    void removeShape(Shape& shape);
 
-	void render();
+    void render();
 
-	void addProgram(const std::string& vert, const std::string& frag);
+    void addProgram(const std::string& vert, const std::string& frag);
 
-	Camera& getCamera() { return *camera; }
-
-private:
-	GLuint useProgram(const int& index);
+    Camera& getCamera() { return *camera; }
 
 private:
-	GLuint vao;
+    GLuint useProgram(const int& index);
 
-	std::unordered_set<Shape*> shapes;
-	std::mutex shapesMutex;
+private:
+    GLuint vao;
 
-	std::vector<std::unique_ptr<Program>> programs;
-	int curProgram{ -1 };
+    std::unordered_set<Shape*> shapes;
+    std::mutex shapesMutex;
 
-	std::unique_ptr<Camera> camera;
+    std::vector<std::unique_ptr<Program>> programs;
+    int curProgram{ -1 };
+
+    std::unique_ptr<Camera> camera;
 };

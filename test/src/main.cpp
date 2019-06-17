@@ -4,83 +4,74 @@
 #include <iostream>
 #include <thread>
 
-#include "Libs.h"
 #include "Camera.h"
-#include "Controller.h"
+#include "Graphics.h"
+#include "Libs.h"
 #include "Model.h"
 #include "Renderer.h"
 #include "TFShape.h"
 #include "Window.h"
 
-Controller c;
 TFShape* t;
-Window* w;
 Model m;
 
-void bgThreadCB();
-std::atomic<bool> bgThreadDone;
+void bgThread(Window* w);
 
 int main(void)
 {
-	// Create a mode
-	int v1 = m.vert_create(vec2(-0.1f, 0.0f));
-	int v2 = m.vert_create(vec2(0.1f, 0.0f));
-	int v3 = m.vert_create(vec2(0.1f, 1.0f));
-	int v4 = m.vert_create(vec2(-0.1f, 1.0f));
-	m.face_create_from_nodes({ v1, v2, v3, v4 });
-	std::cout << m << std::endl;
+    initGraphics(100);
 
-	// Create a window
-	w = &c.createWindow(1028, 1028, "Test");
+    // Create a window
+    getGraphics().createWindow(1028, 1028, "Test", bgThread);
 
-	// Add shaders
-	w->getRenderer().addProgram("shaders/simple.vs", "shaders/simple.fs");
+    // Loop
+    getGraphics().loop();
 
-	// Create background thread
-	std::thread bgThread(bgThreadCB);
-
-	// Loop
-	c.loop();
-
-	// End the background thread
-	bgThreadDone.store(true);
-	bgThread.join();
-
-	return 0;
+    return 0;
 }
 
-void bgThreadCB()
+void bgThread(Window* w)
 {
-	// Create a triangle from the model
-	//t = new TFShape({ vec2(-0.1f,0.0f), vec2(0.1f,0.0f), vec2(0.0f,1.0f) });
-	//t->bufferCreate<vec3>({ vec3(1,0,0), vec3(0,1,0), vec3(0,0,1) });
-	t = dynamic_cast<TFShape*>(m.genShape());
-	t->setProgramIndex(0);
+    // Add shaders
+    w->getRenderer().addProgram("shaders/simple.vs", "shaders/simple.fs");
 
-	// Add the triangle to the window
-	w->getRenderer().addShape(*t);
+    // Create a model
+    int v1 = m.vert_create(vec2(-0.1f, 0.0f), UV_BOTTOM_LEFT);
+    int v2 = m.vert_create(vec2(0.1f, 0.0f), UV_BOTTOM_RIGHT);
+    int v3 = m.vert_create(vec2(0.1f, 1.0f), UV_TOP_RIGHT);
+    int v4 = m.vert_create(vec2(-0.1f, 1.0f), UV_TOP_LEFT);
+    m.face_create_from_nodes({ v1, v2, v3, v4 });
+    std::cout << m << std::endl;
 
-	// Move the camera a bit
-	//w->getRenderer().getCamera().tl(true, VEC3_BACKWARDS * 1.0f);
-	//w->getRenderer().getCamera().lookAt(VEC3_ORIGIN, false);
-	w->getRenderer().getCamera().follow(true, 2.0f);
-	//w->getRenderer().getCamera().follow(true, VEC3_UP * .5f);
+    // Create a triangle from the model
+    t = dynamic_cast<TFShape*>(m.genShape());
+    t->setProgramIndex(0);
+    t->setTexture("image.png");
 
-	// Set the perspective
-	w->getRenderer().getCamera().perspective(60.0f, 1.0f, .1f, 100.0f);
+    // Add the triangle to the window
+    w->getRenderer().addShape(*t);
 
-	while (!bgThreadDone.load())
-	{
-		// Rotate the triangle
-		t->rotExt(true, PI / 50.0f);
+    // Move the camera a bit
+    //w->getRenderer().getCamera().tl(true, VEC3_BACKWARDS * 1.0f);
+    //w->getRenderer().getCamera().lookAt(VEC3_ORIGIN, false);
+    w->getRenderer().getCamera().follow(true, 2.0f);
+    w->getRenderer().getCamera().follow(true, VEC3_UP * .5f);
 
-		// Move the camera
-		w->getRenderer().getCamera().rot(true, PI / 100.0f, VEC3_UP);
+    // Set the perspective
+    w->getRenderer().getCamera().perspective(60.0f, 1.0f, .1f, 100.0f);
 
-		// Mark the window to be updated
-		c.updateWindow(*w);
+    while (!w->shouldClose())
+    {
+        // Rotate the triangle
+        //t->rotExt(true, PI / 50.0f);
 
-		// Sleep the thread for a bit
-		sleepMS(20);
-	}
+        // Move the camera
+        w->getRenderer().getCamera().rot(true, PI / 100.0f, VEC3_UP);
+
+        // Mark the window to be updated
+        w->markForUpdate();
+
+        // Sleep the thread for a bit
+        sleepMS(20);
+    }
 }

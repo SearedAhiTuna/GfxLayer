@@ -10,51 +10,56 @@
 class Shape
 {
 private:
-	struct Buffer
-	{
-		GLuint vbo;
+    struct Buffer
+    {
+        GLuint vbo;
 
-		size_t nverts;
-		size_t ndims;
+        size_t nverts;
+        size_t ndims;
 
-		GLfloat* data;
-		size_t size;
+        GLfloat* data;
+        size_t size;
 
-		bool init{};
+        bool init{};
 
-		Buffer(const size_t& _nverts, const size_t& _ndims);
-		~Buffer();
-	};
+        Buffer(const size_t& _nverts, const size_t& _ndims);
+        ~Buffer();
+    };
 
 public:
-	Shape(const GLenum& _mode = GL_TRIANGLES);
-	Shape(const Shape& other) = delete;
-	virtual ~Shape();
+    Shape(const GLenum& _mode = GL_TRIANGLES);
+    Shape(const Shape& other) = delete;
+    virtual ~Shape();
 
-	Shape& operator=(const Shape& rhs) = delete;
+    Shape& operator=(const Shape& rhs) = delete;
 
-	GLfloat* genBuffer(const size_t& nverts, const size_t& ndims);
-	void deleteBuffer(GLfloat* buf);
+    GLfloat* genBuffer(const size_t& nverts, const size_t& ndims);
+    void deleteBuffer(GLfloat* buf);
 
-	void update();
-	void draw();
+    void update();
+    void draw();
 
-	bool usesProgram() { return programIndex >= 0; }
-	const int& getProgramIndex() { return programIndex; }
-	Shape& setProgramIndex(const int& _programIndex) { programIndex = _programIndex; return *this; }
+    bool usesProgram() { return programIndex >= 0; }
+    const int& getProgramIndex() { return programIndex; }
+    Shape& setProgramIndex(const int& _programIndex) { programIndex = _programIndex; return *this; }
 
-	const mat4& getTF() { return tfMat; }
+    const mat4& getTF() { return tfMat; }
+
+    Shape& setTexture(const std::string& fn);
+    const GLuint getTexture() const { return textureID; }
 
 protected:
-	mat4 tfMat{};
+    mat4 tfMat{};
 
 private:
-	GLenum mode;
+    GLenum mode;
 
-	std::list<Buffer> buffers;
-	std::mutex buffersMutex;
+    std::list<Buffer> buffers;
+    std::mutex buffersMutex;
 
-	bool needsUpdate;
+    bool needsUpdate;
 
-	int programIndex{ -1 };
+    int programIndex{ -1 };
+
+    GLuint textureID{};
 };

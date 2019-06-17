@@ -16,15 +16,15 @@
     <Filter Include="Shader Files">
       <UniqueIdentifier>{5e5cebab-3d35-47c3-a5f6-c1fcccfbb43c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Directly Included Libs">
+      <UniqueIdentifier>{73914802-919e-4f84-93eb-cf127aef1f06}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Shape.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Libs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer.cpp">
@@ -34,9 +34,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\TFShape.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Controller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Program.cpp">
@@ -54,11 +51,17 @@
     <ClCompile Include="src\Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="external\lodepng\lodepng.cpp">
+      <Filter>Directly Included Libs</Filter>
+    </ClCompile>
+    <ClCompile Include="external\lodepng\lodepng_util.cpp">
+      <Filter>Directly Included Libs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="inc\Libs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="inc\Shape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -66,9 +69,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\Window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\Controller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\TFShape.h">
@@ -92,6 +92,18 @@
     <ClInclude Include="inc\Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="external\lodepng\lodepng.h">
+      <Filter>Directly Included Libs</Filter>
+    </ClInclude>
+    <ClInclude Include="external\lodepng\lodepng_util.h">
+      <Filter>Directly Included Libs</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\Graphics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\Libs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\simple.vs">
@@ -100,5 +112,6 @@
     <None Include="shaders\simple.fs">
       <Filter>Shader Files</Filter>
     </None>
+    <None Include="Makefile" />
   </ItemGroup>
 </Project>
