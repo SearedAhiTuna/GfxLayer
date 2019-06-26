@@ -97,7 +97,7 @@ void Window::Update()
     glfwMakeContextCurrent(_window);
 
     // Clear the window
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Bind the VAO
     glBindVertexArray(_vao);

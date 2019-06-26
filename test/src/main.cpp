@@ -41,6 +41,10 @@ void bgThread(Window* w)
     m.verts().emplace(VEC3_RIGHT, UV_BOTTOM_RIGHT);
     m.faces().emplace_verts(Verts(&m.vert(0), &m.vert(1), &m.vert(2), &m.vert(3)));
 
+    Model::Edge* e = m.edges().between(m.vert(0), m.vert(1));
+    Model::Edge& e2 = e->extrude();
+    m.edge_tf_3d(e2, MDL_ATT_POSITION, glm::translate(glm::mat4(), VEC3_FORWARDS * .5f));
+
     std::cout << "Mesh:\n";
     std::cout.flush();
     m.print_verbose(std::cout);

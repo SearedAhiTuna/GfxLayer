@@ -175,6 +175,9 @@ Window& Graphics::createWindow(const int& w, const int& h, const std::string& ti
         glEnable(GL_DEBUG_OUTPUT);
         glDebugMessageCallback(messageCallback, 0);
 
+        // Enable depth buffer
+        glEnable(GL_DEPTH_TEST);
+
         // Set sticky
         glfwSetInputMode(glfwWindow, GLFW_STICKY_KEYS, GL_TRUE);
 
@@ -200,6 +203,9 @@ Window& Graphics::createWindow(const int& w, const int& h, const std::string& ti
             // Enable debug output
             glEnable(GL_DEBUG_OUTPUT);
             glDebugMessageCallback(messageCallback, 0);
+
+            // Enable depth buffer
+            glEnable(GL_DEPTH_TEST);
 
             // Set sticky
             glfwSetInputMode(glfwWindow, GLFW_STICKY_KEYS, GL_TRUE);

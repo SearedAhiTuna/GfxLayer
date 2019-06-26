@@ -16,29 +16,47 @@ public:
     void vert_tf_3d(Vert& v, const AttributeID& att, const mat4& tf);
 
     template <typename VertsIn>
-    void vert_tf_2d(const VertsIn& v, const AttributeID& att, const mat4& tf);
+    void vert_tf_2d(const VertsIn& vs, const AttributeID& att, const mat4& tf);
 
     template <typename VertsIn>
-    void vert_tf_3d(const VertsIn& v, const AttributeID& att, const mat4& tf);
+    void vert_tf_3d(const VertsIn& vs, const AttributeID& att, const mat4& tf);
 
     void edge_tf_2d(Edge& e, const AttributeID& att, const mat4& tf);
     void edge_tf_3d(Edge& e, const AttributeID& att, const mat4& tf);
 
     template <typename EdgesIn>
-    void edge_tf_2d(const EdgesIn& e, const AttributeID& att, const mat4& tf);
+    void edge_tf_2d(const EdgesIn& es, const AttributeID& att, const mat4& tf);
 
     template <typename EdgesIn>
-    void edge_tf_3d(const EdgesIn& e, const AttributeID& att, const mat4& tf);
+    void edge_tf_3d(const EdgesIn& es, const AttributeID& att, const mat4& tf);
 
     void face_tf_2d(Face& f, const AttributeID& att, const mat4& tf);
     void face_tf_3d(Face& f, const AttributeID& att, const mat4& tf);
 
     template <typename FacesIn>
-    void face_tf_2d(const FacesIn& f, const AttributeID& att, const mat4& tf);
+    void face_tf_2d(const FacesIn& fs, const AttributeID& att, const mat4& tf);
 
     template <typename FacesIn>
-    void face_tf_3d(const FacesIn& f, const AttributeID& att, const mat4& tf);
+    void face_tf_3d(const FacesIn& fs, const AttributeID& att, const mat4& tf);
 
     Shape* generate_shape(const GLenum& mode = GL_TRIANGLES);
     void generate_shape(Shape& shape, const GLenum& mode = GL_TRIANGLES);
 };
+
+template <typename VertsIn>
+void Model::vert_tf_2d(const VertsIn& vs, const AttributeID& att, const mat4& tf)
+{
+    for (Vert* v : vs)
+    {
+        vert_tf_2d(*v, att, tf);
+    }
+}
+
+template <typename VertsIn>
+void Model::vert_tf_3d(const VertsIn& vs, const AttributeID& att, const mat4& tf)
+{
+    for (Vert* v : vs)
+    {
+        vert_tf_3d(*v, att, tf);
+    }
+}

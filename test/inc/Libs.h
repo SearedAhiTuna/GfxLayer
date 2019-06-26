@@ -7,6 +7,7 @@
 
 #define GLM_SWIZZLE
 #include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
 using namespace glm;
 
 #define VEC3_ORIGIN vec3(0, 0, 0)
