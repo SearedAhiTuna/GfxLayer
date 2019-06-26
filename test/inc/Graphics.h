@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include <atomic>
 #include <condition_variable>
 #include <functional>
 #include <list>
@@ -49,9 +50,12 @@ private:
     {
         Window* _window{};
         std::thread _callback;
+        std::atomic<bool> _terminated{};
 
         WindowData(Window* window, const WindowCB& callback);
         ~WindowData();
+
+        bool Terminated();
     };
 
 private:
@@ -62,6 +66,12 @@ public:
 
     void tick();
     void loop();
+
+private:
+    void frame();
+
+public:
+
     bool finished() const;
 
     template <class Lambda>
@@ -74,8 +84,6 @@ public:
     Window& createWindow(const int& w, const int& h, const std::string& title, const WindowCB& callback);
 
 private:
-    void frame();
-
     void request_int(Request* req);
 
 private:
@@ -83,6 +91,7 @@ private:
     std::mutex _reqMutex;
 
     std::list<std::shared_ptr<WindowData>> _windows;
+    std::list<std::shared_ptr<WindowData>> _closedWindows;
 
     double _timeout{};
 

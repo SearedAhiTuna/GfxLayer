@@ -1,188 +1,74 @@
 
 #include "Model.h"
+#include "Shape.h"
+#include "vecx.h"
 
-#include "TFShape.h"
+#include <list>
+#include <map>
 
-#define ATTRIB_POS 0
-#define ATTRIB_UV 1
-
-Graph::NodeIndex Model::vert_create(const vec3& vec)
+Shape* Model::generate_shape(const GLenum& mode)
 {
-    NodeIndex n = node_create();
-    node_set_attrib<vec3>(n, ATTRIB_POS, vec);
-
-    return n;
+    Shape* shape = new Shape(mode);
+    generate_shape(*shape, mode);
+    return shape;
 }
 
-Graph::NodeIndex Model::vert_create(const vec2& vec)
+void Model::generate_shape(Shape& shape, const GLenum& mode)
 {
-    vec3 v3 = vec3(vec, 0);
-    return vert_create(v3);
-}
+    // Get every attribute ID
+    std::vector<AttributeID> attrs;
+    verts().allAtt(attrs);
 
-Graph::NodeIndex Model::vert_create(const vec3& vec, const vec2& uv)
-{
-    NodeIndex n = node_create();
-    node_set_attrib<vec3>(n, ATTRIB_POS, vec);
-    node_set_attrib<vec2>(n, ATTRIB_UV, uv);
-    textured = true;
+    // Create containers to hold all values
+    std::vector<std::list<vecx>> values(attrs.size());
 
-    return n;
-}
-
-Graph::NodeIndex Model::vert_create(const vec2& vec, const vec2& uv)
-{
-    vec3 v3 = vec3(vec, 0);
-    return vert_create(v3, uv);
-}
-
-Model::FaceIndex Model::face_create_from_edges(const std::initializer_list<EdgeIndex>& es)
-{
-    FaceIndex f = (FaceIndex)faces.size();
-    faces.emplace_back(es);
-
-    return f;
-}
-
-Model::FaceIndex Model::face_create_from_nodes(const std::initializer_list<NodeIndex>& ns)
-{
-    FaceIndex f = (FaceIndex)faces.size();
-    faces.emplace_back();
-
-    Face& face = faces.back();
-
-    for (size_t i = 0; i < ns.size(); ++i)
+    // For each face
+    for (Face& f : faces())
     {
-        size_t next = (i + 1) % ns.size();
+        // Get all vertices in the face
+        std::vector<Vert*> vs;
+        f.adjacent_verts(vs);
 
-        NodeIndex n1 = ns.begin()[i];
-        NodeIndex n2 = ns.begin()[next];
+        std::cout << "Verts in order: ";
+        for (Vert* v : vs)
+            std::cout << " " << *v;
+        std::cout << "\n";
 
-        EdgeIndex e = edge_create(n1, n2);
-
-        face.edges.emplace_back(e);
-    }
-
-    return f;
-}
-
-vec3 Model::node_get_vert(const NodeIndex& n) const
-{
-    return node_get_attrib<vec3>(n, ATTRIB_POS);
-}
-
-vec2 Model::node_get_uv(const NodeIndex& n) const
-{
-    return node_get_attrib<vec2>(n, ATTRIB_UV);
-}
-
-Shape* Model::genShape() const
-{
-    std::vector<vec3> verts;
-    verts.reserve(1);
-
-    std::vector<vec2> uvs;
-    if (textured)
-        uvs.reserve(1);
-
-    std::list<FaceIndex> fs;
-    face_get_all<std::list<FaceIndex>>(fs);
-    for (const FaceIndex& f : fs)
-    {
-        std::vector<NodeIndex> ns;
-        face_get_nodes<std::vector<NodeIndex>>(ns, f);
-
-        size_t needed = (ns.size() - 2) * 3;
-        while (verts.capacity() < verts.size() + needed)
+        // Construct the face out of triangles
+        for (size_t v = 2; v < vs.size(); ++v)
         {
-            verts.reserve(verts.capacity() * 2);
-            if (textured)
-                uvs.reserve(verts.capacity() * 2);
-        }
-
-        for (size_t i = 2; i < ns.size(); ++i)
-        {
-            verts.push_back(node_get_vert(ns[0]));
-            verts.push_back(node_get_vert(ns[i - 1]));
-            verts.push_back(node_get_vert(ns[i]));
-
-            if (textured)
+            for (size_t i = 0; i < attrs.size(); ++i)
             {
-                uvs.push_back(node_get_uv(ns[0]));
-                uvs.push_back(node_get_uv(ns[i - 1]));
-                uvs.push_back(node_get_uv(ns[i]));
+                AttributeID id = attrs[i];
+
+                values[i].emplace_back(vs[0]->getAtt(id));
+                values[i].emplace_back(vs[v - 1]->getAtt(id));
+                values[i].emplace_back(vs[v]->getAtt(id));
             }
         }
     }
 
-    TFShape* shape = new TFShape(verts);
-    if (textured)
-        shape->bufferCreate(uvs);
-    return shape;
-}
+    // Get the number of vertices
+    size_t nverts;
+    if (attrs.empty())
+        nverts = 0;
+    else
+        nverts = values.front().size();
+    
+    // Resize the provided shape
+    shape = Shape(nverts, mode);
 
-std::ostream& operator<<(std::ostream& os, const Model& m)
-{
-    bool first = true;
-
-    // List vertices
-    std::list<Graph::NodeIndex> ns;
-    m.node_get_all<std::list<Graph::NodeIndex>>(ns);
-
-    for (const Graph::NodeIndex& n : ns)
+    // Add the vertices to the shape
+    for (size_t i = 0; i < attrs.size(); ++i)
     {
-        if (first)
-            first = false;
-        else
-            os << std::endl;
+        // Get the dimensions for this attribute
+        size_t ndims = values[i].front().length();
 
-        vec3 vec = m.node_get_vert(n);
+        // If this is not a vector attribute
+        if (ndims == 0)
+            continue;
 
-        os << "v";
-        os << " " << vec.x;
-        os << " " << vec.y;
-        os << " " << vec.z;
+        auto buf = shape.GenBuffer(ndims);
+        buf.WriteRange(values[i]);
     }
-
-    // List UV
-    if (m.isTextured())
-    {
-        for (const Graph::NodeIndex& n : ns)
-        {
-            if (first)
-                first = false;
-            else
-                os << std::endl;
-
-            vec2 uv = m.node_get_uv(n);
-
-            os << "vt";
-            os << " " << uv.x;
-            os << " " << uv.y;
-        }
-    }
-
-    // List faces
-    std::list<Model::FaceIndex> fs;
-    m.face_get_all<std::list<Model::FaceIndex>>(fs);
-
-    for (const Model::FaceIndex& f : fs)
-    {
-        if (first)
-            first = false;
-        else
-            os << std::endl;
-
-        os << "f";
-        
-        std::list<Graph::NodeIndex> faceN;
-        m.face_get_nodes<std::list<Graph::NodeIndex>>(faceN, f);
-
-        for (const Graph::NodeIndex& n : faceN)
-        {
-            os << " " << (n + 1);
-        }
-    }
-
-    return os;
 }

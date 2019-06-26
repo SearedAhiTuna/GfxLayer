@@ -5,35 +5,65 @@
 
 #include <atomic>
 #include <memory>
+#include <mutex>
 #include <string>
+#include <unordered_set>
+#include <vector>
 
-class Renderer;
+class Camera;
+class Program;
+class Shape;
 
-class Window
+class Window final
 {
 private:
+    Window();
     Window(GLFWwindow* window);
+    Window(const Window& other) = delete;
+    Window(Window&& other) noexcept;
 
 public:
-    
-    Window(const Window& other) = delete;
-    virtual ~Window();
+    ~Window();
 
+private:
     Window& operator=(const Window& rhs) = delete;
+    Window& operator=(Window&& rhs) noexcept;
 
-    void update();
-    void markForUpdate();
+    void Free();
 
-    bool shouldClose();
+    void Update();
+    void Draw(Shape& s);
 
-    Renderer& getRenderer() { return *_pRenderer; }
+public:
+    void MarkForUpdate();
+    bool ShouldClose();
+
+    void RegisterShape(Shape& s);
+    void DeregisterShape(Shape& s);
+
+    void AddProgram(const std::string& vert, const std::string& frag);
+
+    Camera& Camera() { return *_camera; }
+
+private:
+    Program* UseProgram(const int& index);
+
+    friend class Graphics;
 
 private:
     GLFWwindow* _window;
-    std::unique_ptr<Renderer> _pRenderer;
 
-    std::atomic<bool> extShouldClose{};
-    std::atomic<bool> needsUpdate{};
+    std::atomic<bool> _updated{};
+    std::atomic<bool> _extShouldClose{};
 
-    friend class Graphics;
+    GLuint _vao;
+
+    std::unordered_set<Shape*> _shapes;
+    std::mutex _shapeLock;
+
+    std::vector<std::unique_ptr<Program>> _programs;
+    int _curProgram{ -1 };
+    std::mutex _programLock;
+
+    std::unique_ptr<::Camera> _camera;
 };

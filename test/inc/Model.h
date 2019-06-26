@@ -1,106 +1,44 @@
 
 #pragma once
 
-#include "Graph.h"
+#include "Mesh.h"
 #include "Libs.h"
 
-#include <initializer_list>
-#include <iostream>
-#include <list>
+#define MDL_ATT_POSITION 0
+#define MDL_ATT_UV 1
 
 class Shape;
 
-class Model : public Graph
+class Model : public Mesh
 {
 public:
-    typedef int FaceIndex;
+    void vert_tf_2d(Vert& v, const AttributeID& att, const mat4& tf);
+    void vert_tf_3d(Vert& v, const AttributeID& att, const mat4& tf);
 
-private:
-    struct Face
-    {
-        bool invalid{};
-        std::list<EdgeIndex> edges;
+    template <typename VertsIn>
+    void vert_tf_2d(const VertsIn& v, const AttributeID& att, const mat4& tf);
 
-        Face(const std::initializer_list<EdgeIndex>& es = {})
-        {
-            for (const EdgeIndex& e : es)
-                edges.emplace_back(e);
-        }
-    };
+    template <typename VertsIn>
+    void vert_tf_3d(const VertsIn& v, const AttributeID& att, const mat4& tf);
 
-public:
-    NodeIndex vert_create(const vec3& vec = VEC3_ORIGIN);
-    NodeIndex vert_create(const vec2& vec);
+    void edge_tf_2d(Edge& e, const AttributeID& att, const mat4& tf);
+    void edge_tf_3d(Edge& e, const AttributeID& att, const mat4& tf);
 
-    NodeIndex vert_create(const vec3& vec, const vec2& uv);
-    NodeIndex vert_create(const vec2& vec, const vec2& uv);
+    template <typename EdgesIn>
+    void edge_tf_2d(const EdgesIn& e, const AttributeID& att, const mat4& tf);
 
-    FaceIndex face_create_from_edges(const std::initializer_list<EdgeIndex>& es);
-    FaceIndex face_create_from_nodes(const std::initializer_list<NodeIndex>& ns);
+    template <typename EdgesIn>
+    void edge_tf_3d(const EdgesIn& e, const AttributeID& att, const mat4& tf);
 
-    vec3 node_get_vert(const NodeIndex& n) const;
-    vec2 node_get_uv(const NodeIndex& n) const;
+    void face_tf_2d(Face& f, const AttributeID& att, const mat4& tf);
+    void face_tf_3d(Face& f, const AttributeID& att, const mat4& tf);
 
-    template <class Container>
-    void face_get_edges(Container& c, const FaceIndex& f) const
-    {
-        const Face& face = faces[f];
+    template <typename FacesIn>
+    void face_tf_2d(const FacesIn& f, const AttributeID& att, const mat4& tf);
 
-        for (const EdgeIndex& e : face.edges)
-        {
-            c.push_back(e);
-        }
-    }
+    template <typename FacesIn>
+    void face_tf_3d(const FacesIn& f, const AttributeID& att, const mat4& tf);
 
-    template <class Container>
-    void face_get_nodes(Container& c, const FaceIndex& f) const
-    {
-        const Face& face = faces[f];
-
-        std::list<NodeIndex> allN;
-        std::unordered_set<NodeIndex> prevN;
-
-        for (const EdgeIndex& e : face.edges)
-        {
-            std::vector<NodeIndex> ns;
-            edge_get_connected_nodes<std::vector<NodeIndex>>(ns, e);
-
-            for (const NodeIndex& n : ns)
-            {
-                if (!prevN.count(n))
-                {
-                    allN.emplace_back(n);
-                    prevN.emplace(n);
-                }
-            }
-        }
-
-        for (const NodeIndex& n : allN)
-        {
-            c.push_back(n);
-        }
-    }
-
-    template <class Container>
-    void face_get_all(Container& c) const
-    {
-        FaceIndex f = 0;
-        for (const Face& face : faces)
-        {
-            if (!face.invalid)
-                c.push_back(f);
-
-            ++f;
-        }
-    }
-
-    Shape* genShape() const;
-
-    const bool& isTextured() const { return textured; }
-
-private:
-    std::vector<Face> faces;
-    bool textured{};
+    Shape* generate_shape(const GLenum& mode = GL_TRIANGLES);
+    void generate_shape(Shape& shape, const GLenum& mode = GL_TRIANGLES);
 };
-
-std::ostream& operator<<(std::ostream& os, const Model& m);

@@ -14,8 +14,17 @@ public:
 
     Program& operator=(const Program& other) = delete;
 
-    const GLuint& getID() { return id; }
+    const GLuint& ID() const { return _id; }
 
 private:
-    GLuint id;
+    void SetMVP(const mat4& mvp);
+    void SetTexture(const GLuint& tex);
+
+    friend class Window;
+
+private:
+    GLuint _id;
+
+    GLint _mvp;
+    GLint _texture;
 };

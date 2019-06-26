@@ -5,148 +5,274 @@
 #include <iostream>
 #include <list>
 
-static std::list<GLuint> used{};
+Shape::Buffer::Buffer() :
+    _vbo(0),
+    _nverts(0),
+    _ndims(0),
+    _data(nullptr),
+    _size(0),
+    _init(false),
+    _updated(false),
+    _valid(false)
+{
+}
 
-Shape::Buffer::Buffer(const size_t& _nverts, const size_t& _ndims):
-    nverts(_nverts),
-    ndims(_ndims)
+Shape::Buffer::Buffer(const size_t& nverts, const size_t& ndims) :
+    _vbo(0),
+    _nverts(nverts),
+    _ndims(ndims),
+    _data(nullptr),
+    _size(0),
+    _init(false),
+    _updated(false),
+    _valid(true)
 {
     GLuint temp = 0;
     GRAPHICS_CALL_BEGIN(&temp)
         glGenBuffers(1, &temp);
     GRAPHICS_CALL_END
-    vbo = temp;
+    _vbo = temp;
 
     // Generate the data
-    data = new GLfloat[nverts * ndims];
-    size = nverts * ndims * sizeof(GLfloat);
+    _data = new GLfloat[_nverts * _ndims];
+    _size = _nverts * _ndims * sizeof(GLfloat);
+}
+
+Shape::Buffer::Buffer(Buffer&& other) noexcept :
+    _vbo(other._vbo),
+    _nverts(other._nverts),
+    _ndims(other._ndims),
+    _data(other._data),
+    _size(other._size),
+    _init(other._init),
+    _updated(other._updated),
+    _valid(true)
+{
+    other._valid = false;
 }
 
 Shape::Buffer::~Buffer()
 {
-    GLuint temp = vbo;
+    if (!_valid)
+        return;
+
+    GLuint temp = _vbo;
     GRAPHICS_CALL_BEGIN(&temp)
         glDeleteBuffers(1, &temp);
     GRAPHICS_CALL_END
 
     // Delete the data
-    delete[] data;
+    delete[] _data;
 }
 
-Shape::Shape(const GLenum& _mode):
-    mode(_mode)
+Shape::Buffer& Shape::Buffer::operator=(Buffer&& rhs) noexcept
 {
+    _vbo = rhs._vbo;
+    _nverts = rhs._nverts;
+    _ndims = rhs._ndims;
+    _data = rhs._data;
+    _size = rhs._size;
+    _init = rhs._init;
+    _valid = true;
+
+    rhs._valid = false;
+
+    return *this;
+}
+
+GLfloat& Shape::Buffer::operator[](const size_t ind)
+{
+    return _data[ind];
+}
+
+Shape::BufferHandle::BufferHandle(Shape& parent, Buffer& buffer):
+    _parent(parent),
+    _buffer(&buffer)
+{
+}
+
+void Shape::BufferHandle::Free()
+{
+    if (_buffer == nullptr)
+        return;
+
+    std::lock_guard<std::mutex> myLk(_parent._bigLock);
+
+    auto& allBuffers = _parent._buffers;
+
+    for (auto it = allBuffers.begin(); it != allBuffers.end(); ++it)
+    {
+        if (it->get() == _buffer)
+        {
+            allBuffers.erase(it);
+            break;
+        }
+    }
+}
+
+Shape::Shape(const size_t nverts, const GLenum& mode) :
+    _mode(mode),
+    _nverts(nverts)
+{
+}
+
+Shape::Shape(Shape&& other) noexcept :
+    _mode(other._mode),
+    _nverts(other._nverts)
+{
+    // Lock the other shape
+    std::lock_guard<std::mutex> lk(other._bigLock);
+
+    // Move all the buffers
+    _buffers = other._buffers;
+
+    // Empty the other shape
+    other._buffers.clear();
+
+    // Get the texture from the other shape
+    _texture = other._texture;
+    other._texture = 0;
 }
 
 Shape::~Shape()
 {
-    if (textureID != 0)
+    Free();
+}
+
+Shape& Shape::operator=(Shape&& rhs) noexcept
+{
+    // Free any data in this shape
+    Free();
+
+    // Lock this shape
+    std::lock_guard<std::mutex> myLk(_bigLock);
+
+    // Lock the other shape
+    std::lock_guard<std::mutex> other(rhs._bigLock);
+
+    // Set the mode
+    _mode = rhs._mode;
+
+    // Set the dimensions
+    _nverts = rhs._nverts;
+
+    // Move all the buffers
+    _buffers = rhs._buffers;
+
+    // Empty the other shape
+    rhs._buffers.clear();
+
+    // Get the texture from the other shape
+    _texture = rhs._texture;
+    rhs._texture = 0;
+
+    return *this;
+}
+
+void Shape::Free()
+{
+    std::lock_guard<std::mutex> myLk(_bigLock);
+
+    // Empty buffers
+    _buffers.clear();
+
+    // Free texture
+    if (_texture != 0)
     {
-        freeTexture(this->textureID);
+        freeTexture(_texture);
+        _texture = 0;
     }
+
+    // Reset program
+    _program = -1;
 }
 
-GLfloat* Shape::genBuffer(const size_t& nverts, const size_t& ndims)
+Shape::BufferHandle Shape::GenBuffer(const size_t& ndims)
 {
-    std::lock_guard<std::mutex> lk(buffersMutex);
-    buffers.emplace_back(nverts, ndims);
-    needsUpdate = true;
-    return buffers.back().data;
+    std::lock_guard<std::mutex> myLk(_bigLock);
+
+    Buffer* buf = new Buffer(_nverts, ndims);
+
+    _buffers.emplace_back(buf);
+    return BufferHandle(*this, *buf);
 }
 
-void Shape::deleteBuffer(GLfloat* buf)
+void Shape::UpdateBuffers()
 {
-    std::lock_guard<std::mutex> lk(buffersMutex);
-    for (auto it = buffers.begin(); it != buffers.end(); ++it)
-    {
-        if (it->data == buf)
-        {
-            buffers.erase(it);
-            break;
-        }
-    }
-    needsUpdate = true;
-}
-
-void Shape::update()
-{
-    std::lock_guard<std::mutex> lk(buffersMutex);
-    needsUpdate = true;
-}
-
-void Shape::draw()
-{
-    // This function should only be called by the main thread
     assertMainThread();
 
-    std::lock_guard<std::mutex> lk(buffersMutex);
+    std::lock_guard<std::mutex> myLk(_bigLock);
 
-    if (buffers.empty())
+    for (auto& ptr : _buffers)
     {
-        return;
-    }
+        Buffer& buffer = *ptr.get();
 
-    // Update buffers
-    if (needsUpdate)
-    {
-        for (Buffer& buf : buffers)
+        if (!buffer._updated)
         {
             // Copy the buffer data
-            glBindBuffer(GL_ARRAY_BUFFER, buf.vbo);
-            if (buf.init)
+            glBindBuffer(GL_ARRAY_BUFFER, buffer._vbo);
+            if (buffer._init)
             {
-                glBufferSubData(GL_ARRAY_BUFFER, 0, buf.size, buf.data);
+                glBufferSubData(GL_ARRAY_BUFFER, 0, buffer._size, buffer._data);
             }
             else
             {
-                glBufferData(GL_ARRAY_BUFFER, buf.size, buf.data, GL_STATIC_DRAW);
-                buf.init = true;
+                glBufferData(GL_ARRAY_BUFFER, buffer._size, buffer._data, GL_STATIC_DRAW);
+                buffer._init = true;
             }
 
+            buffer._updated = true;
         }
-
-        needsUpdate = false;
-    }
-
-    // For each buffer
-    GLuint index = 0;
-    for (Buffer& buf : buffers)
-    {
-        // Enable this attribute array
-        glEnableVertexAttribArray(index);
-
-        // Bind the buffer
-        glBindBuffer(GL_ARRAY_BUFFER, buf.vbo);
-
-        // Set the attribute pointer
-        glVertexAttribPointer(
-            index,              // attribute.
-            (GLint)buf.ndims,    // size
-            GL_FLOAT,           // type
-            GL_FALSE,           // normalized?
-            0,                  // stride
-            (void*)0            // array buffer offset
-        );
-
-        // Increment index
-        ++index;
-    }
-
-    // Draw the arrays
-    glDrawArrays(mode, 0, (GLsizei)buffers.front().nverts);
-
-    // Disable the attribute arrays
-    for (GLuint i = 0; i < index; ++i)
-    {
-        glDisableVertexAttribArray(i);
     }
 }
 
-Shape& Shape::setTexture(const std::string& fn)
+Shape& Shape::Texture(const std::string& fn)
 {
-    if (textureID != 0)
-        freeTexture(textureID);
-    textureID = loadTexture(fn);
-    std::cout << "Got texture ID " << textureID << std::endl;
+    std::lock_guard<std::mutex> myLk(_bigLock);
+
+    if (_texture != 0)
+        freeTexture(_texture);
+
+    _texture = loadTexture(fn);
+
     return *this;
+}
+
+GLuint Shape::Texture()
+{
+    std::lock_guard<std::mutex> myLk(_bigLock);
+
+    return _texture;
+}
+
+Shape& Shape::Program(const int& p)
+{
+    std::lock_guard<std::mutex> myLk(_bigLock);
+
+    _program = p;
+
+    return *this;
+}
+
+int Shape::Program()
+{
+    std::lock_guard<std::mutex> myLk(_bigLock);
+
+    return _program;
+}
+
+Shape& Shape::TF(const mat4& tf)
+{
+    std::lock_guard<std::mutex> myLk(_bigLock);
+
+    _tf = tf;
+
+    return *this;
+}
+
+mat4 Shape::TF()
+{
+    std::lock_guard<std::mutex> myLk(_bigLock);
+
+    return _tf;
 }

@@ -33,14 +33,26 @@ const GLfloat PI = glm::pi<GLfloat>();
 Graphics::WindowData::WindowData(Window* window, const WindowCB& callback) :
     _window(window)
 {
-    _callback = std::thread(callback, window);
+    auto* t = &_terminated;
+    _callback = std::thread(
+        [t, window, callback]
+        {
+            callback(window);
+            t->store(true);
+            glfwPostEmptyEvent();
+        }
+    );
 }
 
 Graphics::WindowData::~WindowData()
 {
-    _window->extShouldClose.store(true);
     _callback.join();
     delete _window;
+}
+
+bool Graphics::WindowData::Terminated()
+{
+    return _terminated.load();
 }
 
 Graphics::Graphics(const unsigned int& timeoutMS)
@@ -74,9 +86,66 @@ void Graphics::loop()
     }
 }
 
+void Graphics::frame()
+{
+    // Update any windows
+    for (auto it = _windows.begin(); it != _windows.end();)
+    {
+        WindowData& wd = *it->get();
+        Window& w = *wd._window;
+
+        if (!w._updated.load())
+        {
+            w.Update();
+        }
+
+        if (w.ShouldClose())
+        {
+            // Let the subthread know to close
+            w._extShouldClose.store(true);
+
+            // Move this window to the closed windows list
+            _closedWindows.emplace_back(*it);
+            it = _windows.erase(it);
+        }
+        else
+            ++it;
+    }
+
+    // Process any requests for graphics operations
+    std::unique_lock<std::mutex> reqLock(_reqMutex);
+    for (auto it = _requests.begin(); it != _requests.end(); it = _requests.erase(it))
+    {
+        // Run the request
+        (*it)->run();
+
+        // Mark the request as finished
+        (*it)->finished = true;
+        (*it)->finishedCond.notify_one();
+
+        // Yield the lock
+        reqLock.unlock();
+        reqLock.lock();
+    }
+
+    // Check for terminated subthreads
+    for (auto it = _closedWindows.begin(); it != _closedWindows.end();)
+    {
+        WindowData& wd = *it->get();
+        Window& w = *wd._window;
+
+        if (wd.Terminated())
+        {
+            it = _closedWindows.erase(it);
+        }
+        else
+            ++it;
+    }
+}
+
 bool Graphics::finished() const
 {
-    return _windows.empty();
+    return _windows.empty() && _closedWindows.empty();
 }
 
 Window& Graphics::createWindow(const int& w, const int& h, const std::string& title, const WindowCB& callback)
@@ -143,46 +212,6 @@ Window& Graphics::createWindow(const int& w, const int& h, const std::string& ti
     Window* window = new Window(glfwWindow);
     _windows.emplace_back(new WindowData(window, callback));
     return *window;
-}
-
-void Graphics::frame()
-{
-    // Update any windows
-    for (auto it = _windows.begin(); it != _windows.end();)
-    {
-        WindowData& wd = *it->get();
-        Window& w = *wd._window;
-
-        if (w.needsUpdate.load())
-        {
-            w.update();
-            w.needsUpdate.store(false);
-        }
-
-        if (w.shouldClose())
-        {
-            w.extShouldClose.store(true);
-            it = _windows.erase(it);
-        }
-        else
-            ++it;
-    }
-
-    // Process any requests for graphics operations
-    std::unique_lock<std::mutex> reqLock(_reqMutex);
-    for (auto it = _requests.begin(); it != _requests.end(); it = _requests.erase(it))
-    {
-        // Run the request
-        (*it)->run();
-
-        // Mark the request as finished
-        (*it)->finished = true;
-        (*it)->finishedCond.notify_one();
-
-        // Yield the lock
-        reqLock.unlock();
-        reqLock.lock();
-    }
 }
 
 void Graphics::request_int(Request* req)

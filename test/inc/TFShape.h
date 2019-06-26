@@ -6,14 +6,14 @@
 
 #include <list>
 #include <memory>
+#include <mutex>
 #include <vector>
 
 class TFShape : public Shape
 {
 public:
-    TFShape(const std::vector<vec4>& _verts, const GLenum& mode = GL_TRIANGLES);
-    TFShape(const std::vector<vec3>& _verts, const GLenum& mode = GL_TRIANGLES);
-    TFShape(const std::vector<vec2>& _verts, const GLenum& mode = GL_TRIANGLES);
+    template <typename vec, typename Container>
+    TFShape(const vec& type, const Container& _verts, const GLenum& mode = GL_TRIANGLES);
 
     void tfInt(const mat4& mat);
 
@@ -33,70 +33,123 @@ private:
     template <typename vec>
     struct VertBuffer
     {
-        std::vector<vec> verts;
-        GLfloat* vertBuf;
-        const size_t vertSize;
-        TFShape* parent;
+        std::vector<vec> _verts;
+        GLfloat* _vertBuf;
+        const size_t _vertSize;
+        TFShape& _parent;
 
-        VertBuffer(TFShape* _parent, const std::vector<vec>& _verts):
-            verts(_verts),
-            vertSize(_verts[0].length()),
-            parent(_parent)
-        {
-            vertBuf = parent->genBuffer(verts.size(), vertSize);
-        }
-
-        ~VertBuffer()
-        {
-            parent->deleteBuffer(vertBuf);
-        }
-
-        void update()
-        {
-            for (size_t v = 0; v < verts.size(); ++v)
-            {
-                for (size_t i = 0; i < vertSize; ++i)
-                {
-#pragma warning(suppress: 4267)
-                    vertBuf[v * vertSize + i] = verts[v][i];
-                }
-            }
-        }
+        template <typename Container>
+        VertBuffer(TFShape& parent, const Container& verts);
+        ~VertBuffer();
         
+        void UpdateVertex(const size_t& vert);
+        void UpdateAllVertices();
     };
 
     typedef void VertXBuffer;
-    typedef VertBuffer<vec4> Vert4Buffer;
-    typedef VertBuffer<vec3> Vert3Buffer;
     typedef VertBuffer<vec2> Vert2Buffer;
+    typedef VertBuffer<vec3> Vert3Buffer;
+    typedef VertBuffer<vec4> Vert4Buffer;
 
 public:
-    template <typename vec>
-    size_t bufferCreate(std::vector<vec> verts)
-    {
-        VertBuffer<vec>* buf = new VertBuffer<vec>(this, verts);
-        buffers.emplace_back(buf);
-        buf->update();
-        update();
-        return buffers.size() - 1;
-    }
+    template <typename vec, typename Container>
+    size_t CreateBuffer(const Container& verts);
 
     template <typename vec>
-    const vec& bufferGet(const size_t& bufInd, const size_t& vertInd)
-    {
-        VertBuffer<vec>& buf = *(VertBuffer<vec>*)buffers[bufInd].get();
-        return buf.verts[vertInd];
-    }
+    const vec& GetVertex(const size_t& buf, const size_t& vert);
 
     template <typename vec>
-    void bufferSet(const size_t& bufInd, const size_t& vertInd, const vec& value)
-    {
-        VertBuffer<vec>& buf = *(VertBuffer<vec>*)buffers[bufInd].get();
-        buf->verts[vertInd] = value;
-        buf->update();
-        update();
-    }
+    void SetVertex(const size_t& buf, const size_t& vert, const vec& value);
 
 private:
-    std::vector<std::shared_ptr<VertXBuffer>> buffers;
+    std::vector<std::shared_ptr<VertXBuffer>> _buffers;
+    size_t _ndims;
 };
+
+template <typename vec, typename Container>
+TFShape::TFShape(const vec& type, const Container& verts, const GLenum& mode):
+    Shape(mode),
+    _ndims(type.length())
+{
+    CreateBuffer<vec, Container>(verts);
+}
+
+template <typename vec>
+template <typename Container>
+TFShape::VertBuffer<vec>::VertBuffer(TFShape& parent, const Container& verts) :
+    _vertSize(verts.front().length()),
+    _parent(parent)
+{
+    _verts.reserve(verts.size());
+    for (const vec& v : verts)
+    {
+        _verts.push_back(v);
+    }
+
+    _vertBuf = parent.GenBuffer(verts.size(), vertSize);
+
+    UpdateAllVertices();
+}
+
+template <typename vec>
+TFShape::VertBuffer<vec>::~VertBuffer()
+{
+    parent.DeleteBuffer(_vertBuf);
+}
+
+template <typename vec>
+void TFShape::VertBuffer<vec>::UpdateVertex(const size_t& vert)
+{
+    std::unique_lock<std::mutex> lk(parent._bigLock);
+
+    for (size_t i = 0; i < _vertSize; ++i)
+    {
+#pragma warning(suppress: 4267)
+        _vertBuf[vert * _vertSize + i] = _verts[v][i];
+    }
+
+    lk.unlock();
+
+    parent.MarkBufferForUpdate(_vertBuf);
+}
+
+template <typename vec>
+void TFShape::VertBuffer<vec>::UpdateAllVertices()
+{
+    std::unique_lock<std::mutex> lk(parent._bigLock);
+
+    for (size_t v = 0; v < _verts.size(); ++v)
+    {
+        for (size_t i = 0; i < _vertSize; ++i)
+        {
+#pragma warning(suppress: 4267)
+            _vertBuf[v * _vertSize + i] = _verts[v][i];
+        }
+    }
+
+    lk.unlock();
+
+    parent.MarkBufferForUpdate(_vertBuf);
+}
+
+template <typename vec, typename Container>
+size_t TFShape::CreateBuffer(const Container& verts)
+{
+    auto* buf = new VertBuffer<vec>(*this, verts);
+    _buffers.emplace_back(buf);
+}
+
+template <typename vec>
+const vec& TFShape::GetVertex(const size_t& buf, const size_t& vert)
+{
+    VertBuffer<vec>* buffer = _buffers[buf].get();
+    return buffer->_verts[vert];
+}
+
+template <typename vec>
+void TFShape::SetVertex(const size_t& buf, const size_t& vert, const vec& value)
+{
+    VertBuffer<vec>* buffer = _buffers[buf].get();
+    buffer->_verts[vert] = value;
+    buffer->UpdateVertex(vert, value);
+}
