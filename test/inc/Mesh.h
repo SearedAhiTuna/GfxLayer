@@ -299,6 +299,8 @@ public:
         template <typename FacesOut>
         void directly_adjacent_faces(FacesOut& faces);
 
+        Face& extrude();
+
         std::ostream& print(std::ostream& out) const
         {
             out << "f" << _index;
@@ -349,7 +351,7 @@ public:
         PTR_VECTOR_CONST_ITERATOR(Face) begin() const;
         PTR_VECTOR_CONST_ITERATOR(Face) end() const;
 
-        Face& extrude(Face& f);  // Undefined
+        Face& extrude(Face& f);
 
         template <typename FacesIn, typename FacesOut>
         void extrude(const FacesOut& input, FacesOut& output);  // Undefined

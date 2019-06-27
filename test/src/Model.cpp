@@ -87,10 +87,10 @@ void Model::generate_shape(Shape& shape, const GLenum& mode)
         std::vector<Vert*> vs;
         f.adjacent_verts(vs);
 
-        std::cout << "Verts in order: ";
+        /*std::cout << "Verts in order: ";
         for (Vert* v : vs)
             std::cout << " " << *v;
-        std::cout << "\n";
+        std::cout << "\n";*/
 
         // Construct the face out of triangles
         for (size_t v = 2; v < vs.size(); ++v)
@@ -103,7 +103,7 @@ void Model::generate_shape(Shape& shape, const GLenum& mode)
                 values[i].emplace_back(vs[v - 1]->getAtt(id));
                 values[i].emplace_back(vs[v]->getAtt(id));
 
-                std::cout << id << ": " << *vs[0] << "-" << *vs[v - 1] << "-" << *vs[v] << "\n";
+                //std::cout << id << ": " << *vs[0] << "-" << *vs[v - 1] << "-" << *vs[v] << "\n";
             }
         }
     }
@@ -115,14 +115,14 @@ void Model::generate_shape(Shape& shape, const GLenum& mode)
     else
         nverts = values.front().size();
 
-    std::cout << "All verts:\n";
+    /*std::cout << "All verts:\n";
     for (const vecx& v : values.front())
     {
         std::cout << v.length() << ":";
         for (int i = 0; i < v.length(); ++i)
             std::cout << " " << v[i];
         std::cout << "\n";
-    }
+    }*/
     
     // Resize the provided shape
     shape = Shape(nverts, mode);

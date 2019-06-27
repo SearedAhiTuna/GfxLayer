@@ -361,6 +361,11 @@ bool Mesh::Face::directly_adjacent_to(const Face& f) const
     return false;
 }
 
+Mesh::Face& Mesh::Face::extrude()
+{
+    return _mesh.faces().extrude(*this);
+}
+
 Mesh::FaceList::FaceList(Mesh& mesh):
     _mesh(mesh)
 {
@@ -389,6 +394,17 @@ Mesh::PTR_VECTOR_CONST_ITERATOR(Mesh::Face) Mesh::FaceList::begin() const
 Mesh::PTR_VECTOR_CONST_ITERATOR(Mesh::Face) Mesh::FaceList::end() const
 {
     return PTR_VECTOR_CONST_ITERATOR(Face)(_faces.cend());
+}
+
+Mesh::Face& Mesh::FaceList::extrude(Face& f)
+{
+    std::list<Edge*> es;
+    std::list<Edge*> nes;
+
+    f.directly_adjacent_edges(es);
+    _mesh.edges().extrude(es, nes);
+
+    return emplace_edges(nes);
 }
 
 Mesh::Mesh():
