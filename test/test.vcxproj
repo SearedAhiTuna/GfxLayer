@@ -28,6 +28,10 @@
     <ClInclude Include="external\lodepng\lodepng.h" />
     <ClInclude Include="external\lodepng\lodepng_util.h" />
     <ClInclude Include="inc\Camera.h" />
+    <ClInclude Include="inc\function\Bezier.h" />
+    <ClInclude Include="inc\function\Function.h" />
+    <ClInclude Include="inc\function\Parabola.h" />
+    <ClInclude Include="inc\function\Polynomial.h" />
     <ClInclude Include="inc\Graphics.h" />
     <ClInclude Include="inc\Libs.h" />
     <ClInclude Include="inc\Mesh.h" />

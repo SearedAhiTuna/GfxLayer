@@ -23,7 +23,7 @@ public:
         return sum;
     }
 
-    GLfloat inv(const GLfloat& y, const unsigned int index)
+    GLfloat inv(const GLfloat& y, const unsigned int index = 0)
     {
 #define a at(2)
 #define b at(1)

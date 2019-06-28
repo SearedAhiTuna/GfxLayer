@@ -19,6 +19,9 @@
     <Filter Include="lodepng">
       <UniqueIdentifier>{73914802-919e-4f84-93eb-cf127aef1f06}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Function">
+      <UniqueIdentifier>{1accc629-75de-4a93-859b-7b370e1c29c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -100,6 +103,18 @@
     </ClInclude>
     <ClInclude Include="inc\unique_container.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\function\Bezier.h">
+      <Filter>Header Files\Function</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\function\Function.h">
+      <Filter>Header Files\Function</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\function\Parabola.h">
+      <Filter>Header Files\Function</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\function\Polynomial.h">
+      <Filter>Header Files\Function</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
