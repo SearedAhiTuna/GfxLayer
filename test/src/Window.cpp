@@ -146,17 +146,6 @@ void Window::Draw(Shape& s)
     {
         Shape::Buffer& buf = *ptr.get();
 
-        // Dump the buffer
-        /*std::cout << "Buffer: " << index << " " << buf._ndims << "\n";
-        for (int v = 0; v < buf._nverts; ++v)
-        {
-            for (int i = 0; i < buf._ndims; ++i)
-            {
-                std::cout << buf._data[v * buf._ndims + i] << " ";
-            }
-            std::cout << "\n";
-        }*/
-
         // Enable this attribute array
         glEnableVertexAttribArray(index);
 

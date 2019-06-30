@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClCompile Include="external\lodepng\lodepng.cpp" />
     <ClCompile Include="external\lodepng\lodepng_util.cpp" />
+    <ClCompile Include="src\Arc.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Graphics.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -27,11 +28,14 @@
   <ItemGroup>
     <ClInclude Include="external\lodepng\lodepng.h" />
     <ClInclude Include="external\lodepng\lodepng_util.h" />
+    <ClInclude Include="inc\Arc.h" />
     <ClInclude Include="inc\Camera.h" />
     <ClInclude Include="inc\function\Bezier.h" />
     <ClInclude Include="inc\function\Function.h" />
     <ClInclude Include="inc\function\Parabola.h" />
+    <ClInclude Include="inc\function\Parabola3D.h" />
     <ClInclude Include="inc\function\Polynomial.h" />
+    <ClInclude Include="inc\function\TParabola.h" />
     <ClInclude Include="inc\Graphics.h" />
     <ClInclude Include="inc\Libs.h" />
     <ClInclude Include="inc\Mesh.h" />

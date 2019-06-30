@@ -59,7 +59,7 @@ bool Mesh::Vert::adjacent_to(const Face& f) const
 
 Mesh::Vert& Mesh::Vert::extrude()
 {
-    return _mesh.verts().extrude(*this);
+    return _mesh.verts.extrude(*this);
 }
 
 const std::any Mesh::Vert::getAtt(const AttributeID& id) const
@@ -80,6 +80,16 @@ Mesh::Vert& Mesh::VertList::operator[](const size_t& ind)
 const Mesh::Vert& Mesh::VertList::operator[](const size_t& ind) const
 {
     return *_verts[ind];
+}
+
+Mesh::Vert* Mesh::VertList::operator()(const size_t& ind)
+{
+    return _verts[ind].get();
+}
+
+const Mesh::Vert* Mesh::VertList::operator()(const size_t& ind) const
+{
+    return _verts[ind].get();
 }
 
 Mesh::Vert& Mesh::VertList::emplace()
@@ -116,7 +126,7 @@ Mesh::Vert& Mesh::VertList::extrude(Vert& v)
     Vert &nv = emplace();
 
     // Create an edge connecting the two verts
-    _mesh.edges().emplace(v, nv);
+    _mesh.edges.emplace(v, nv);
 
     // Copy the attributes to the new vertex
     for (const auto& pair : v.attribs)
@@ -203,7 +213,7 @@ Mesh::Face* Mesh::Edge::opposite_face(const Face& f)
 
 Mesh::Edge& Mesh::Edge::extrude()
 {
-    return _mesh.edges().extrude(*this);
+    return _mesh.edges.extrude(*this);
 }
 
 Mesh::EdgeList::EdgeList(Mesh& mesh) :
@@ -216,15 +226,26 @@ Mesh::Edge& Mesh::EdgeList::operator[](const size_t& ind)
     return *_edges[ind];
 }
 
+const Mesh::Edge& Mesh::EdgeList::operator[](const size_t& ind) const
+{
+    return *_edges[ind];
+}
+
 Mesh::Edge& Mesh::EdgeList::emplace(Vert& v1, Vert& v2)
 {
-    // Create a new edge
-    Edge* pEdge = new Edge(_edges.size(), _mesh, v1, v2);
-    _edges.emplace_back(pEdge);
+    // Check if there is already an edge
+    Edge* pEdge = between(v1, v2);
 
-    // Connect the vertices
-    v1._edges.emplace(pEdge);
-    v2._edges.emplace(pEdge);
+    // If there is not an edge, create a new one
+    if (!pEdge)
+    {
+        pEdge = new Edge(_edges.size(), _mesh, v1, v2);
+        _edges.emplace_back(pEdge);
+
+        // Connect the vertices
+        v1._edges.emplace(pEdge);
+        v2._edges.emplace(pEdge);
+    }
 
     return *pEdge;
 }
@@ -295,7 +316,7 @@ Mesh::Edge& Mesh::EdgeList::extrude(Edge& e)
     Edge& ne = emplace(nv1, nv2);
 
     // Connect all vertices with a face
-    _mesh.faces().emplace_verts(Verts(&nv1, &nv2, e._v2, e._v1));
+    _mesh.faces.emplace_verts(Verts(&nv1, &nv2, e._v2, e._v1));
 
     // Return the connecting edge
     return ne;
@@ -363,7 +384,7 @@ bool Mesh::Face::directly_adjacent_to(const Face& f) const
 
 Mesh::Face& Mesh::Face::extrude()
 {
-    return _mesh.faces().extrude(*this);
+    return _mesh.faces.extrude(*this);
 }
 
 Mesh::FaceList::FaceList(Mesh& mesh):
@@ -372,6 +393,11 @@ Mesh::FaceList::FaceList(Mesh& mesh):
 }
 
 Mesh::Face& Mesh::FaceList::operator[](const size_t& ind)
+{
+    return *_faces[ind];
+}
+
+const Mesh::Face& Mesh::FaceList::operator[](const size_t& ind) const
 {
     return *_faces[ind];
 }
@@ -402,15 +428,15 @@ Mesh::Face& Mesh::FaceList::extrude(Face& f)
     std::list<Edge*> nes;
 
     f.directly_adjacent_edges(es);
-    _mesh.edges().extrude(es, nes);
+    _mesh.edges.extrude(es, nes);
 
     return emplace_edges(nes);
 }
 
 Mesh::Mesh():
-    _verts(*this),
-    _edges(*this),
-    _faces(*this)
+    verts(*this),
+    edges(*this),
+    faces(*this)
 {
 }
 
@@ -418,55 +444,10 @@ Mesh::~Mesh()
 {
 }
 
-Mesh::VertList& Mesh::verts()
-{
-    return _verts;
-}
-
-const Mesh::VertList& Mesh::verts() const
-{
-    return _verts;
-}
-
-Mesh::EdgeList& Mesh::edges()
-{
-    return _edges;
-}
-
-const Mesh::EdgeList& Mesh::edges() const
-{
-    return _edges;
-}
-
-Mesh::FaceList& Mesh::faces()
-{
-    return _faces;
-}
-
-const Mesh::FaceList& Mesh::faces() const
-{
-    return _faces;
-}
-
-Mesh::Vert& Mesh::vert(const size_t& ind)
-{
-    return _verts[ind];
-}
-
-Mesh::Edge& Mesh::edge(const size_t& ind)
-{
-    return _edges[ind];
-}
-
-Mesh::Face& Mesh::face(const size_t& ind)
-{
-    return _faces[ind];
-}
-
 std::ostream& Mesh::print(std::ostream& out) const
 {
     int index = 0;
-    for (const auto& v : verts())
+    for (const auto& v : verts)
     {
         out << v << ":";
 
@@ -478,7 +459,7 @@ std::ostream& Mesh::print(std::ostream& out) const
     }
 
     index = 0;
-    for (const auto& e : edges())
+    for (const auto& e : edges)
     {
         out << e << ":";
 
@@ -496,7 +477,7 @@ std::ostream& Mesh::print(std::ostream& out) const
     }
 
     index = 0;
-    for (const auto& f : faces())
+    for (const auto& f : faces)
     {
         out << f<< ":";
 
@@ -512,7 +493,7 @@ std::ostream& Mesh::print(std::ostream& out) const
 
 void Mesh::print_verbose(std::ostream& out)
 {
-    for (Vert& v : verts())
+    for (Vert& v : verts)
     {
         out << v << ":";
 
@@ -541,7 +522,7 @@ void Mesh::print_verbose(std::ostream& out)
         out << "\n";
     }
 
-    for (Edge& e : edges())
+    for (Edge& e : edges)
     {
         out << e << ":";
 
@@ -578,7 +559,7 @@ void Mesh::print_verbose(std::ostream& out)
         out << "\n";
     }
 
-    for (Face& f : faces())
+    for (Face& f : faces)
     {
         out << f << ":";
 

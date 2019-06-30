@@ -120,6 +120,9 @@ public:
         Vert& operator[](const size_t& ind);
         const Vert& operator[](const size_t& ind) const;
 
+        Vert* operator()(const size_t& ind);
+        const Vert* operator()(const size_t& ind) const;
+
         Vert& emplace();
 
         template <typename Type>
@@ -336,8 +339,14 @@ public:
         template <class VertsIn>
         Face& emplace_verts(const VertsIn& verts);
 
+        template <class VertsIn, class FacesOut>
+        void emplace_verts(const VertsIn& verts1, const VertsIn& verts2, FacesOut& faces);  // Undefined
+
         template <class EdgesIn>
         Face& emplace_edges(const EdgesIn& edges);
+
+        template <class EdgesIn, class FacesOut>
+        void emplace_edges(const EdgesIn& verts1, const EdgesIn& verts2, FacesOut& faces);  // Undefined
 
         template <class VertsIn>
         Face* between_verts(const VertsIn& verts);  // Undefined
@@ -371,26 +380,13 @@ public:
 
     Mesh& operator=(const Mesh& other);  // Undefined
 
-    VertList& verts();
-    const VertList& verts() const;
-
-    EdgeList& edges();
-    const EdgeList& edges() const;
-
-    FaceList& faces();
-    const FaceList& faces() const;
-
-    Vert& vert(const size_t& ind);
-    Edge& edge(const size_t& ind);
-    Face& face(const size_t& ind);
-
     virtual std::ostream& print(std::ostream& out) const;
     void print_verbose(std::ostream& out);
 
-private:
-    VertList _verts;
-    EdgeList _edges;
-    FaceList _faces;
+public:
+    VertList verts;
+    EdgeList edges;
+    FaceList faces;
 };
 
 std::ostream& operator<<(std::ostream& out, const Mesh::Vert& v);
@@ -469,7 +465,7 @@ Mesh::Vert& Mesh::Vert::setAtt(const AttributeID& id, const Type& t)
     attribs[id] = t;
 
     bool exists = false;
-    for (const AttributeID& i : _mesh._verts._attrs)
+    for (const AttributeID& i : _mesh.verts._attrs)
     {
         if (i == id)
             exists = true;
@@ -477,7 +473,7 @@ Mesh::Vert& Mesh::Vert::setAtt(const AttributeID& id, const Type& t)
 
     if (!exists)
     {
-        _mesh._verts._attrs.emplace_back(id);
+        _mesh.verts._attrs.emplace_back(id);
     }
 
     return *this;
@@ -790,7 +786,7 @@ void Mesh::EdgeList::extrude(const EdgesIn& input, EdgesOut& output)
             Edge* ne = &emplace(*nvPrev, *nv);
 
             // Connect all the vertices with a face
-            _mesh.faces().emplace_verts(Verts(nvPrev, nv, v, vPrev));
+            _mesh.faces.emplace_verts(Verts(nvPrev, nv, v, vPrev));
 
             // Add the connecting edge to the output
             output.emplace_back(ne);
@@ -809,10 +805,10 @@ void Mesh::Face::add_verts(const VertsIn& verts)
     Vert* prev = verts.back();
     for (Vert* v : verts)
     {
-        Edge* conn = _mesh.edges().between(*v, *prev);
+        Edge* conn = _mesh.edges.between(*v, *prev);
         if (!conn)
         {
-            conn = &_mesh.edges().emplace(*v, *prev);
+            conn = &_mesh.edges.emplace(*v, *prev);
         }
         
         edges.emplace_back(conn);
@@ -827,7 +823,7 @@ template <typename EdgesIn>
 void Mesh::Face::add_edges(const EdgesIn& edges)
 {
     std::list<Edge*> sorted;
-    _mesh.edges().sort_by_adjacency(edges, sorted);
+    _mesh.edges.sort_by_adjacency(edges, sorted);
 
     for (Edge* e : sorted)
     {
@@ -839,7 +835,7 @@ void Mesh::Face::add_edges(const EdgesIn& edges)
 template <typename VertsOut>
 void  Mesh::Face::adjacent_verts(VertsOut& verts)
 {
-    _mesh.verts().within_edges(_edges, verts);
+    _mesh.verts.within_edges(_edges, verts);
 }
 
 template <typename EdgesOut>
@@ -921,6 +917,38 @@ Mesh::Face& Mesh::FaceList::emplace_edges(const EdgesIn& edges)
     _faces.emplace_back(pFace);
 
     return *pFace;
+}
+
+template <class EdgesIn, class FacesOut>
+void Mesh::FaceList::emplace_edges(const EdgesIn& verts1, const EdgesIn& verts2, FacesOut& faces)
+{
+    // Fill the spaces
+    Vert* v1Prev = verts1.back();
+    Vert* v2Prev = verts2.back();
+    for (auto v1It = verts1.begin(), v2It = verts2.begin(); v1It != verts1.end(); ++v1It, ++v2It)
+    {
+        Vert* v1 = *v1It;
+        Vert* v2 = *v2It;
+
+        if (v1->adjacent_to(*v1Prev))
+        {
+            // If this vertex is connected to the previous vertex,
+            // fill in the space
+
+            // Connect the new vertices with an edge
+            Edge* ne1 = &_mesh.edges.emplace(*v1Prev, *v1);
+            Edge* ne2 = &_mesh.edges.emplace(*v2Prev, *v2);
+
+            // Connect all the vertices with a face
+            Face* f = &_mesh.faces.emplace_verts(Verts(v2Prev, v2, v1, v1Prev));
+
+            // Add the connecting face to the output
+            faces.emplace_back(f);
+        }
+
+        v1Prev = v1;
+        v2Prev = v2;
+    }
 }
 
 #undef PTR_VECTOR

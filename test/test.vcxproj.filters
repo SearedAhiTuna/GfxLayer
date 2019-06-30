@@ -60,6 +60,9 @@
     <ClCompile Include="src\vecx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Arc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\Shape.h">
@@ -115,6 +118,15 @@
     </ClInclude>
     <ClInclude Include="inc\function\Polynomial.h">
       <Filter>Header Files\Function</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\function\TParabola.h">
+      <Filter>Header Files\Function</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\Arc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\function\Parabola3D.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

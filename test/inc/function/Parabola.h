@@ -48,11 +48,21 @@ public:
         return _h;
     }
 
+    const GLfloat& a()
+    {
+        return base[2];
+    }
+
+    const GLfloat& c()
+    {
+        return base[0];
+    }
+
 private:
     void update()
     {
         base[0] = _h;
-        base[2] = 4 * _h / powf(_w, 2);
+        base[2] = -4 * _h / powf(_w, 2);
     }
 
 private:

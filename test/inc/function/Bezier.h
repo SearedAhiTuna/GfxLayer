@@ -2,7 +2,9 @@
 #pragma once
 
 #include <cmath>
+#include <initializer_list>
 #include <map>
+#include <utility>
 #include <vector>
 
 #include "Function.h"
@@ -12,6 +14,18 @@ template <typename vec>
 class Bezier : public Function<vec, GLfloat>, public std::vector<vec>
 {
 public:
+    Bezier()
+    {
+    }
+
+    Bezier(const std::initializer_list<vec>& vs)
+    {
+        std::vector<vec>::reserve(vs.size());
+
+        for (const vec& v : vs)
+            std::vector<vec>::push_back(v);
+    }
+
     vec operator()(const GLfloat& t)
     {
         vec sum;
@@ -19,7 +33,8 @@ public:
         size_t n = degree();
         for (size_t i = 0; i <= n; ++i)
         {
-            sum += bin_coeff(n, i) * powf(1 - t, n - i) * pow(t, i) * at(i);
+            const vec& v = std::vector<vec>::at(i);
+            sum += bin_coeff(n, i) * powf(1 - t, (GLfloat)(n - i)) * pow(t, (GLfloat)i) * v;
         }
 
         return sum;
@@ -27,21 +42,11 @@ public:
 
     size_t degree()
     {
-        return size() - 1;
+        return std::vector<vec>::size() - 1;
     }
 
 private:
-    struct nk
-    {
-        size_t n;
-        size_t k;
-
-        nk(const size_t& _n = 0, const size_t& _k = 0) :
-            n(_n),
-            k(_k)
-        {
-        }
-    };
+    typedef std::pair<size_t, size_t> nk;
 
     static size_t bin_coeff(const size_t& n, const size_t& k)
     {

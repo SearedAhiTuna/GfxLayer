@@ -1,10 +1,10 @@
 
 #version 330 core
 
-// Interpolated values from the vertex shaders
-in vec2 UV;
+// Input data
+in vec4 norm;
 
-// Ouput data
+// Output data
 out vec3 color;
 
 // Values that stay constant for the whole mesh.
@@ -13,5 +13,11 @@ uniform sampler2D TEXTURE_SAMPLER;
 void main()
 {
     // Output color = color of the texture at the specified UV
-    color = texture(TEXTURE_SAMPLER, UV).rgb;
+    //color = texture(TEXTURE_SAMPLER, UV).rgb;
+	//color = (gl_FragCoord.xyz + vec3(1,1,1)) * .5f;
+
+	float red = abs(norm.z);
+	float blue = 1 - abs(norm.z);
+
+	color = vec3(1, 1, 1) * red;
 }

@@ -17,7 +17,7 @@ public:
 
         for (size_t n = 0; n < size(); ++n)
         {
-            sum += at(n) * powf(x, n);
+            sum += at(n) * powf(x, (GLfloat)n);
         }
 
         return sum;
@@ -33,7 +33,7 @@ public:
             if (y == c)
                 return y;
             else
-                throw std::domain_error(__PRETTY_FUNCTION__ ": Argument out of range");
+                throw std::domain_error("Argument out of range");
         }
         else if (degree() == 1)
         {
@@ -44,7 +44,7 @@ public:
             GLfloat arg = powf(b, 2) - 4 * a * c + 4 * a * y;
 
             if (arg < 0)
-                throw std::domain_error(__PRETTY_FUNCTION__ ": Argument out of range");
+                throw std::domain_error("Argument out of range");
 
             if (index % 2 == 0)
                 return (-b - sqrtf(arg)) / (2 * a);
@@ -53,7 +53,7 @@ public:
         }
         else
         {
-            throw std::invalid_argument(__PRETTY_FUNCTION__ ": Not defined for higher degrees");
+            throw std::invalid_argument("Not defined for higher degrees");
         }
 #undef a
 #undef b

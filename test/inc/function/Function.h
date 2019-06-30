@@ -10,6 +10,6 @@ public:
     virtual Out operator()(const In&) = 0;
     virtual In inv(const Out&, const unsigned int index = 0)
     {
-        throw std::runtime_error(__PRETTY_FUNCTION__ ": Not defined");
+        throw std::runtime_error("Inverse not defined");
     }
 };
