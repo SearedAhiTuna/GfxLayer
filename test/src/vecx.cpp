@@ -9,7 +9,7 @@ vecx::vecx(const std::any a)
     {
         vec2 v = std::any_cast<vec2>(a);
         values.reserve(v.length());
-        for (size_t i = 0; i < v.length(); ++i)
+        for (length_t i = 0; i != v.length(); ++i)
         {
             values.emplace_back(v[i]);
         }
@@ -22,7 +22,7 @@ vecx::vecx(const std::any a)
     {
         vec3 v = std::any_cast<vec3>(a);
         values.reserve(v.length());
-        for (size_t i = 0; i < v.length(); ++i)
+        for (length_t i = 0; i != v.length(); ++i)
         {
             values.emplace_back(v[i]);
         }
@@ -35,7 +35,7 @@ vecx::vecx(const std::any a)
     {
         vec4 v = std::any_cast<vec4>(a);
         values.reserve(v.length());
-        for (size_t i = 0; i < v.length(); ++i)
+        for (length_t i = 0; i != v.length(); ++i)
         {
             values.emplace_back(v[i]);
         }

@@ -70,6 +70,7 @@ void bgThread(Window* w)
     //std::cout << "Mesh:\n";
     //std::cout.flush();
     //m.print_verbose(std::cout);
+    m.export_obj(std::cout, .01f);
 
     // Create a triangle
     Shape s;
@@ -99,6 +100,6 @@ void bgThread(Window* w)
         w->MarkForUpdate();
 
         // Sleep the thread for a bit
-        sleepMS(20);
+        waitMS(20);
     }
 }

@@ -67,6 +67,11 @@ const std::any Mesh::Vert::getAtt(const AttributeID& id) const
     return attribs.at(id);
 }
 
+bool Mesh::Vert::hasAtt(const AttributeID& id) const
+{
+    return attribs.count(id) != 0;
+}
+
 Mesh::VertList::VertList(Mesh& mesh) :
     _mesh(mesh)
 {

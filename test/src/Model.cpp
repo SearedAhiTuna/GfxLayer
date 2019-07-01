@@ -5,6 +5,8 @@
 
 #include <list>
 #include <map>
+#include <unordered_map>
+#include <unordered_set>
 
 void Model::vert_tf_3d(Vert& v, const AttributeID& att, const mat4& tf)
 {
@@ -178,5 +180,129 @@ void Model::generate_shape(Shape& shape, const GLenum& mode)
 
         auto buf = shape.GenBuffer(ndims);
         buf.WriteRange(values[i]);
+    }
+}
+
+template <typename vec>
+struct VecMapper
+{
+    std::map<void*, std::pair<size_t, vec>> base;
+    size_t num = 0;
+
+    bool add(void* v, const vec& val, const GLfloat& merge = -1)
+    {
+        if (base.count(v) != 0)
+            return false;
+
+        if (merge >= 0)
+        {
+            for (auto& topPair : base)
+            {
+                auto& pair = topPair.second;
+
+                vec disp = pair.second - val;
+
+                if (glm::length(disp) <= merge)
+                {
+                    std::cout << "Found one\n";
+                    base.emplace(v, pair);
+                    return false;
+                }
+            }
+        }
+
+        base.emplace(v, std::pair(++num, val));
+        return true;
+    }
+
+    size_t get(void* v)
+    {
+        if (base.count(v) != 0)
+            return base[v].first;
+        else
+            return 0;
+    }
+};
+
+void Model::export_obj(std::ostream& os, const GLfloat& merge)
+{
+    VecMapper<vec3> posMap;
+    VecMapper<vec2> uvMap;
+    VecMapper<vec3> normMap;
+
+    for (Vert& v : verts)
+    {
+        vec3 pos = v.getAtt<vec3>(MDL_ATT_POSITION);
+        if (posMap.add(&v, pos, merge))
+        {
+            os << "v " << pos.x << " " << pos.y << " " << pos.z << std::endl;
+        }
+
+        if (v.hasAtt(MDL_ATT_UV))
+        {
+            vec2 uv = v.getAtt<vec2>(MDL_ATT_UV);
+            if (uvMap.add(&v, uv))
+            {
+                os << "vt " << uv.x << " " << uv.y << std::endl;
+            }
+        }
+
+        if (!_useFaceNormals && v.hasAtt(MDL_ATT_NORMAL))
+        {
+            vec3 norm = v.getAtt<vec3>(MDL_ATT_NORMAL);
+            if (normMap.add(&v, norm))
+            {
+                os << "vn " << norm.x << " " << norm.y << " " << norm.z << std::endl;
+            }
+        }
+    }
+
+    if (_useFaceNormals)
+    {
+        for (Face& f : faces)
+        {
+            vec3 norm = _normals[&f];
+            if (normMap.add(&f, norm))
+            {
+                os << "vn " << norm.x << " " << norm.y << " " << norm.z << std::endl;
+            }
+        }
+    }
+
+    for (Face& f : faces)
+    {
+        os << "f";
+
+        std::list<Vert*> vs;
+        f.adjacent_verts(vs);
+
+        std::unordered_set<size_t> usedVs;
+
+        for (Vert* v : vs)
+        {
+            size_t pos = posMap.get(v);
+
+            if (usedVs.count(pos))
+                continue;
+            else
+                usedVs.emplace(pos);
+
+            size_t uv = uvMap.get(v);
+            size_t norm;
+            if (_useFaceNormals)
+                norm = normMap.get(&f);
+            else
+                norm = normMap.get(v);
+
+            os << " " << pos;
+            if (uv != 0 || norm != 0)
+                os << "/";
+            if (uv != 0)
+                os << uv;
+            if (norm != 0)
+                os << "/" << norm;
+        }
+
+        os << std::endl;
     }
 }

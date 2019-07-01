@@ -86,6 +86,8 @@ public:
 
         const std::any getAtt(const AttributeID& id) const;
 
+        bool hasAtt(const AttributeID& id) const;
+
         std::ostream& print(std::ostream& out) const
         {
             out << "v" << _index;

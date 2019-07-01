@@ -4,9 +4,11 @@
 #include "Mesh.h"
 #include "Libs.h"
 
+#include <iostream>
+
 #define MDL_ATT_POSITION 0
-#define MDL_UV_POSITION 1
-#define MDL_NORM_POSITION 2
+#define MDL_ATT_UV 1
+#define MDL_ATT_NORMAL 2
 
 class Shape;
 
@@ -28,11 +30,14 @@ public:
     template <typename FacesIn>
     void face_tf_3d(const FacesIn& fs, const AttributeID& att, const mat4& tf);
 
-    void generate_vert_normals(const AttributeID& att, const AttributeID& pos_att = MDL_ATT_POSITION);
-    void generate_face_normals(const AttributeID& att, const AttributeID& pos_att = MDL_ATT_POSITION);
+    void generate_vert_normals(const AttributeID& att = MDL_ATT_NORMAL, const AttributeID& pos_att = MDL_ATT_POSITION);
+    void generate_face_normals(const AttributeID& att = MDL_ATT_NORMAL, const AttributeID& pos_att = MDL_ATT_POSITION);
 
     Shape* generate_shape(const GLenum& mode = GL_TRIANGLES);
     void generate_shape(Shape& shape, const GLenum& mode = GL_TRIANGLES);
+
+    void export_obj(std::ostream& os, const GLfloat& merge = -1);
+    void import_obj(std::istream& is);
 
 private:
     bool _useFaceNormals{};

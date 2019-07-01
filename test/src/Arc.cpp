@@ -34,7 +34,7 @@ void Arc::connect_verts(Model& m, Model::Vert& v1, Model::Vert& v2, const size_t
 
     vec3 scVec(1,1,1);
 
-    for (size_t i = 0; i < 3; ++i)
+    for (length_t i = 0; i != scVec.length(); ++i)
     {
         if (myDisp[i] != 0)
         {

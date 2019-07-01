@@ -110,6 +110,7 @@ extern void assertMainThread();
 extern void assertSubThread();
 
 extern void sleepMS(unsigned int t);
+extern void waitMS(unsigned int t);
 
 extern void throwGraphicsError(const std::string& msg);
 
