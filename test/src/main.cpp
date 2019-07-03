@@ -3,6 +3,7 @@
 #include "Arc.h"
 #include "function/Bezier.h"
 #include "Camera.h"
+#include "FrameCounter.h"
 #include "Graphics.h"
 #include "Libs.h"
 #include "Model.h"
@@ -91,6 +92,9 @@ void bgThread(Window* w)
     // Set the perspective
     w->Camera().perspective(90.0f, 1.0f, .1f, 100.0f);
 
+    // Set the FPS to 60
+    FrameCounter fps(60);
+
     while (!w->ShouldClose())
     {
         // Move the camera
@@ -99,7 +103,10 @@ void bgThread(Window* w)
         // Mark the window to be updated
         w->MarkForUpdate();
 
-        // Sleep the thread for a bit
-        waitMS(20);
+        // Wait for the next frame
+        fps.wait();
+
+        // Display FPS count
+        //std::cout << "FPS=" << fps.fps() << std::endl;
     }
 }

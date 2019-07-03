@@ -109,9 +109,6 @@ extern bool onMainThread();
 extern void assertMainThread();
 extern void assertSubThread();
 
-extern void sleepMS(unsigned int t);
-extern void waitMS(unsigned int t);
-
 extern void throwGraphicsError(const std::string& msg);
 
 extern unsigned int loadTexture(const std::string& fn, const bool& alpha = false);

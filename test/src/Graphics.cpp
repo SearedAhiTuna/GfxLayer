@@ -299,41 +299,6 @@ void assertSubThread()
     }
 }
 
-void sleepMS(unsigned int t)
-{
-    std::this_thread::sleep_for(std::chrono::milliseconds(t));
-}
-
-typedef std::chrono::high_resolution_clock hr_clock;
-typedef hr_clock::time_point t_point;
-typedef std::chrono::microseconds usec;
-
-
-static std::map<std::thread::id, t_point> waitMap;
-
-void waitMS(unsigned int t)
-{
-    std::thread::id id = std::this_thread::get_id();
-
-    if (!waitMap.count(id))
-        sleepMS(t);
-    else
-    {
-        t_point cur = hr_clock::now();
-        const t_point& prev = waitMap[id];
-
-        usec d_us = std::chrono::duration_cast<usec>(cur - prev);
-        usec t_us(t * 1000);
-
-        if (d_us < t_us)
-        {
-            std::this_thread::sleep_for(t_us - d_us);
-        }
-    }
-    
-    waitMap[id] = hr_clock::now();
-}
-
 class GraphicsError : public std::runtime_error
 {
 public:
