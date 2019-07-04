@@ -1,7 +1,9 @@
 
 #pragma once
 
+#include "Camera.h"
 #include "Libs.h"
+#include "Mouse.h"
 
 #include <atomic>
 #include <memory>
@@ -10,7 +12,6 @@
 #include <unordered_set>
 #include <vector>
 
-class Camera;
 class Program;
 class Shape;
 
@@ -45,6 +46,8 @@ public:
 
     Camera& Camera() { return *_camera; }
 
+    Mouse& Mouse() { return *_mouse; }
+
 private:
     Program* UseProgram(const int& index);
 
@@ -66,4 +69,6 @@ private:
     std::mutex _programLock;
 
     std::unique_ptr<::Camera> _camera;
+
+    std::unique_ptr<::Mouse> _mouse;
 };

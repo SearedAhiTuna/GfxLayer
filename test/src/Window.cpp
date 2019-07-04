@@ -2,6 +2,7 @@
 #include "Window.h"
 #include "Camera.h"
 #include "Graphics.h"
+#include "Mouse.h"
 #include "Program.h"
 #include "Shape.h"
 
@@ -10,7 +11,8 @@
 Window::Window():
     _window(nullptr),
     _vao(0),
-    _camera(nullptr)
+    _camera(nullptr),
+    _mouse(nullptr)
 {
 }
 
@@ -26,6 +28,8 @@ Window::Window(GLFWwindow* window) :
     _vao = temp;
 
     _camera = std::make_unique<::Camera>();
+
+    _mouse = std::make_unique<::Mouse>(_window);
 }
 
 Window::Window(Window&& other) noexcept :

@@ -5,6 +5,7 @@
 
 #include <list>
 #include <map>
+#include <string>
 #include <unordered_map>
 #include <unordered_set>
 
@@ -305,4 +306,8 @@ void Model::export_obj(std::ostream& os, const GLfloat& merge)
 
         os << std::endl;
     }
+}
+
+void Model::import_obj(std::istream& is)
+{
 }

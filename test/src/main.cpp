@@ -2,7 +2,6 @@
 
 #include "Arc.h"
 #include "function/Bezier.h"
-#include "Camera.h"
 #include "FrameCounter.h"
 #include "Graphics.h"
 #include "Libs.h"
@@ -30,6 +29,13 @@ int main(void)
     getGraphics().loop();
 
     return 0;
+}
+
+void rotate(void* w_, double x, double y)
+{
+    Window* w = reinterpret_cast<Window*>(w_);
+    if (w->Mouse().Button(GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+        w->Camera().rot(false, PI * (GLfloat)y, VEC3_UP);
 }
 
 void bgThread(Window* w)
@@ -92,13 +98,16 @@ void bgThread(Window* w)
     // Set the perspective
     w->Camera().perspective(90.0f, 1.0f, .1f, 100.0f);
 
+    // Set a callback when scrolling
+    w->Mouse().RegisterPosCallback(rotate, w);
+
     // Set the FPS to 60
     FrameCounter fps(60);
 
     while (!w->ShouldClose())
     {
         // Move the camera
-        w->Camera().rot(true, PI / 200.0f, VEC3_UP);
+        
 
         // Mark the window to be updated
         w->MarkForUpdate();

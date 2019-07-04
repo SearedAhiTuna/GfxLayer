@@ -20,6 +20,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Model.cpp" />
+    <ClCompile Include="src\Mouse.cpp" />
     <ClCompile Include="src\Program.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\Shape.cpp" />
@@ -42,6 +43,7 @@
     <ClInclude Include="inc\Libs.h" />
     <ClInclude Include="inc\Mesh.h" />
     <ClInclude Include="inc\Model.h" />
+    <ClInclude Include="inc\Mouse.h" />
     <ClInclude Include="inc\Program.h" />
     <ClInclude Include="inc\RunningAverage.h" />
     <ClInclude Include="inc\Shader.h" />
