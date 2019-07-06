@@ -33,11 +33,14 @@ int main(void)
     return 0;
 }
 
-void rotate(void* w_, double x, double y)
+void rotate(void* w_, double dx, double dy)
 {
     Window* w = reinterpret_cast<Window*>(w_);
     if (w->Mouse().Button(GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-        w->Camera().rot(false, PI * (GLfloat)y, VEC3_UP);
+    {
+        w->Camera().rot(true, PI * (GLfloat)dx, VEC3_DOWN);
+        w->Camera().rot(true, PI * (GLfloat)dy, VEC3_RIGHT);
+    }
 }
 
 void bgThread(Window* w)
@@ -107,7 +110,7 @@ void bgThread(Window* w)
     w->Camera().perspective(90.0f, 1.0f, .1f, 100.0f);
 
     // Set a callback when scrolling
-    w->Mouse().RegisterPosCallback(rotate, w);
+    w->Mouse().RegisterMoveCallback(rotate, w);
 
     // Set the FPS to 60
     FrameCounter fps(60);

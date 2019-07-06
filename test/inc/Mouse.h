@@ -35,6 +35,7 @@ public:
 
     MousePos Pos();
     Mouse& RegisterPosCallback(PosCallback cb, void* caller = nullptr);
+    Mouse& RegisterMoveCallback(PosCallback cb, void* caller = nullptr);
 
     bool Entered();
     Mouse& RegisterEnterCallback(EnterCallback cb, void* caller = nullptr);
@@ -79,6 +80,10 @@ private:
     std::list<Entry<EnterCallback>> _enterCallbacks;
     std::list<Entry<ButtonCallback>> _buttonCallbacks;
     std::list<Entry<ScrollCallback>> _scrollCallbacks;
+
+    bool _prevInit{};
+    MousePos _prev;
+    std::list<Entry<PosCallback>> _moveCallbacks;
 
 };
 
