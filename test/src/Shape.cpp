@@ -132,7 +132,7 @@ Shape::Shape(Shape&& other) noexcept :
 
     // Get the texture from the other shape
     _texture = other._texture;
-    other._texture = 0;
+    //other._texture = 0;
 }
 
 Shape::~Shape()
@@ -165,7 +165,7 @@ Shape& Shape::operator=(Shape&& rhs) noexcept
 
     // Get the texture from the other shape
     _texture = rhs._texture;
-    rhs._texture = 0;
+    //rhs._texture = 0;
 
     return *this;
 }
@@ -176,13 +176,6 @@ void Shape::Free()
 
     // Empty buffers
     _buffers.clear();
-
-    // Free texture
-    if (_texture != 0)
-    {
-        Textures::free(_texture);
-        _texture = 0;
-    }
 
     // Reset program
     _program = -1;
@@ -231,15 +224,12 @@ Shape& Shape::Texture(const std::string& fn)
 {
     std::lock_guard<std::mutex> myLk(_bigLock);
 
-    if (_texture != 0)
-        Textures::free(_texture);
-
     _texture = Textures::load(fn);
 
     return *this;
 }
 
-GLuint Shape::Texture()
+::Texture Shape::Texture()
 {
     std::lock_guard<std::mutex> myLk(_bigLock);
 

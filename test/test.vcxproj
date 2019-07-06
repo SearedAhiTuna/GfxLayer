@@ -15,6 +15,7 @@
     <ClCompile Include="external\lodepng\lodepng_util.cpp" />
     <ClCompile Include="src\Arc.cpp" />
     <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\Font.cpp" />
     <ClCompile Include="src\FrameCounter.cpp" />
     <ClCompile Include="src\Graphics.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -33,6 +34,8 @@
     <ClInclude Include="external\lodepng\lodepng_util.h" />
     <ClInclude Include="inc\Arc.h" />
     <ClInclude Include="inc\Camera.h" />
+    <ClInclude Include="inc\dict.h" />
+    <ClInclude Include="inc\Font.h" />
     <ClInclude Include="inc\FrameCounter.h" />
     <ClInclude Include="inc\function\Bezier.h" />
     <ClInclude Include="inc\function\Function.h" />
@@ -46,6 +49,7 @@
     <ClInclude Include="inc\Model.h" />
     <ClInclude Include="inc\Mouse.h" />
     <ClInclude Include="inc\Program.h" />
+    <ClInclude Include="inc\RefCntDict.h" />
     <ClInclude Include="inc\RunningAverage.h" />
     <ClInclude Include="inc\Shader.h" />
     <ClInclude Include="inc\Shape.h" />

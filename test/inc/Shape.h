@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Libs.h"
+#include "Textures.h"
 
 #include <list>
 #include <memory>
@@ -74,7 +75,7 @@ public:
     BufferHandle GenBuffer(const size_t& ndims);
 
     Shape& Texture(const std::string& fn);
-    GLuint Texture();
+    ::Texture Texture();
 
     Shape& Program(const int& p);
     int Program();
@@ -103,7 +104,7 @@ protected:
 
     int _program{ -1 };
 
-    GLuint _texture{};
+    ::Texture _texture{};
 
     mat4 _tf {};
 };

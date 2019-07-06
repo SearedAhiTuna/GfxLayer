@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Libs.h"
+#include "Textures.h"
 
 #include <string>
 
@@ -18,7 +19,7 @@ public:
 
 private:
     void SetMVP(const mat4& mvp);
-    void SetTexture(const GLuint& tex);
+    void SetTexture(const Texture& tex);
 
     friend class Window;
 

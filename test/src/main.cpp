@@ -77,13 +77,13 @@ void bgThread(Window* w)
     //std::cout << "Mesh:\n";
     //std::cout.flush();
     //m.print_verbose(std::cout);
-    m.export_obj(std::cout, .01f);
+    //m.export_obj(std::cout, .01f);
 
     // Create a triangle
     Shape s;
     m.generate_shape(s);
     s.Program(0);
-    //s.Texture("image.png");
+    s.Texture("image.png");
 
     // Add the triangle to the window
     w->RegisterShape(s);
