@@ -132,7 +132,7 @@ void Window::Draw(Shape& s)
         mvpMat = _camera->getP() * mvpMat;
         p->SetMVP(mvpMat);
 
-        if (s.Texture().valid())
+        if (s.Texture())
         {
             p->SetTexture(s.Texture());
         }

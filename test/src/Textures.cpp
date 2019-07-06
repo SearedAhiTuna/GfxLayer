@@ -17,7 +17,8 @@ static GLuint loadPNG(const std::string& fn, const bool& alpha)
 
     const unsigned char* dataArr = imgData.data();
 
-    return Textures::generate(dataArr, w, h, alpha);
+    uvec2 dims(w, h);
+    return Textures::generate(dataArr, dims, alpha ? GL_RGBA : GL_RGB);
 }
 
 static TextureList textures;
@@ -27,18 +28,17 @@ Texture Textures::load(const std::string& fn, const bool& alpha)
     return textures.get(fn, alpha);
 }
 
-unsigned int Textures::generate(const unsigned char* data, unsigned int& w, const unsigned int& h, const bool& alpha)
+unsigned int Textures::generate(const void* data, const uvec2& dims, const GLenum& format, const GLenum& type)
 {
     GLuint textureID;
-    GRAPHICS_CALL_BEGIN(&textureID, alpha, w, h, data)
+    GRAPHICS_CALL_BEGIN(&textureID, format, dims, type, data)
         glGenTextures(1, &textureID);
         glBindTexture(GL_TEXTURE_2D, textureID);
 
         //glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB, w, h); GL_CHECK
         //glTextureSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, imgData.data()); GL_CHECK
 
-        glTexImage2D(GL_TEXTURE_2D, 0, alpha ? GL_RGBA : GL_RGB, w, h, 0,
-            alpha ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, dims.x, dims.y, 0, format, type, data);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -47,16 +47,16 @@ unsigned int Textures::generate(const unsigned char* data, unsigned int& w, cons
     return textureID;
 }
 
-void Textures::free(const unsigned int& id)
+void Textures::free(const GLuint& id)
 {
     GRAPHICS_CALL_BEGIN(&id)
         glDeleteTextures(1, &id);
     GRAPHICS_CALL_END
 }
 
-Tex_int TextureList::create(const std::string& fn, const bool& alpha)
+Image TextureList::create(const std::string& fn, const bool& alpha)
 {
-    Tex_int tex;
+    Image tex;
 
     std::string ext = fn.substr(fn.find_last_of('.'));
 
@@ -73,7 +73,7 @@ Tex_int TextureList::create(const std::string& fn, const bool& alpha)
     return tex;
 }
 
-void TextureList::destroy(const std::string& fn, Tex_int& tex)
+void TextureList::destroy(const std::string& fn, Image& tex)
 {
     Textures::free(tex.id);
     //std::cout << "Destroyed texture: " << tex.id << "\n";

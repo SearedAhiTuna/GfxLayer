@@ -2,6 +2,7 @@
 
 #include "Arc.h"
 #include "function/Bezier.h"
+#include "Font.h"
 #include "FrameCounter.h"
 #include "Graphics.h"
 #include "Libs.h"
@@ -54,23 +55,23 @@ void bgThread(Window* w)
     //bez->push_back(VEC3_LEFT);
 
     // Create arcs
-    Arc arc1(c1, 0, PI/2);
-    Arc arc2(c2, 0, PI/2);
-    Arc arc3(c3, 0, 1);
+    //Arc arc1(c1, 0, PI/2);
+    //Arc arc2(c2, 0, PI/2);
+    //Arc arc3(c3, 0, 1);
 
     // Create a model from the arc
-    Model m;
+    //Model m;
 
-    std::list<Model::Edge*> e1;
-    arc1.generate(m, 5, e1);
+    //std::list<Model::Edge*> e1;
+    //arc1.generate(m, 5, e1);
 
-    std::list<Model::Edge*> e2;
-    arc2.generate(m, 5, e2);
+    //std::list<Model::Edge*> e2;
+    //arc2.generate(m, 5, e2);
 
-    std::list<Model::Face*> fs;
-    arc3.connect_edges(m, e1, e2, 5, fs);
+    //std::list<Model::Face*> fs;
+    //arc3.connect_edges(m, e1, e2, 5, fs);
 
-    m.generate_face_normals(1);
+    //m.generate_face_normals(1);
 
     //m.edge_tf_3d(e2, MDL_ATT_POSITION, rotate(PI/4, VEC3_RIGHT));
 
@@ -78,12 +79,18 @@ void bgThread(Window* w)
     //std::cout.flush();
     //m.print_verbose(std::cout);
     //m.export_obj(std::cout, .01f);
+    Font f("C:/Windows/Fonts/times.ttf", 128);
+    Letter l = f.get(L'M');
+    GLfloat width = l.dims.x / 128.f;
 
     // Create a triangle
-    Shape s;
-    m.generate_shape(s);
+    Shape s(4, GL_TRIANGLE_STRIP);
+    s.GenBuffer(3).Write(VEC3_ORIGIN, 0).Write(VEC3_RIGHT * width, 1).Write(VEC3_UP, 2).Write(VEC3_RIGHT * width + VEC3_UP, 3);
+    s.GenBuffer(2).Write(UV_BOTTOM_LEFT, 0).Write(UV_BOTTOM_RIGHT, 1).Write(UV_TOP_LEFT, 2).Write(UV_TOP_RIGHT, 3);
+
+    //m.generate_shape(s);
     s.Program(0);
-    s.Texture("image.png");
+    s.Texture(l.tex);
 
     // Add the triangle to the window
     w->RegisterShape(s);

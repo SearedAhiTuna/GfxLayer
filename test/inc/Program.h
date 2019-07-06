@@ -19,7 +19,7 @@ public:
 
 private:
     void SetMVP(const mat4& mvp);
-    void SetTexture(const Texture& tex);
+    void SetTexture(const GLuint& tex);
 
     friend class Window;
 

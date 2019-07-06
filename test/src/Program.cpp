@@ -68,12 +68,12 @@ void Program::SetMVP(const mat4& mvp)
     }
 }
 
-void Program::SetTexture(const Texture& tex)
+void Program::SetTexture(const GLuint& tex)
 {
     if (_texture != -1)
     {
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, tex.id);
+        glBindTexture(GL_TEXTURE_2D, tex);
         glUniform1i(_texture, 0);
     }
 }

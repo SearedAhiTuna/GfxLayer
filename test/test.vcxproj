@@ -123,7 +123,8 @@
     </Link>
     <PreBuildEvent>
       <Command>echo Copying Debug DLLs
-copy $(ProjectDir)external\glew-1.13.0\bin\Debug\glew32d.dll $(ProjectDir)x64\Debug</Command>
+copy $(ProjectDir)external\glew-1.13.0\bin\Debug\glew32d.dll $(ProjectDir)x64\Debug
+copy $(ProjectDir)external\freetype-2.10.1\objs\x64\Debug\freetype.dll $(ProjectDir)x64\Debug</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -150,7 +151,8 @@ copy $(ProjectDir)external\glew-1.13.0\bin\Debug\glew32d.dll $(ProjectDir)x64\De
     </Link>
     <PreBuildEvent>
       <Command>echo Copying Release DLLs
-copy $(ProjectDir)external\glew-1.13.0\bin\Release\glew32.dll $(ProjectDir)x64\Release</Command>
+copy $(ProjectDir)external\glew-1.13.0\bin\Release\glew32.dll $(ProjectDir)x64\Release
+copy $(ProjectDir)external\freetype-2.10.1\objs\x64\Release\freetype.dll $(ProjectDir)x64\Release</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -3,22 +3,28 @@
 
 #include "Libs.h"
 
+#include <memory>
 #include <string>
 
-/*class Letter
-{
+struct FontInfo;
 
+struct Letter
+{
+    GLuint tex;
+    uvec2 dims;
 };
 
 class Font
 {
 public:
-    Font();
+    Font(const std::string& fn, const size_t& size, const vec3& color = VEC3_ORIGIN);
 
-    Font(std::string fn);
+    Letter get(const wchar_t& c);
+    Letter get(const char& c);
 
-    void load(std::string fn);
+private:
+    std::shared_ptr<FontInfo> _info;
 
-    Letter& operator[](const char& c);
-    Letter& operator[](const wchar_t& wc);
-};*/
+    size_t _size;
+    vec3 _color;
+};

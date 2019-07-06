@@ -132,6 +132,7 @@ Shape::Shape(Shape&& other) noexcept :
 
     // Get the texture from the other shape
     _texture = other._texture;
+    _texID = other._texID;
     //other._texture = 0;
 }
 
@@ -165,6 +166,7 @@ Shape& Shape::operator=(Shape&& rhs) noexcept
 
     // Get the texture from the other shape
     _texture = rhs._texture;
+    _texID = rhs._texID;
     //rhs._texture = 0;
 
     return *this;
@@ -220,20 +222,30 @@ void Shape::UpdateBuffers()
     }
 }
 
+Shape& Shape::Texture(const GLuint& fn)
+{
+    std::lock_guard<std::mutex> myLk(_bigLock);
+
+    _texID = _texture.id;
+
+    return *this;
+}
+
 Shape& Shape::Texture(const std::string& fn)
 {
     std::lock_guard<std::mutex> myLk(_bigLock);
 
     _texture = Textures::load(fn);
+    _texID = _texture.id;
 
     return *this;
 }
 
-::Texture Shape::Texture()
+GLuint Shape::Texture()
 {
     std::lock_guard<std::mutex> myLk(_bigLock);
 
-    return _texture;
+    return _texID;
 }
 
 Shape& Shape::Program(const int& p)
