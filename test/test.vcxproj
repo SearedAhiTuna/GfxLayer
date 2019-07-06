@@ -23,6 +23,7 @@
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\Mouse.cpp" />
     <ClCompile Include="src\Program.cpp" />
+    <ClCompile Include="src\Rectangle.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\Shape.cpp" />
     <ClCompile Include="src\Textures.cpp" />
@@ -49,6 +50,7 @@
     <ClInclude Include="inc\Model.h" />
     <ClInclude Include="inc\Mouse.h" />
     <ClInclude Include="inc\Program.h" />
+    <ClInclude Include="inc\Rectangle.h" />
     <ClInclude Include="inc\RefCntDict.h" />
     <ClInclude Include="inc\RunningAverage.h" />
     <ClInclude Include="inc\Shader.h" />

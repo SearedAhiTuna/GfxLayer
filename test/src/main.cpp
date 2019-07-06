@@ -8,6 +8,7 @@
 #include "Libs.h"
 #include "Model.h"
 #include "function/Parabola3D.h"
+#include "Rectangle.h"
 #include "Shape.h"
 #include "Window.h"
 
@@ -79,14 +80,14 @@ void bgThread(Window* w)
     //std::cout.flush();
     //m.print_verbose(std::cout);
     //m.export_obj(std::cout, .01f);
-    Font f("C:/Windows/Fonts/times.ttf", 128);
+    Font f("C:/Windows/Fonts/times.ttf", 256, vec3(1,0,0));
     Letter l = f.get(L'M');
     GLfloat width = l.dims.x / 128.f;
 
-    // Create a triangle
-    Shape s(4, GL_TRIANGLE_STRIP);
-    s.GenBuffer(3).Write(VEC3_ORIGIN, 0).Write(VEC3_RIGHT * width, 1).Write(VEC3_UP, 2).Write(VEC3_RIGHT * width + VEC3_UP, 3);
-    s.GenBuffer(2).Write(UV_BOTTOM_LEFT, 0).Write(UV_BOTTOM_RIGHT, 1).Write(UV_TOP_LEFT, 2).Write(UV_TOP_RIGHT, 3);
+    // Create a rectangle
+    Rectangle s(VEC3_RIGHT, VEC3_UP);
+    s.GenUV();
+    s.GenNormals();
 
     //m.generate_shape(s);
     s.Program(0);
