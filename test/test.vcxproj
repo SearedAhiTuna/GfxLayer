@@ -24,6 +24,7 @@
     <ClCompile Include="src\Program.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\Shape.cpp" />
+    <ClCompile Include="src\Textures.cpp" />
     <ClCompile Include="src\vecx.cpp" />
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
@@ -48,6 +49,7 @@
     <ClInclude Include="inc\RunningAverage.h" />
     <ClInclude Include="inc\Shader.h" />
     <ClInclude Include="inc\Shape.h" />
+    <ClInclude Include="inc\Textures.h" />
     <ClInclude Include="inc\Triangle.h" />
     <ClInclude Include="inc\unique_container.h" />
     <ClInclude Include="inc\vecx.h" />

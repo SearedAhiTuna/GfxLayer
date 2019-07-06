@@ -1,6 +1,7 @@
 
 #include "Shape.h"
 #include "Graphics.h"
+#include "Textures.h"
 
 #include <iostream>
 #include <list>
@@ -179,7 +180,7 @@ void Shape::Free()
     // Free texture
     if (_texture != 0)
     {
-        freeTexture(_texture);
+        Textures::free(_texture);
         _texture = 0;
     }
 
@@ -231,9 +232,9 @@ Shape& Shape::Texture(const std::string& fn)
     std::lock_guard<std::mutex> myLk(_bigLock);
 
     if (_texture != 0)
-        freeTexture(_texture);
+        Textures::free(_texture);
 
-    _texture = loadTexture(fn);
+    _texture = Textures::load(fn);
 
     return *this;
 }

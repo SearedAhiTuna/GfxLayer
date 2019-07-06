@@ -111,8 +111,5 @@ extern void assertSubThread();
 
 extern void throwGraphicsError(const std::string& msg);
 
-extern unsigned int loadTexture(const std::string& fn, const bool& alpha = false);
-extern void freeTexture(const unsigned int& id);
-
 #define GRAPHICS_CALL_BEGIN(...) { assertSubThread(); getGraphics().request([__VA_ARGS__]() {
 #define GRAPHICS_CALL_END }); }
