@@ -12,6 +12,7 @@ struct Letter
 {
     GLuint tex;
     uvec2 dims;
+    unsigned int top;
 };
 
 class Font

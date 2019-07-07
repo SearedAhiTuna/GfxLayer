@@ -21,6 +21,10 @@ Text::Text(Font& fnt, const vec3& hor, const vec3& ver, const std::string text)
         emplace_back(v1, v2);
         Rectangle& r = back();
 
+        vec3 dip = (l.top / height) * ver - v2;
+
+        r.TF(true, translate(dip));
+
         r.GenUV();
         r.GenNormals();
         r.Texture(l.tex);

@@ -60,7 +60,7 @@ struct FontInfo
 
     }
 
-    bool load(const wchar_t& c, unsigned char* dst, uvec2& dims)
+    bool load(const wchar_t& c, unsigned char* dst, uvec2& dims, unsigned int& top)
     {
         if (!valid)
             return false;
@@ -92,10 +92,12 @@ struct FontInfo
         FT_Bitmap& bitmap = glyph->bitmap;
 
         std::cout << "Width = " << bitmap.width << "\n";
+        std::cout << "Rows = " << bitmap.rows << "\n";
 
         memcpy(dst, bitmap.buffer, (size_t)bitmap.rows * (size_t)bitmap.pitch);
         dims.x = bitmap.width;
-        dims.y = glyph->bitmap_top;
+        dims.y = bitmap.rows;
+        top = glyph->bitmap_top;
 
         return true;
     }
@@ -143,9 +145,12 @@ Font::Font(const std::string& fn, const size_t& size, const vec3& color) :
 
 Letter Font::get(const wchar_t& c)
 {
-    unsigned char* buf1 = new unsigned char[_size * _size];
+    // Oversize the buffer to be safe
+    unsigned char* buf1 = new unsigned char[2 * _size * _size];
+
     uvec2 dims;
-    _info->load(c, buf1, dims);
+    unsigned int top;
+    _info->load(c, buf1, dims, top);
 
     GLfloat* buf2 = new GLfloat[(size_t)dims.x * (size_t)dims.y * 4];
 
@@ -173,7 +178,7 @@ Letter Font::get(const wchar_t& c)
 
     delete[] buf2;
 
-    return { id, dims };
+    return { id, dims, top };
 }
 
 Letter Font::get(const char& c)
