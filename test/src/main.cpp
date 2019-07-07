@@ -10,6 +10,7 @@
 #include "function/Parabola3D.h"
 #include "Rectangle.h"
 #include "Shape.h"
+#include "Text.h"
 #include "Window.h"
 
 #include <atomic>
@@ -84,20 +85,12 @@ void bgThread(Window* w)
     //m.print_verbose(std::cout);
     //m.export_obj(std::cout, .01f);
     Font f("C:/Windows/Fonts/times.ttf", 256, vec3(1,0,0));
-    Letter l = f.get(L'M');
-    GLfloat width = l.dims.x / 128.f;
+    
+    Text t(f, VEC3_RIGHT * .2f, VEC3_UP * .2f, "Hey");
+    t.Program(0);
 
-    // Create a rectangle
-    Rectangle s(VEC3_RIGHT, VEC3_UP);
-    s.GenUV();
-    s.GenNormals();
-
-    //m.generate_shape(s);
-    s.Program(0);
-    s.Texture(l.tex);
-
-    // Add the triangle to the window
-    w->RegisterShape(s);
+    // Add the text
+    w->RegisterShapes(t);
 
     // Move the camera a bit
     //w->getRenderer().getCamera().tl(true, VEC3_BACKWARDS * 1.0f);

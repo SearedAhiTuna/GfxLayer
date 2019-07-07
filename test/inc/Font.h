@@ -22,6 +22,11 @@ public:
     Letter get(const wchar_t& c);
     Letter get(const char& c);
 
+    GLuint size() { return (GLuint)_size; }
+
+    GLuint kerning(const wchar_t& c1, const wchar_t& c2);
+    GLuint kerning(const char& c1, const char& c2);
+
 private:
     std::shared_ptr<FontInfo> _info;
 

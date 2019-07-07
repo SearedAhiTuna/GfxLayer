@@ -42,6 +42,20 @@ public:
     void RegisterShape(Shape& s);
     void DeregisterShape(Shape& s);
 
+    template <class ShapeGroup>
+    void RegisterShapes(ShapeGroup& ss)
+    {
+        for (Shape& s : ss)
+            RegisterShape(s);
+    }
+
+    template <class ShapeGroup>
+    void DeregisterShapes(ShapeGroup& ss)
+    {
+        for (Shape& s : ss)
+            DeregisterShape(s);
+    }
+
     void AddProgram(const std::string& vert, const std::string& frag);
 
     Camera& Camera() { return *_camera; }

@@ -99,6 +99,39 @@ struct FontInfo
 
         return true;
     }
+
+    GLuint kerning(const wchar_t& c1, const wchar_t& c2)
+    {
+        if (!valid)
+            return 0;
+
+        auto i1 = FT_Get_Char_Index(face, c1);
+        if (i1 == 0)
+        {
+            std::cerr << "[FreeType] Unrecognized character code: "
+                << std::hex << (int)c1 << std::endl;
+            return 0;
+        }
+
+        auto i2 = FT_Get_Char_Index(face, c2);
+        if (i2 == 0)
+        {
+            std::cerr << "[FreeType] Unrecognized character code: "
+                << std::hex << (int)c2 << std::endl;
+            return 0;
+        }
+
+        FT_Vector kern;
+        auto err = FT_Get_Kerning(face, i1, i2, FT_KERNING_DEFAULT, &kern);
+        if (err)
+        {
+            std::cerr << "[FreeType] Failed to generate kerning for: "
+                << std::hex << (int)c1 << " " << (int)c2 << std::endl;
+            return 0;
+        }
+
+        return kern.x;
+    }
 };
 
 Font::Font(const std::string& fn, const size_t& size, const vec3& color) :
@@ -146,4 +179,14 @@ Letter Font::get(const wchar_t& c)
 Letter Font::get(const char& c)
 {
     return get((wchar_t)c);
+}
+
+GLuint Font::kerning(const wchar_t& c1, const wchar_t& c2)
+{
+    return _info->kerning(c1, c2);
+}
+
+GLuint Font::kerning(const char& c1, const char& c2)
+{
+    return kerning((wchar_t)c1, (wchar_t)c2);
 }

@@ -74,7 +74,7 @@ private:
 public:
     BufferHandle GenBuffer(const size_t& ndims);
 
-    Shape& Texture(const GLuint& fn);
+    Shape& Texture(const GLuint& id);
     Shape& Texture(const std::string& fn);
     GLuint Texture();
 
@@ -82,7 +82,7 @@ public:
     int Program();
     bool UsesProgram() { return Program() >= 0; }
 
-    Shape& TF(const mat4& tf);
+    Shape& TF(const bool& relative, const mat4& tf);
     mat4 TF();
 
     const GLenum& Mode() { return _mode; }
@@ -106,7 +106,7 @@ protected:
     int _program{ -1 };
 
     ::Texture _texture{};
-    GLuint _texID;
+    GLuint _texID{};
 
     mat4 _tf {};
 };

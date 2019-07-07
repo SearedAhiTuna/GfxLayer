@@ -222,11 +222,11 @@ void Shape::UpdateBuffers()
     }
 }
 
-Shape& Shape::Texture(const GLuint& fn)
+Shape& Shape::Texture(const GLuint& id)
 {
     std::lock_guard<std::mutex> myLk(_bigLock);
 
-    _texID = _texture.id;
+    _texID = id;
 
     return *this;
 }
@@ -264,11 +264,14 @@ int Shape::Program()
     return _program;
 }
 
-Shape& Shape::TF(const mat4& tf)
+Shape& Shape::TF(const bool& relative, const mat4& tf)
 {
     std::lock_guard<std::mutex> myLk(_bigLock);
 
-    _tf = tf;
+    if (relative)
+        _tf = tf * _tf;
+    else
+        _tf = tf;
 
     return *this;
 }
