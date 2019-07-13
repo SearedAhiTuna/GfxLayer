@@ -49,34 +49,33 @@ void bgThread(Window* w)
     // Add shaders
     w->AddProgram("shaders/simple.vs", "shaders/simple.fs");
 
-    // Create curves
-    auto* c1 = new Parabola3D(1, .5f, VEC3_ORIGIN);
-    auto* c2 = new Parabola3D(1, .5f, VEC3_ORIGIN, VEC3_DOWN * (PI/2));
-    auto* c3 = new Bezier<vec3>({ VEC3_RIGHT, VEC3_RIGHT + VEC3_BACKWARDS, VEC3_BACKWARDS });
-    //bez->reserve(4);
-    //bez->push_back(VEC3_RIGHT);
-    //bez->push_back(VEC3_UP);
-    //bez->push_back(VEC3_DOWN);
-    //bez->push_back(VEC3_LEFT);
+    // Create a model
+    Model m;
 
-    // Create arcs
-    //Arc arc1(c1, 0, PI/2);
-    //Arc arc2(c2, 0, PI/2);
-    //Arc arc3(c3, 0, 1);
+    m.verts.emplace(VEC3_ORIGIN, UV_BOTTOM_LEFT);
+    m.verts.emplace(VEC3_RIGHT, UV_BOTTOM_RIGHT);
+    m.verts.emplace(VEC3_RIGHT + VEC3_UP, UV_TOP_RIGHT);
+    m.verts.emplace(VEC3_UP, UV_TOP_LEFT);
 
-    // Create a model from the arc
-    //Model m;
+    m.faces.emplace_verts(Verts(m.verts(0), m.verts(1), m.verts(2), m.verts(3)));
 
-    //std::list<Model::Edge*> e1;
-    //arc1.generate(m, 5, e1);
+    m.generate_face_normals();
 
-    //std::list<Model::Edge*> e2;
-    //arc2.generate(m, 5, e2);
+    std::cout << "Generated the normals\n";
+    std::cout << m << std::endl;
+    std::cout.flush();
 
-    //std::list<Model::Face*> fs;
-    //arc3.connect_edges(m, e1, e2, 5, fs);
+    // Create a shape from the model
+    Shape s;
+    m.generate_shape(s);
+    s.Program(0);
+    s.TF(false, translate(VEC3_FORWARDS));
+    s.Texture("image.png");
 
-    //m.generate_face_normals(1);
+    std::cout << "Shape:\n" << s << std::endl;
+    std::cout.flush();
+
+    w->RegisterShape(s);
 
     //m.edge_tf_3d(e2, MDL_ATT_POSITION, rotate(PI/4, VEC3_RIGHT));
 
@@ -86,7 +85,7 @@ void bgThread(Window* w)
     //m.export_obj(std::cout, .01f);
     Font f("C:/Windows/Fonts/times.ttf", 256, vec3(1,0,0));
     
-    Text t(f, VEC3_RIGHT * .2f, VEC3_UP * .2f, "Hey");
+    Text t(f, VEC3_RIGHT * .2f, VEC3_UP * .2f, "Heyo");
     t.Program(0);
 
     // Add the text

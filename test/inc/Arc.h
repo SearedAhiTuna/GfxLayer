@@ -49,7 +49,7 @@ void Arc::generate(Model& m, const size_t& res, EdgesOut& output)
 
         // Extrude the next vertex
         Model::Vert* cur = &prev->extrude();
-        cur->setAtt(0, (*_func)(t));
+        cur->attribs.at<vec3>(0) = (*_func)(t);
 
         // Get the connecting edge
         Model::Edge* e = m.edges.between(*prev, *cur);

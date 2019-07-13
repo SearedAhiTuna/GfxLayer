@@ -10,7 +10,7 @@ Rectangle::Rectangle(const vec3& v1, const vec3& v2) :
     buf.Write(v2, 2);
     buf.Write(v1 + v2, 3);
 
-    _normal = vec4(normalize(cross(v1, v2)), 0);
+    _normal = normalize(cross(v1, v2));
 }
 
 void Rectangle::GenUV()
@@ -24,7 +24,7 @@ void Rectangle::GenUV()
 
 void Rectangle::GenNormals()
 {
-    auto buf = GenBuffer(4);
+    auto buf = GenBuffer(3);
     for (size_t i = 0; i < 4; ++i)
     {
         buf.Write(_normal, i);

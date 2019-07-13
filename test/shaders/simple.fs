@@ -3,7 +3,7 @@
 
 // Input data
 in vec2 uv;
-in vec4 norm;
+in vec3 norm;
 
 // Output data
 out vec4 color;
@@ -17,8 +17,8 @@ void main()
     
 	color = texture(TEXTURE_SAMPLER, uv);
 
-	//if (texture(TEXTURE_SAMPLER, uv).a < .25f)
-		//discard;
+	if (texture(TEXTURE_SAMPLER, uv).a < .25f)
+		discard;
 
 	float light = abs(norm.z);
 	color *= vec4(vec3(1,1,1) * light, 1);

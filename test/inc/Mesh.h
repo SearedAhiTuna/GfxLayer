@@ -3,7 +3,6 @@
 
 #include "unique_container.h"
 
-#include <any>
 #include <list>
 #include <map>
 #include <memory>
@@ -41,16 +40,63 @@ public:
         BaseIterator _it;
     };
 
-public:
-    typedef size_t AttributeID;
+private:
+    class Attribute
+    {
+    public:
+        Attribute();
+
+        Attribute(const Attribute& other);
+
+        ~Attribute();
+
+        template <typename T>
+        T& get();
+
+        template <typename T>
+        T get() const;
+
+        bool valid() const;
+
+        size_t size() const;
+
+    private:
+        char* data{};
+        size_t _size{};
+    };
 
 public:
+    class AttribList;
     class Vert;
     class VertList;
     class Edge;
     class EdgeList;
     class Face;
     class FaceList;
+
+    class AttribList
+    {
+    public:
+        AttribList& operator=(const AttribList&) = delete;
+
+        template <typename T>
+        T& at(const size_t i);
+
+        template <typename T>
+        T at(const size_t i) const;
+
+        size_t size() const;
+
+        bool has(const size_t& i) const;
+
+        size_t sizeat(const size_t& i) const;
+
+    private:
+        friend class VertList;
+
+    private:
+        PTR_VECTOR(Attribute) _attribs;
+    };
 
     class Vert
     {
@@ -78,16 +124,6 @@ public:
 
         Vert& extrude();
 
-        template <typename Type>
-        Vert& setAtt(const AttributeID& id, const Type& t);
-
-        template <typename Type>
-        Type getAtt(const AttributeID& id) const;
-
-        const std::any getAtt(const AttributeID& id) const;
-
-        bool hasAtt(const AttributeID& id) const;
-
         std::ostream& print(std::ostream& out) const
         {
             out << "v" << _index;
@@ -108,7 +144,8 @@ public:
 
         std::unordered_set<Edge*> _edges;
 
-        std::map<AttributeID, std::any> attribs;
+    public:
+        AttribList attribs;
     };
 
     class VertList
@@ -153,13 +190,12 @@ public:
         PTR_VECTOR_CONST_ITERATOR(Vert) begin() const;
         PTR_VECTOR_CONST_ITERATOR(Vert) end() const;
 
+        size_t size() const { return _verts.size(); }
+
         Vert& extrude(Vert& v);
         
         template <typename VertsIn, typename VertsOut>
         void extrude(const VertsIn& input, VertsOut& output);
-
-        template <typename AttrsOut>
-        void allAtt(AttrsOut& attrs) const;
 
     private:
         friend class Mesh;
@@ -167,7 +203,6 @@ public:
     private:
         Mesh& _mesh;
         PTR_VECTOR(Vert) _verts;
-        std::list<AttributeID> _attrs;
     };
 
     class Edge
@@ -427,6 +462,53 @@ bool Mesh::PtrIterator<BaseIterator, Type>::operator!=(const PtrIterator& other)
     return _it != other._it;
 }
 
+template <typename T>
+T& Mesh::Attribute::get()
+{
+    if (!data)
+    {
+        _size = sizeof(T);
+        data = new char[_size];
+    }
+
+    T* data_ = reinterpret_cast<T*>(data);
+    return *data_;
+}
+
+template <typename T>
+T Mesh::Attribute::get() const
+{
+    if (!data)
+        return T();
+
+    const T* data_ = reinterpret_cast<const T*>(data);
+    return *data_;
+}
+
+template <typename T>
+T& Mesh::AttribList::at(const size_t i)
+{
+    if (i >= size())
+    {
+        _attribs.reserve(i + 1);
+        while (_attribs.size() <= i)
+        {
+            _attribs.emplace_back(new Attribute());
+        }
+    }
+
+    return _attribs[i]->get<T>();
+}
+
+template <typename T>
+T Mesh::AttribList::at(const size_t i) const
+{
+    if (i >= size())
+        return T();
+
+    return _attribs.at(i)->get<T>();
+}
+
 template <typename VertsOut>
 void Mesh::Vert::adjacent_verts(VertsOut& verts)
 {
@@ -462,39 +544,10 @@ void Mesh::Vert::adjacent_faces(FacesOut& faces)
 }
 
 template <typename Type>
-Mesh::Vert& Mesh::Vert::setAtt(const AttributeID& id, const Type& t)
-{
-    attribs[id] = t;
-
-    bool exists = false;
-    for (const AttributeID& i : _mesh.verts._attrs)
-    {
-        if (i == id)
-            exists = true;
-    }
-
-    if (!exists)
-    {
-        _mesh.verts._attrs.emplace_back(id);
-    }
-
-    return *this;
-}
-
-template <typename Type>
-Type Mesh::Vert::getAtt(const AttributeID& id) const
-{
-    if (attribs.count(id) == 0)
-        return Type();
-    else
-        return std::any_cast<Type>(attribs.at(id));
-}
-
-template <typename Type>
 Mesh::Vert& Mesh::VertList::emplace(const Type& attrib)
 {
     Vert& v = emplace();
-    v.setAtt(0, attrib);
+    v.attribs.at<Type>(0) = attrib;
 
     return v;
 }
@@ -503,7 +556,7 @@ template <typename Type, typename ... Types>
 Mesh::Vert& Mesh::VertList::emplace(const Type& attrib, const Types& ... attribs)
 {
     Vert& v = emplace();
-    v.setAtt(0, attrib);
+    v.attribs.at<Type>(0) = attrib;
 
     return emplace_int(v, 1, attribs...);
 }
@@ -511,7 +564,7 @@ Mesh::Vert& Mesh::VertList::emplace(const Type& attrib, const Types& ... attribs
 template <typename Type>
 Mesh::Vert& Mesh::VertList::emplace_int(Vert& v, const size_t& depth, const Type& attrib)
 {
-    v.setAtt(depth, attrib);
+    v.attribs.at<Type>(depth) = attrib;
 
     return v;
 }
@@ -519,7 +572,7 @@ Mesh::Vert& Mesh::VertList::emplace_int(Vert& v, const size_t& depth, const Type
 template <typename Type, typename ... Types>
 Mesh::Vert& Mesh::VertList::emplace_int(Vert& v, const size_t& depth, const Type& attrib, const Types& ... attribs)
 {
-    v.setAtt(depth, attrib);
+    v.attribs.at<Type>(depth) = attrib;
 
     return emplace_int(v, depth + 1, attribs...);
 }
@@ -586,15 +639,6 @@ void Mesh::VertList::extrude(const VertsIn& input, VertsOut& output)
     for (Vert* v : input)
     {
         output.emplace_back(&extrude(*v));
-    }
-}
-
-template <typename AttrsOut>
-void Mesh::VertList::allAtt(AttrsOut& attrs) const
-{
-    for (const AttributeID& id : _attrs)
-    {
-        attrs.emplace_back(id);
     }
 }
 

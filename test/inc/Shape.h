@@ -7,6 +7,7 @@
 #include <list>
 #include <memory>
 #include <mutex>
+#include <ostream>
 
 class Shape
 {
@@ -46,8 +47,13 @@ private:
         template <typename vec>
         BufferHandle& Write(const vec& value, const size_t& ind);
 
-        template <typename Container>
-        BufferHandle& WriteRange(const Container& values, const size_t& start = 0);
+        template <typename Verts>
+        BufferHandle& WriteRange(const Verts& values, const size_t& start = 0);
+
+        template <typename Values>
+        BufferHandle& WriteRangeRaw(const Values& values, const size_t& start = 0);
+
+        BufferHandle& Clear(const GLfloat& value);
 
         void Free();
 
@@ -109,7 +115,12 @@ protected:
     GLuint _texID{};
 
     mat4 _tf {};
+
+private:
+    friend std::ostream& operator<<(std::ostream& out, const Shape& s);
 };
+
+std::ostream& operator<<(std::ostream& out, const Shape& s);
 
 template <typename vec>
 Shape::BufferHandle& Shape::BufferHandle::Write(const vec& value, const size_t& ind)
@@ -132,8 +143,8 @@ Shape::BufferHandle& Shape::BufferHandle::Write(const vec& value, const size_t& 
     return *this;
 }
 
-template <typename Container>
-Shape::BufferHandle& Shape::BufferHandle::WriteRange(const Container& values, const size_t& start)
+template <typename Verts>
+Shape::BufferHandle& Shape::BufferHandle::WriteRange(const Verts& values, const size_t& start)
 {
     if (_buffer == nullptr)
         return *this;
@@ -151,6 +162,27 @@ Shape::BufferHandle& Shape::BufferHandle::WriteRange(const Container& values, co
             _buffer->_data[ind * ndims + i] = value[i];
         }
         ++ind;
+    }
+
+    _buffer->_updated = false;
+
+    return *this;
+}
+
+template <typename Values>
+Shape::BufferHandle& Shape::BufferHandle::WriteRangeRaw(const Values& values, const size_t& start)
+{
+    if (_buffer == nullptr)
+        return *this;
+
+    std::lock_guard<std::mutex> myLk(_parent._bigLock);
+
+    size_t i = start;
+    for (const auto& value : values)
+    {
+#pragma warning(suppress: 4267)
+        _buffer->_data[i] = value;
+        ++i;
     }
 
     _buffer->_updated = false;

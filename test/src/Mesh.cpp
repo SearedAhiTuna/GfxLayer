@@ -8,6 +8,55 @@
 #define PTR_VECTOR_ITERATOR(TYPE) PtrIterator<PTR_VECTOR(TYPE)::iterator, TYPE>
 #define PTR_VECTOR_CONST_ITERATOR(TYPE) PtrIterator<PTR_VECTOR(TYPE)::const_iterator, TYPE>
 
+Mesh::Attribute::Attribute()
+{
+}
+
+Mesh::Attribute::Attribute(const Attribute& other)
+{
+    _size = other._size;
+    data = new char[_size];
+
+    memcpy(data, other.data, _size);
+}
+
+Mesh::Attribute::~Attribute()
+{
+    if (data)
+        delete[] data;
+}
+
+bool Mesh::Attribute::valid() const
+{
+    return data != nullptr;
+}
+
+size_t Mesh::Attribute::size() const
+{
+    return _size;
+}
+
+size_t Mesh::AttribList::size() const
+{
+    return _attribs.size();
+}
+
+size_t Mesh::AttribList::sizeat(const size_t& i) const
+{
+    if (i >= size())
+        return 0;
+
+    return _attribs.at(i)->size();
+}
+
+bool Mesh::AttribList::has(const size_t& i) const
+{
+    if (i >= size())
+        return false;
+
+    return _attribs.at(i)->valid();
+}
+
 Mesh::Vert::Vert(const size_t& index, Mesh& mesh) :
     _index(index),
     _mesh(mesh)
@@ -60,16 +109,6 @@ bool Mesh::Vert::adjacent_to(const Face& f) const
 Mesh::Vert& Mesh::Vert::extrude()
 {
     return _mesh.verts.extrude(*this);
-}
-
-const std::any Mesh::Vert::getAtt(const AttributeID& id) const
-{
-    return attribs.at(id);
-}
-
-bool Mesh::Vert::hasAtt(const AttributeID& id) const
-{
-    return attribs.count(id) != 0;
 }
 
 Mesh::VertList::VertList(Mesh& mesh) :
@@ -134,9 +173,12 @@ Mesh::Vert& Mesh::VertList::extrude(Vert& v)
     _mesh.edges.emplace(v, nv);
 
     // Copy the attributes to the new vertex
-    for (const auto& pair : v.attribs)
+    for (size_t i = 0; i < v.attribs.size(); ++i)
     {
-        nv.attribs.emplace(pair.first, pair.second);
+        if (v.attribs.has(i))
+            nv.attribs._attribs.emplace_back(v.attribs._attribs[i]);
+        else
+            nv.attribs._attribs.emplace_back();
     }
 
     // Return the new vertex

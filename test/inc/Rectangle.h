@@ -12,5 +12,5 @@ public:
     void GenNormals();
 
 private:
-    vec4 _normal;
+    vec3 _normal;
 };

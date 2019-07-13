@@ -35,7 +35,8 @@ Shape::Buffer::Buffer(const size_t& nverts, const size_t& ndims) :
     _vbo = temp;
 
     // Generate the data
-    _data = new GLfloat[_nverts * _ndims];
+    if (_nverts * _ndims != 0)
+        _data = new GLfloat[_nverts * _ndims];
     _size = _nverts * _ndims * sizeof(GLfloat);
 }
 
@@ -90,6 +91,21 @@ Shape::BufferHandle::BufferHandle(Shape& parent, Buffer& buffer):
     _parent(parent),
     _buffer(&buffer)
 {
+}
+
+Shape::BufferHandle& Shape::BufferHandle::Clear(const GLfloat& value)
+{
+    if (_buffer == nullptr)
+        return *this;
+
+    std::lock_guard<std::mutex> myLk(_parent._bigLock);
+
+    for (size_t i = 0; i < _buffer->_size / sizeof(GLfloat); ++i)
+    {
+        _buffer->_data[i] = value;
+    }
+
+    return *this;
 }
 
 void Shape::BufferHandle::Free()
@@ -281,4 +297,23 @@ mat4 Shape::TF()
     std::lock_guard<std::mutex> myLk(_bigLock);
 
     return _tf;
+}
+
+std::ostream& operator<<(std::ostream& out, const Shape& s)
+{
+    for (const auto& ptr : s._buffers)
+    {
+        const Shape::Buffer& buf = *ptr;
+
+        out << buf._nverts << "," << buf._ndims << ": ";
+
+        out << "[";
+        for (size_t i = 0; i < buf._size / sizeof(GLfloat); ++i)
+        {
+            out << buf._data[i] << ",";
+        }
+        out << "]\n";
+    }
+
+    return out;
 }
