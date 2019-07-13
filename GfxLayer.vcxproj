@@ -150,19 +150,19 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew-1.13.0\include;$(ProjectDir)external\glfw-3.3\include;$(ProjectDir)external\glm-0.9.7;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype-2.10.1\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew\include;$(ProjectDir)external\glfw\include;$(ProjectDir)external\glm;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>opengl32.lib;glu32.lib;Debug\glfw3.lib;Debug\glew32d.lib;Debug\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)external\glew-1.13.0\lib;$(ProjectDir)external\glfw-3.3\src;$(ProjectDir)external\freetype-2.10.1\objs\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)external\glew\lib;$(ProjectDir)external\glfw\src;$(ProjectDir)external\freetype\objs\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>echo Copying Debug DLLs
-copy $(ProjectDir)external\glew-1.13.0\bin\Debug\glew32d.dll $(ProjectDir)x64\Debug
-copy $(ProjectDir)external\freetype-2.10.1\objs\x64\Debug\freetype.dll $(ProjectDir)x64\Debug</Command>
+copy $(ProjectDir)external\glew\bin\Debug\glew32d.dll $(TargetDir)
+copy $(ProjectDir)external\freetype\objs\x64\Debug\freetype.dll $(TargetDir)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Lib|x64'">
@@ -174,19 +174,19 @@ copy $(ProjectDir)external\freetype-2.10.1\objs\x64\Debug\freetype.dll $(Project
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;IS_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew-1.13.0\include;$(ProjectDir)external\glfw-3.3\include;$(ProjectDir)external\glm-0.9.7;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype-2.10.1\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew\include;$(ProjectDir)external\glfw\include;$(ProjectDir)external\glm;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>opengl32.lib;glu32.lib;Debug\glfw3.lib;Debug\glew32d.lib;Debug\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)external\glew-1.13.0\lib;$(ProjectDir)external\glfw-3.3\src;$(ProjectDir)external\freetype-2.10.1\objs\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)external\glew\lib;$(ProjectDir)external\glfw\src;$(ProjectDir)external\freetype\objs\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>echo Copying Debug DLLs
-copy $(ProjectDir)external\glew-1.13.0\bin\Debug\glew32d.dll $(ProjectDir)x64\Debug
-copy $(ProjectDir)external\freetype-2.10.1\objs\x64\Debug\freetype.dll $(ProjectDir)x64\Debug</Command>
+copy $(ProjectDir)external\glew\bin\Debug\glew32d.dll $(TargetDir)
+copy $(ProjectDir)external\freetype\objs\x64\Debug\freetype.dll $(TargetDir)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -200,7 +200,7 @@ copy $(ProjectDir)external\freetype-2.10.1\objs\x64\Debug\freetype.dll $(Project
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew-1.13.0\include;$(ProjectDir)external\glfw-3.3\include;$(ProjectDir)external\glm-0.9.7;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype-2.10.1\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew\include;$(ProjectDir)external\glfw\include;$(ProjectDir)external\glm;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -209,12 +209,12 @@ copy $(ProjectDir)external\freetype-2.10.1\objs\x64\Debug\freetype.dll $(Project
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>opengl32.lib;glu32.lib;Release\glfw3.lib;Release\glew32.lib;Release\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)external\glew-1.13.0\lib;$(ProjectDir)external\glfw-3.3\src;$(ProjectDir)external\freetype-2.10.1\objs\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)external\glew\lib;$(ProjectDir)external\glfw\src;$(ProjectDir)external\freetype\objs\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>echo Copying Release DLLs
-copy $(ProjectDir)external\glew-1.13.0\bin\Release\glew32.dll $(ProjectDir)x64\Release
-copy $(ProjectDir)external\freetype-2.10.1\objs\x64\Release\freetype.dll $(ProjectDir)x64\Release</Command>
+copy $(ProjectDir)external\glew\bin\Release\glew32.dll $(TargetDir)
+copy $(ProjectDir)external\freetype\objs\x64\Release\freetype.dll $(TargetDir)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-Lib|x64'">
@@ -228,7 +228,7 @@ copy $(ProjectDir)external\freetype-2.10.1\objs\x64\Release\freetype.dll $(Proje
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;IS_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew-1.13.0\include;$(ProjectDir)external\glfw-3.3\include;$(ProjectDir)external\glm-0.9.7;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype-2.10.1\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew\include;$(ProjectDir)external\glfw\include;$(ProjectDir)external\glm;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -237,12 +237,12 @@ copy $(ProjectDir)external\freetype-2.10.1\objs\x64\Release\freetype.dll $(Proje
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>opengl32.lib;glu32.lib;Release\glfw3.lib;Release\glew32.lib;Release\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)external\glew-1.13.0\lib;$(ProjectDir)external\glfw-3.3\src;$(ProjectDir)external\freetype-2.10.1\objs\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)external\glew\lib;$(ProjectDir)external\glfw\src;$(ProjectDir)external\freetype\objs\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>echo Copying Release DLLs
-copy $(ProjectDir)external\glew-1.13.0\bin\Release\glew32.dll $(ProjectDir)x64\Release
-copy $(ProjectDir)external\freetype-2.10.1\objs\x64\Release\freetype.dll $(ProjectDir)x64\Release</Command>
+copy $(ProjectDir)external\glew\bin\Release\glew32.dll $(TargetDir)
+copy $(ProjectDir)external\freetype\objs\x64\Release\freetype.dll $(TargetDir)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
