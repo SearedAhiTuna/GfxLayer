@@ -1,8 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug-Lib|x64">
+      <Configuration>Debug-Lib</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release-Lib|x64">
+      <Configuration>Release-Lib</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
@@ -15,6 +23,7 @@
     <ClCompile Include="external\lodepng\lodepng_util.cpp" />
     <ClCompile Include="src\Arc.cpp" />
     <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\Font.cpp" />
     <ClCompile Include="src\FrameCounter.cpp" />
     <ClCompile Include="src\Graphics.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -22,8 +31,10 @@
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\Mouse.cpp" />
     <ClCompile Include="src\Program.cpp" />
+    <ClCompile Include="src\Rectangle.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\Shape.cpp" />
+    <ClCompile Include="src\Text.cpp" />
     <ClCompile Include="src\Textures.cpp" />
     <ClCompile Include="src\vecx.cpp" />
     <ClCompile Include="src\Window.cpp" />
@@ -33,6 +44,8 @@
     <ClInclude Include="external\lodepng\lodepng_util.h" />
     <ClInclude Include="inc\Arc.h" />
     <ClInclude Include="inc\Camera.h" />
+    <ClInclude Include="inc\dict.h" />
+    <ClInclude Include="inc\Font.h" />
     <ClInclude Include="inc\FrameCounter.h" />
     <ClInclude Include="inc\function\Bezier.h" />
     <ClInclude Include="inc\function\Function.h" />
@@ -46,9 +59,12 @@
     <ClInclude Include="inc\Model.h" />
     <ClInclude Include="inc\Mouse.h" />
     <ClInclude Include="inc\Program.h" />
+    <ClInclude Include="inc\Rectangle.h" />
+    <ClInclude Include="inc\RefCntDict.h" />
     <ClInclude Include="inc\RunningAverage.h" />
     <ClInclude Include="inc\Shader.h" />
     <ClInclude Include="inc\Shape.h" />
+    <ClInclude Include="inc\Text.h" />
     <ClInclude Include="inc\Textures.h" />
     <ClInclude Include="inc\Triangle.h" />
     <ClInclude Include="inc\unique_container.h" />
@@ -64,8 +80,9 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{0DC2C608-224A-4FC8-B3F1-CFE1A9AFAB80}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>test</RootNamespace>
+    <RootNamespace>GfxLayer</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>GfxLayer</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -74,8 +91,21 @@
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Lib|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-Lib|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -89,14 +119,26 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Lib|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release-Lib|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Lib|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-Lib|x64'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -119,7 +161,32 @@
     </Link>
     <PreBuildEvent>
       <Command>echo Copying Debug DLLs
-copy $(ProjectDir)external\glew-1.13.0\bin\Debug\glew32d.dll $(ProjectDir)x64\Debug</Command>
+copy $(ProjectDir)external\glew-1.13.0\bin\Debug\glew32d.dll $(ProjectDir)x64\Debug
+copy $(ProjectDir)external\freetype-2.10.1\objs\x64\Debug\freetype.dll $(ProjectDir)x64\Debug</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Lib|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;IS_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew-1.13.0\include;$(ProjectDir)external\glfw-3.3\include;$(ProjectDir)external\glm-0.9.7;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype-2.10.1\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;Debug\glfw3.lib;Debug\glew32d.lib;Debug\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)external\glew-1.13.0\lib;$(ProjectDir)external\glfw-3.3\src;$(ProjectDir)external\freetype-2.10.1\objs\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <PreBuildEvent>
+      <Command>echo Copying Debug DLLs
+copy $(ProjectDir)external\glew-1.13.0\bin\Debug\glew32d.dll $(ProjectDir)x64\Debug
+copy $(ProjectDir)external\freetype-2.10.1\objs\x64\Debug\freetype.dll $(ProjectDir)x64\Debug</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -146,7 +213,36 @@ copy $(ProjectDir)external\glew-1.13.0\bin\Debug\glew32d.dll $(ProjectDir)x64\De
     </Link>
     <PreBuildEvent>
       <Command>echo Copying Release DLLs
-copy $(ProjectDir)external\glew-1.13.0\bin\Release\glew32.dll $(ProjectDir)x64\Release</Command>
+copy $(ProjectDir)external\glew-1.13.0\bin\Release\glew32.dll $(ProjectDir)x64\Release
+copy $(ProjectDir)external\freetype-2.10.1\objs\x64\Release\freetype.dll $(ProjectDir)x64\Release</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-Lib|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;IS_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew-1.13.0\include;$(ProjectDir)external\glfw-3.3\include;$(ProjectDir)external\glm-0.9.7;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype-2.10.1\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;Release\glfw3.lib;Release\glew32.lib;Release\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)external\glew-1.13.0\lib;$(ProjectDir)external\glfw-3.3\src;$(ProjectDir)external\freetype-2.10.1\objs\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <PreBuildEvent>
+      <Command>echo Copying Release DLLs
+copy $(ProjectDir)external\glew-1.13.0\bin\Release\glew32.dll $(ProjectDir)x64\Release
+copy $(ProjectDir)external\freetype-2.10.1\objs\x64\Release\freetype.dll $(ProjectDir)x64\Release</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

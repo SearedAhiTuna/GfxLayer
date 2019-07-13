@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Libs.h"
+#include "Textures.h"
 
 #include <string>
 

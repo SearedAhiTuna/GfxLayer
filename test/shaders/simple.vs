@@ -3,18 +3,21 @@
 
 // Input vertex data, different for all executions of this shader.
 layout(location = 0) in vec3 vertexPos;
-layout(location = 1) in vec4 vertexNorm;
+layout(location = 1) in vec2 vertexUV;
+layout(location = 2) in vec3 vertexNorm;
 
 // Values that stay constant for the whole mesh.
 uniform mat4 MVP;
 
 // Output to frag shader
-out vec4 norm;
+out vec2 uv;
+out vec3 norm;
 
 void main()
 {
     // Output position of the vertex, in clip space : MVP * position
     gl_Position =  MVP * vec4(vertexPos, 1);
 
-	norm = MVP * vertexNorm;
+	uv = vertexUV;
+	norm = (MVP * vec4(vertexNorm, 0)).xyz;
 }

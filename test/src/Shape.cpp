@@ -35,7 +35,8 @@ Shape::Buffer::Buffer(const size_t& nverts, const size_t& ndims) :
     _vbo = temp;
 
     // Generate the data
-    _data = new GLfloat[_nverts * _ndims];
+    if (_nverts * _ndims != 0)
+        _data = new GLfloat[_nverts * _ndims];
     _size = _nverts * _ndims * sizeof(GLfloat);
 }
 
@@ -92,6 +93,21 @@ Shape::BufferHandle::BufferHandle(Shape& parent, Buffer& buffer):
 {
 }
 
+Shape::BufferHandle& Shape::BufferHandle::Clear(const GLfloat& value)
+{
+    if (_buffer == nullptr)
+        return *this;
+
+    std::lock_guard<std::mutex> myLk(_parent._bigLock);
+
+    for (size_t i = 0; i < _buffer->_size / sizeof(GLfloat); ++i)
+    {
+        _buffer->_data[i] = value;
+    }
+
+    return *this;
+}
+
 void Shape::BufferHandle::Free()
 {
     if (_buffer == nullptr)
@@ -132,7 +148,8 @@ Shape::Shape(Shape&& other) noexcept :
 
     // Get the texture from the other shape
     _texture = other._texture;
-    other._texture = 0;
+    _texID = other._texID;
+    //other._texture = 0;
 }
 
 Shape::~Shape()
@@ -165,7 +182,8 @@ Shape& Shape::operator=(Shape&& rhs) noexcept
 
     // Get the texture from the other shape
     _texture = rhs._texture;
-    rhs._texture = 0;
+    _texID = rhs._texID;
+    //rhs._texture = 0;
 
     return *this;
 }
@@ -176,13 +194,6 @@ void Shape::Free()
 
     // Empty buffers
     _buffers.clear();
-
-    // Free texture
-    if (_texture != 0)
-    {
-        Textures::free(_texture);
-        _texture = 0;
-    }
 
     // Reset program
     _program = -1;
@@ -227,14 +238,21 @@ void Shape::UpdateBuffers()
     }
 }
 
+Shape& Shape::Texture(const GLuint& id)
+{
+    std::lock_guard<std::mutex> myLk(_bigLock);
+
+    _texID = id;
+
+    return *this;
+}
+
 Shape& Shape::Texture(const std::string& fn)
 {
     std::lock_guard<std::mutex> myLk(_bigLock);
 
-    if (_texture != 0)
-        Textures::free(_texture);
-
     _texture = Textures::load(fn);
+    _texID = _texture.id;
 
     return *this;
 }
@@ -243,7 +261,7 @@ GLuint Shape::Texture()
 {
     std::lock_guard<std::mutex> myLk(_bigLock);
 
-    return _texture;
+    return _texID;
 }
 
 Shape& Shape::Program(const int& p)
@@ -262,11 +280,14 @@ int Shape::Program()
     return _program;
 }
 
-Shape& Shape::TF(const mat4& tf)
+Shape& Shape::TF(const bool& relative, const mat4& tf)
 {
     std::lock_guard<std::mutex> myLk(_bigLock);
 
-    _tf = tf;
+    if (relative)
+        _tf = tf * _tf;
+    else
+        _tf = tf;
 
     return *this;
 }
@@ -276,4 +297,23 @@ mat4 Shape::TF()
     std::lock_guard<std::mutex> myLk(_bigLock);
 
     return _tf;
+}
+
+std::ostream& operator<<(std::ostream& out, const Shape& s)
+{
+    for (const auto& ptr : s._buffers)
+    {
+        const Shape::Buffer& buf = *ptr;
+
+        out << buf._nverts << "," << buf._ndims << ": ";
+
+        out << "[";
+        for (size_t i = 0; i < buf._size / sizeof(GLfloat); ++i)
+        {
+            out << buf._data[i] << ",";
+        }
+        out << "]\n";
+    }
+
+    return out;
 }

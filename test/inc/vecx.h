@@ -13,8 +13,6 @@ public:
     template <typename vec>
     vecx(const vec& v);
 
-    vecx(const std::any a);
-
     size_t length() const;
 
     GLfloat& operator[](const size_t& ind);

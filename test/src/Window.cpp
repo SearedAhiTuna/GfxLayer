@@ -137,6 +137,10 @@ void Window::Draw(Shape& s)
             p->SetTexture(s.Texture());
         }
     }
+    else
+    {
+        UseProgram(-1);
+    }
 
     // Update the shape
     s.UpdateBuffers();

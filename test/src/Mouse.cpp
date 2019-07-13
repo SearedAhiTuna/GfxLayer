@@ -60,6 +60,12 @@ Mouse& Mouse::RegisterPosCallback(PosCallback cb, void* caller)
     return *this;
 }
 
+Mouse& Mouse::RegisterMoveCallback(PosCallback cb, void* caller)
+{
+    _moveCallbacks.emplace_back(cb, caller);
+    return *this;
+}
+
 bool Mouse::Entered()
 {
     return glfwGetWindowAttrib(_window, GLFW_HOVERED);
@@ -99,6 +105,27 @@ void Mouse::callPosCallbacks(const double& x, const double& y)
     for (auto& entry : _posCallbacks)
     {
         entry.cb(entry.caller, x_, y_);
+    }
+
+    double dx, dy;
+
+    if (_prevInit)
+    {
+        dx = x_ - _prev.x;
+        dy = y_ - _prev.y;
+    }
+    else
+    {
+        dx = 0;
+        dy = 0;
+        _prevInit = true;
+    }
+
+    _prev = { x_, y_ };
+
+    for (auto& entry : _moveCallbacks)
+    {
+        entry.cb(entry.caller, dx, dy);
     }
 }
 

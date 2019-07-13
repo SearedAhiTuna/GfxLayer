@@ -1,12 +1,31 @@
 
 #pragma once
 
+#include "Libs.h"
+#include "RefCntDict.h"
+
 #include <string>
+
+struct Image
+{
+    GLuint id{};
+
+    bool valid() { return id != 0; }
+};
+
+class TextureList : public RefCntDict<std::string, Image, const bool&>
+{
+private:
+    Image create(const std::string& fn, const bool& alpha);
+    void destroy(const std::string& fn, Image& tex);
+};
+
+typedef TextureList::Ref Texture;
 
 namespace Textures
 {
-    unsigned int load(const std::string& fn, const bool& alpha = false);
-    void free(const unsigned int& id);
+    Texture load(const std::string& fn, const bool& alpha = false);
 
-    unsigned int generate(const unsigned char* data, unsigned int& w, const unsigned int& h, const bool& alpha = false);
+    unsigned int generate(const void* data, const uvec2& dims, const GLenum& format, const GLenum& type = GL_UNSIGNED_BYTE);
+    void free(const GLuint& id);
 }

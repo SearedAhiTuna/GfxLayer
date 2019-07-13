@@ -25,8 +25,8 @@ void Arc::connect_verts(Model& m, Model::Vert& v1, Model::Vert& v2, const size_t
     vec3 myEnd = (*_func)(_tf);
 
     // Get start and end vertices
-    vec3 start = v1.getAtt<vec3>(MDL_ATT_POSITION);
-    vec3 end = v2.getAtt<vec3>(MDL_ATT_POSITION);
+    vec3 start = v1.attribs.at<vec3>(MDL_ATT_POSITION);
+    vec3 end = v2.attribs.at<vec3>(MDL_ATT_POSITION);
 
     // Calculate scale
     vec3 myDisp = myEnd - myStart;
@@ -68,7 +68,7 @@ void Arc::connect_verts(Model& m, Model::Vert& v1, Model::Vert& v2, const size_t
         // Set the vertex position
         vec3 val = (*_func)(t);
         val = (tf * vec4(val,1)).xyz;
-        cur->setAtt(MDL_ATT_POSITION, val);
+        cur->attribs.at<vec3>(MDL_ATT_POSITION) = val;
 
         // Set the current as previous
         prev = cur;
