@@ -2,7 +2,7 @@
 #pragma once
 
 #include "Function.h"
-#include "Libs.h"
+#include "Types.h"
 #include "Polynomial.h"
 
 class Parabola : public Function<GLfloat, GLfloat>

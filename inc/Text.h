@@ -2,7 +2,7 @@
 #pragma once
 
 #include "Font.h"
-#include "Libs.h"
+#include "Types.h"
 #include "Rectangle.h"
 
 #include <list>

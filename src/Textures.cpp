@@ -1,9 +1,11 @@
 
 #include "Textures.h"
 #include "Graphics.h"
-#include "Libs.h"
+#include "InternalLibs.h"
+#include "Types.h"
 
 //#include <iostream>
+
 #include "lodepng.h"
 
 static GLuint loadPNG(const std::string& fn, const bool& alpha)

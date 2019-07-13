@@ -1,5 +1,6 @@
 
 #include "Program.h"
+#include "InternalLibs.h"
 
 #include "Graphics.h"
 #include "Shader.h"

@@ -1,9 +1,15 @@
 
 #pragma once
 
+#ifdef BUILD_GFXLAYER
+
 #include <GL/glew.h>
 
-#include <GLFW/glfw3.h>
+#else
+
+#include "FakeGlew.h"
+
+#endif
 
 #define GLM_SWIZZLE
 #include <glm/glm.hpp>
@@ -24,3 +30,5 @@ using namespace glm;
 #define UV_BOTTOM_RIGHT vec2(1, 1)
 
 extern const GLfloat PI;
+
+struct GLFWwindow;

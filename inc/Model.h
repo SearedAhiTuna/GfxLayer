@@ -2,7 +2,7 @@
 #pragma once
 
 #include "Mesh.h"
-#include "Libs.h"
+#include "Types.h"
 
 #include <iostream>
 
@@ -28,7 +28,7 @@ public:
     void face_tf_3d(Face& f, const mat4& tf);
 
     template <typename FacesIn>
-    void face_tf_3d(const FacesIn& fs, const const mat4& tf);
+    void face_tf_3d(const FacesIn& fs, const mat4& tf);
 
     void generate_vert_normals();
     void generate_face_normals();

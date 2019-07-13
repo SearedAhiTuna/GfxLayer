@@ -1,6 +1,7 @@
 
 #include "Shape.h"
 #include "Graphics.h"
+#include "InternalLibs.h"
 #include "Textures.h"
 
 #include <iostream>

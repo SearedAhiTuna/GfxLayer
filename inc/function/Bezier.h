@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "Function.h"
-#include "Libs.h"
+#include "Types.h"
 
 template <typename vec>
 class Bezier : public Function<vec, GLfloat>, public std::vector<vec>

@@ -107,9 +107,6 @@
     <ClInclude Include="inc\Graphics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Libs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="inc\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -175,6 +172,15 @@
     </ClInclude>
     <ClInclude Include="inc\function\Parabola3D.h">
       <Filter>Header Files\Function</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\Types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\InternalLibs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\FakeGlew.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -2,7 +2,7 @@
 #pragma once
 
 #include "Camera.h"
-#include "Libs.h"
+#include "Types.h"
 #include "Mouse.h"
 
 #include <atomic>

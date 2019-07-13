@@ -2,7 +2,7 @@
 #pragma once
 
 #include "Function.h"
-#include "Libs.h"
+#include "Types.h"
 #include "Parabola.h"
 
 #include <iostream>

@@ -2,6 +2,7 @@
 #include "Window.h"
 #include "Camera.h"
 #include "Graphics.h"
+#include "InternalLibs.h"
 #include "Mouse.h"
 #include "Program.h"
 #include "Shape.h"

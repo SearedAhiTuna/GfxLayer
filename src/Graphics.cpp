@@ -1,6 +1,7 @@
 
 #include "Graphics.h"
-#include "Libs.h"
+#include "InternalLibs.h"
+#include "Types.h"
 #include "Window.h"
 
 #include <chrono>

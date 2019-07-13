@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "Function.h"
-#include "Libs.h"
+#include "Types.h"
 
 class Polynomial : public Function<GLfloat, GLfloat>, public std::vector<GLfloat>
 {

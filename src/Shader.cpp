@@ -1,6 +1,7 @@
 
 #include "Shader.h"
 #include "Graphics.h"
+#include "InternalLibs.h"
 
 #include <fstream>
 #include <iostream>

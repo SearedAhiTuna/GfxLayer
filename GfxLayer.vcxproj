@@ -44,6 +44,7 @@
     <ClInclude Include="inc\Arc.h" />
     <ClInclude Include="inc\Camera.h" />
     <ClInclude Include="inc\dict.h" />
+    <ClInclude Include="inc\FakeGlew.h" />
     <ClInclude Include="inc\Font.h" />
     <ClInclude Include="inc\FrameCounter.h" />
     <ClInclude Include="inc\function\Bezier.h" />
@@ -56,7 +57,7 @@
     <ClInclude Include="inc\GfxLayer\GfxLayerFunctions.h" />
     <ClInclude Include="inc\GfxLayer\GfxLayerShapes.h" />
     <ClInclude Include="inc\Graphics.h" />
-    <ClInclude Include="inc\Libs.h" />
+    <ClInclude Include="inc\InternalLibs.h" />
     <ClInclude Include="inc\Mesh.h" />
     <ClInclude Include="inc\Model.h" />
     <ClInclude Include="inc\Mouse.h" />
@@ -68,6 +69,7 @@
     <ClInclude Include="inc\Shape.h" />
     <ClInclude Include="inc\Text.h" />
     <ClInclude Include="inc\Textures.h" />
+    <ClInclude Include="inc\Types.h" />
     <ClInclude Include="inc\unique_container.h" />
     <ClInclude Include="inc\Window.h" />
   </ItemGroup>
@@ -148,7 +150,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BUILD_GFXLAYER;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew\include;$(ProjectDir)external\glfw\include;$(ProjectDir)external\glm;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -172,7 +174,7 @@ copy $(ProjectDir)external\freetype\objs\x64\Debug\freetype.dll $(TargetDir)</Co
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;IS_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BUILD_GFXLAYER;_DEBUG;_CONSOLE;IS_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew\include;$(ProjectDir)external\glfw\include;$(ProjectDir)external\glm;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -185,9 +187,17 @@ copy $(ProjectDir)external\freetype\objs\x64\Debug\freetype.dll $(TargetDir)</Co
     </Link>
     <PreBuildEvent>
       <Command>echo Copying Debug DLLs
+
 copy $(ProjectDir)external\glew\bin\Debug\glew32d.dll $(TargetDir)
+
 copy $(ProjectDir)external\freetype\objs\x64\Debug\freetype.dll $(TargetDir)</Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>echo Copying Debug libs
+copy $(ProjectDir)external\freetype\objs\x64\Debug\freetype.lib $(TargetDir)
+copy $(ProjectDir)external\glew\lib\Debug\glew32d.lib $(TargetDir)
+copy $(ProjectDir)external\glfw\src\Debug\glfw3.lib $(TargetDir)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -198,7 +208,7 @@ copy $(ProjectDir)external\freetype\objs\x64\Debug\freetype.dll $(TargetDir)</Co
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BUILD_GFXLAYER;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew\include;$(ProjectDir)external\glfw\include;$(ProjectDir)external\glm;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -226,7 +236,7 @@ copy $(ProjectDir)external\freetype\objs\x64\Release\freetype.dll $(TargetDir)</
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;IS_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BUILD_GFXLAYER;NDEBUG;_CONSOLE;IS_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew\include;$(ProjectDir)external\glfw\include;$(ProjectDir)external\glm;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -244,6 +254,12 @@ copy $(ProjectDir)external\freetype\objs\x64\Release\freetype.dll $(TargetDir)</
 copy $(ProjectDir)external\glew\bin\Release\glew32.dll $(TargetDir)
 copy $(ProjectDir)external\freetype\objs\x64\Release\freetype.dll $(TargetDir)</Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>echo Copying Release libs
+copy $(ProjectDir)external\freetype\objs\x64\Release\freetype.lib $(TargetDir)
+copy $(ProjectDir)external\glew\lib\Release\glew32.lib $(TargetDir)
+copy $(ProjectDir)external\glfw\src\Release\glfw3.lib $(TargetDir)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

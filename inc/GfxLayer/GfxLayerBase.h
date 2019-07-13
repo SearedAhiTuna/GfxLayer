@@ -5,7 +5,6 @@
 #include "Font.h"
 #include "FrameCounter.h"
 #include "Graphics.h"
-#include "Libs.h"
 #include "Mesh.h"
 #include "Model.h"
 #include "Mouse.h"
@@ -13,4 +12,5 @@
 #include "Shader.h"
 #include "Shape.h"
 #include "Textures.h"
+#include "Types.h"
 #include "Window.h"

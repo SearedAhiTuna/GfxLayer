@@ -1,5 +1,6 @@
 
 #include "Mouse.h"
+#include "InternalLibs.h"
 
 #include <unordered_map>
 
