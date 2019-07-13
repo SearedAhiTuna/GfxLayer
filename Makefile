@@ -3,10 +3,10 @@ MSBUILD = /c/"Program Files (x86)"/"Microsoft Visual Studio"/2019/Community/MSBu
 
 all: x64/Debug-Lib/GfxLayer.dll x64/Release-Lib/GfxLayer.dll
 
-x64/Debug-Lib/GfxLayer.dll: libs
+x64/Debug-Lib/GfxLayer.lib: libs
 	$(MSBUILD) GfxLayer.sln /property:Configuration=Debug-Lib /property:Platform=x64
 
-x64/Release-Lib/GfxLayer.dll: libs
+x64/Release-Lib/GfxLayer.lib: libs
 	$(MSBUILD) GfxLayer.sln /property:Configuration=Release-Lib /property:Platform=x64
 
 .PHONY: libs

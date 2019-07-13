@@ -1,7 +1,6 @@
 
 #include "Model.h"
 #include "Shape.h"
-#include "vecx.h"
 
 #include <list>
 #include <map>

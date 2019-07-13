@@ -22,6 +22,9 @@
     <Filter Include="Header Files\Function">
       <UniqueIdentifier>{1accc629-75de-4a93-859b-7b370e1c29c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Library Includes">
+      <UniqueIdentifier>{263bff8e-4db9-4ea7-bdf3-5c87fbab3659}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -55,9 +58,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\vecx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Arc.cpp">
@@ -98,9 +98,6 @@
     <ClInclude Include="inc\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Triangle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="external\lodepng\lodepng.h">
       <Filter>lodepng</Filter>
     </ClInclude>
@@ -117,9 +114,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\Model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\vecx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\unique_container.h">
@@ -141,9 +135,6 @@
       <Filter>Header Files\Function</Filter>
     </ClInclude>
     <ClInclude Include="inc\Arc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\function\Parabola3D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\FrameCounter.h">
@@ -172,6 +163,18 @@
     </ClInclude>
     <ClInclude Include="inc\Text.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\GfxLayer\GfxLayerFunctions.h">
+      <Filter>Header Files\Library Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\GfxLayer\GfxLayerShapes.h">
+      <Filter>Header Files\Library Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\GfxLayer\GfxLayerBase.h">
+      <Filter>Header Files\Library Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\function\Parabola3D.h">
+      <Filter>Header Files\Function</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

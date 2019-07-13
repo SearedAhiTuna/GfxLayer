@@ -36,7 +36,6 @@
     <ClCompile Include="src\Shape.cpp" />
     <ClCompile Include="src\Text.cpp" />
     <ClCompile Include="src\Textures.cpp" />
-    <ClCompile Include="src\vecx.cpp" />
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -53,6 +52,9 @@
     <ClInclude Include="inc\function\Parabola3D.h" />
     <ClInclude Include="inc\function\Polynomial.h" />
     <ClInclude Include="inc\function\TParabola.h" />
+    <ClInclude Include="inc\GfxLayer\GfxLayerBase.h" />
+    <ClInclude Include="inc\GfxLayer\GfxLayerFunctions.h" />
+    <ClInclude Include="inc\GfxLayer\GfxLayerShapes.h" />
     <ClInclude Include="inc\Graphics.h" />
     <ClInclude Include="inc\Libs.h" />
     <ClInclude Include="inc\Mesh.h" />
@@ -66,9 +68,7 @@
     <ClInclude Include="inc\Shape.h" />
     <ClInclude Include="inc\Text.h" />
     <ClInclude Include="inc\Textures.h" />
-    <ClInclude Include="inc\Triangle.h" />
     <ClInclude Include="inc\unique_container.h" />
-    <ClInclude Include="inc\vecx.h" />
     <ClInclude Include="inc\Window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -92,7 +92,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Lib|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -105,7 +105,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-Lib|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
