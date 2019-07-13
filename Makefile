@@ -8,13 +8,13 @@ glew: external/glew/bin/Debug/glew32d.dll external/glew/bin/Release/glew32.dll
 
 external/glew/bin/Debug/glew32d.dll: external/glew/build/cmake/glew.sln
 	cd external/glew/build/cmake; $(MSBUILD) glew.sln /property:Configuration=Debug /property:Platform=x64
-	cp -r external/glew/build/cmake/bin/Debug/* external/glew/bin/Debug
-	cp -r external/glew/build/cmake/lib/Debug/* external/glew/lib/Debug
+	mkdir -p external/glew/bin/Debug && cp -r external/glew/build/cmake/bin/Debug/* external/glew/bin/Debug
+	mkdir -p external/glew/lib/Debug && cp -r external/glew/build/cmake/lib/Debug/* external/glew/lib/Debug
 
 external/glew/bin/Release/glew32.dll: external/glew/build/cmake/glew.sln
 	cd external/glew/build/cmake; $(MSBUILD) glew.sln /property:Configuration=Release /property:Platform=x64
-	cp -r external/glew/build/cmake/bin/Release/* external/glew/bin/Release
-	cp -r external/glew/build/cmake/lib/Release/* external/glew/lib/Release
+	mkdir -p external/glew/bin/Release && cp -r external/glew/build/cmake/bin/Release/* external/glew/bin/Release
+	mkdir -p external/glew/lib/Release && cp -r external/glew/build/cmake/lib/Release/* external/glew/lib/Release
 
 external/glew/build/cmake/glew.sln: external/glew
 	cd external/glew/build/cmake; cmake .
