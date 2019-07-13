@@ -1,4 +1,5 @@
 
+#ifndef IS_LIBRARY
 
 #include "Arc.h"
 #include "function/Bezier.h"
@@ -122,3 +123,5 @@ void bgThread(Window* w)
         //std::cout << "FPS=" << fps.fps() << std::endl;
     }
 }
+
+#endif
