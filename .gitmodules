@@ -1,7 +1,3 @@
-[submodule "ogl"]
-	path = ogl
-	url = https://github.com/opengl-tutorials/ogl.git
-	branch = master
 [submodule "test/external/glfw-3.3"]
 	path = test/external/glfw-3.3
 	url = https://github.com/glfw/glfw.git
