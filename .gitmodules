@@ -1,11 +1,11 @@
-[submodule "test/external/glfw-3.3"]
-	path = test/external/glfw-3.3
+[submodule "external/glfw"]
+	path = external/glfw
 	url = https://github.com/glfw/glfw.git
 	branch = 3.3-stable
-[submodule "test/external/glm-0.9.7"]
-	path = test/external/glm-0.9.7
+[submodule "external/glm"]
+	path = external/glm
 	url = https://github.com/g-truc/glm.git
 	branch = 0.9.7
-[submodule "test/external/lodepng"]
-	path = test/external/lodepng
+[submodule "external/lodepng"]
+	path = external/lodepng
 	url = https://github.com/lvandeve/lodepng.git
