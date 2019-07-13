@@ -1,7 +1,16 @@
 
 MSBUILD = /c/"Program Files (x86)"/"Microsoft Visual Studio"/2019/Community/MSBuild/Current/Bin/MSBuild.exe
 
-all: glfw glew glm freetype
+all: x64/Debug-Lib/GfxLayer.dll x64/Release-Lib/GfxLayer.dll
+
+x64/Debug-Lib/GfxLayer.dll: libs
+	$(MSBUILD) GfxLayer.sln /property:Configuration=Debug-Lib /property:Platform=x64
+
+x64/Release-Lib/GfxLayer.dll: libs
+	$(MSBUILD) GfxLayer.sln /property:Configuration=Release-Lib /property:Platform=x64
+
+.PHONY: libs
+libs: glfw glew glm freetype
 
 .PHONY: glew
 glew: external/glew/bin/Debug/glew32d.dll external/glew/bin/Release/glew32.dll
