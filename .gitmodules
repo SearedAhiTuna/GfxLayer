@@ -9,3 +9,6 @@
 [submodule "external/lodepng"]
 	path = external/lodepng
 	url = https://github.com/lvandeve/lodepng.git
+[submodule "external/ExtraSTL"]
+	path = external/ExtraSTL
+	url = https://github.com/SearedAhiTuna/ExtraSTL.git
