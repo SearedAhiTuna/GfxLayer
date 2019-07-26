@@ -2,7 +2,7 @@
 #pragma once
 
 
-#include "ptr_container.h"
+#include "ref_container.h"
 #include "unique_container.h"
 
 #include <list>
@@ -14,9 +14,9 @@
 
 #include <iostream>
 
-#define PTR_VECTOR(TYPE) PTR_CONTAINER(std::vector, TYPE)
-#define PTR_VECTOR_ITERATOR(TYPE) PTR_VECTOR(TYPE)::ref_iterator
-#define PTR_VECTOR_CONST_ITERATOR(TYPE) PTR_VECTOR(TYPE)::ref_const_iterator
+#define REF_VECTOR(TYPE) REF_CONTAINER(std::vector, TYPE)
+#define REF_VECTOR_ITERATOR(TYPE) REF_VECTOR(TYPE)::ref_iterator
+#define REF_VECTOR_CONST_ITERATOR(TYPE) REF_VECTOR(TYPE)::ref_const_iterator
 
 #define Verts(...) std::list<Mesh::Vert*>({ __VA_ARGS__ })
 #define Edges(...) std::list<Mesh::Edge*>({ __VA_ARGS__ })
@@ -79,7 +79,7 @@ public:
         friend class VertList;
 
     private:
-        PTR_VECTOR(Attribute) _attribs;
+        REF_VECTOR(Attribute) _attribs;
     };
 
     class Vert
@@ -168,11 +168,11 @@ public:
         template <typename FacesIn, typename VertsOut>
         void within_faces(const FacesIn& input, VertsOut& output);  // Undefined
 
-        PTR_VECTOR_ITERATOR(Vert) begin();
-        PTR_VECTOR_ITERATOR(Vert) end();
+        REF_VECTOR_ITERATOR(Vert) begin();
+        REF_VECTOR_ITERATOR(Vert) end();
 
-        PTR_VECTOR_CONST_ITERATOR(Vert) begin() const;
-        PTR_VECTOR_CONST_ITERATOR(Vert) end() const;
+        REF_VECTOR_CONST_ITERATOR(Vert) begin() const;
+        REF_VECTOR_CONST_ITERATOR(Vert) end() const;
 
         size_t size() const { return _verts.size(); }
 
@@ -186,7 +186,7 @@ public:
     
     private:
         Mesh& _mesh;
-        PTR_VECTOR(Vert) _verts;
+        REF_VECTOR(Vert) _verts;
     };
 
     class Edge
@@ -267,11 +267,11 @@ public:
         template <typename EdgesIn, typename EdgesOut>
         void sort_by_adjacency(const EdgesIn& input, EdgesOut& output);
 
-        PTR_VECTOR_ITERATOR(Edge) begin();
-        PTR_VECTOR_ITERATOR(Edge) end();
+        REF_VECTOR_ITERATOR(Edge) begin();
+        REF_VECTOR_ITERATOR(Edge) end();
 
-        PTR_VECTOR_CONST_ITERATOR(Edge) begin() const;
-        PTR_VECTOR_CONST_ITERATOR(Edge) end() const;
+        REF_VECTOR_CONST_ITERATOR(Edge) begin() const;
+        REF_VECTOR_CONST_ITERATOR(Edge) end() const;
 
         Edge& extrude(Edge& e);
 
@@ -283,7 +283,7 @@ public:
 
     private:
         Mesh& _mesh;
-        PTR_VECTOR(Edge) _edges;
+        REF_VECTOR(Edge) _edges;
     };
 
     class Face
@@ -375,11 +375,11 @@ public:
         template <class EdgesIn>
         Face* between_edges(const EdgesIn& edges);  // Undefined
 
-        PTR_VECTOR_ITERATOR(Face) begin();
-        PTR_VECTOR_ITERATOR(Face) end();
+        REF_VECTOR_ITERATOR(Face) begin();
+        REF_VECTOR_ITERATOR(Face) end();
 
-        PTR_VECTOR_CONST_ITERATOR(Face) begin() const;
-        PTR_VECTOR_CONST_ITERATOR(Face) end() const;
+        REF_VECTOR_CONST_ITERATOR(Face) begin() const;
+        REF_VECTOR_CONST_ITERATOR(Face) end() const;
 
         Face& extrude(Face& f);
 
@@ -391,7 +391,7 @@ public:
 
     private:
         Mesh& _mesh;
-        PTR_VECTOR(Face) _faces;
+        REF_VECTOR(Face) _faces;
     };
 
 public:

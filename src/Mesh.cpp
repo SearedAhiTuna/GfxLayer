@@ -140,22 +140,22 @@ Mesh::Vert& Mesh::VertList::emplace()
     return *pVert;
 }
 
-PTR_VECTOR_ITERATOR(Mesh::Vert) Mesh::VertList::begin()
+REF_VECTOR_ITERATOR(Mesh::Vert) Mesh::VertList::begin()
 {
     return _verts.begin();
 }
 
-PTR_VECTOR_ITERATOR(Mesh::Vert) Mesh::VertList::end()
+REF_VECTOR_ITERATOR(Mesh::Vert) Mesh::VertList::end()
 {
     return _verts.end();
 }
 
-PTR_VECTOR_CONST_ITERATOR(Mesh::Vert) Mesh::VertList::begin() const
+REF_VECTOR_CONST_ITERATOR(Mesh::Vert) Mesh::VertList::begin() const
 {
     return _verts.cbegin();
 }
 
-PTR_VECTOR_CONST_ITERATOR(Mesh::Vert) Mesh::VertList::end() const
+REF_VECTOR_CONST_ITERATOR(Mesh::Vert) Mesh::VertList::end() const
 {
     return _verts.cend();
 }
@@ -329,22 +329,22 @@ Mesh::Edge* Mesh::EdgeList::between(const Edge& e1, const Edge& e2)
     return nullptr;
 }
 
-PTR_VECTOR_ITERATOR(Mesh::Edge) Mesh::EdgeList::begin()
+REF_VECTOR_ITERATOR(Mesh::Edge) Mesh::EdgeList::begin()
 {
     return _edges.begin();
 }
 
-PTR_VECTOR_ITERATOR(Mesh::Edge) Mesh::EdgeList::end()
+REF_VECTOR_ITERATOR(Mesh::Edge) Mesh::EdgeList::end()
 {
     return _edges.end();
 }
 
-PTR_VECTOR_CONST_ITERATOR(Mesh::Edge) Mesh::EdgeList::begin() const
+REF_VECTOR_CONST_ITERATOR(Mesh::Edge) Mesh::EdgeList::begin() const
 {
     return _edges.cbegin();
 }
 
-PTR_VECTOR_CONST_ITERATOR(Mesh::Edge) Mesh::EdgeList::end() const
+REF_VECTOR_CONST_ITERATOR(Mesh::Edge) Mesh::EdgeList::end() const
 {
     return _edges.cend();
 }
@@ -445,22 +445,22 @@ const Mesh::Face& Mesh::FaceList::operator[](const size_t& ind) const
     return _faces.at(ind);
 }
 
-PTR_VECTOR_ITERATOR(Mesh::Face) Mesh::FaceList::begin()
+REF_VECTOR_ITERATOR(Mesh::Face) Mesh::FaceList::begin()
 {
     return _faces.begin();
 }
 
-PTR_VECTOR_ITERATOR(Mesh::Face) Mesh::FaceList::end()
+REF_VECTOR_ITERATOR(Mesh::Face) Mesh::FaceList::end()
 {
     return _faces.end();
 }
 
-PTR_VECTOR_CONST_ITERATOR(Mesh::Face) Mesh::FaceList::begin() const
+REF_VECTOR_CONST_ITERATOR(Mesh::Face) Mesh::FaceList::begin() const
 {
     return _faces.cbegin();
 }
 
-PTR_VECTOR_CONST_ITERATOR(Mesh::Face) Mesh::FaceList::end() const
+REF_VECTOR_CONST_ITERATOR(Mesh::Face) Mesh::FaceList::end() const
 {
     return _faces.cend();
 }
