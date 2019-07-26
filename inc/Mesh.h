@@ -1,6 +1,8 @@
 
 #pragma once
 
+
+#include "ptr_container.h"
 #include "unique_container.h"
 
 #include <list>
@@ -12,9 +14,9 @@
 
 #include <iostream>
 
-#define PTR_VECTOR(TYPE) std::vector<std::shared_ptr<TYPE>>
-#define PTR_VECTOR_ITERATOR(TYPE) PtrIterator<PTR_VECTOR(TYPE)::iterator, TYPE>
-#define PTR_VECTOR_CONST_ITERATOR(TYPE) PtrIterator<PTR_VECTOR(TYPE)::const_iterator, TYPE>
+#define PTR_VECTOR(TYPE) PTR_CONTAINER(std::vector, TYPE)
+#define PTR_VECTOR_ITERATOR(TYPE) PTR_VECTOR(TYPE)::ref_iterator
+#define PTR_VECTOR_CONST_ITERATOR(TYPE) PTR_VECTOR(TYPE)::ref_const_iterator
 
 #define Verts(...) std::list<Mesh::Vert*>({ __VA_ARGS__ })
 #define Edges(...) std::list<Mesh::Edge*>({ __VA_ARGS__ })
@@ -22,24 +24,6 @@
 
 class Mesh
 {
-public:
-    template <typename BaseIterator, typename Type>
-    class PtrIterator
-    {
-    public:
-        PtrIterator(BaseIterator it);
-
-        Type& operator*();
-        Type* operator->();
-
-        PtrIterator& operator++();
-
-        bool operator!=(const PtrIterator& other);
-
-    private:
-        BaseIterator _it;
-    };
-
 private:
     class Attribute
     {
@@ -431,37 +415,6 @@ std::ostream& operator<<(std::ostream& out, const Mesh::Edge& e);
 std::ostream& operator<<(std::ostream& out, const Mesh::Face& f);
 std::ostream& operator<<(std::ostream& out, const Mesh& m);
 
-template <typename BaseIterator, typename Type>
-Mesh::PtrIterator<BaseIterator, Type>::PtrIterator(BaseIterator it):
-    _it(it)
-{
-}
-
-template <typename BaseIterator, typename Type>
-Type& Mesh::PtrIterator<BaseIterator, Type>::operator*()
-{
-    return *_it->get();
-}
-
-template <typename BaseIterator, typename Type>
-Type* Mesh::PtrIterator<BaseIterator, Type>::operator->()
-{
-    return _it->get();
-}
-
-template <typename BaseIterator, typename Type>
-Mesh::PtrIterator<BaseIterator, Type>& Mesh::PtrIterator<BaseIterator, Type>::operator++()
-{
-    ++_it;
-    return *this;
-}
-
-template <typename BaseIterator, typename Type>
-bool Mesh::PtrIterator<BaseIterator, Type>::operator!=(const PtrIterator& other)
-{
-    return _it != other._it;
-}
-
 template <typename T>
 T& Mesh::Attribute::get()
 {
@@ -497,7 +450,7 @@ T& Mesh::AttribList::at(const size_t i)
         }
     }
 
-    return _attribs[i]->get<T>();
+    return _attribs[i].get<T>();
 }
 
 template <typename T>
@@ -506,7 +459,7 @@ T Mesh::AttribList::at(const size_t i) const
     if (i >= size())
         return T();
 
-    return _attribs.at(i)->get<T>();
+    return _attribs.at(i).get<T>();
 }
 
 template <typename VertsOut>
@@ -996,7 +949,3 @@ void Mesh::FaceList::emplace_edges(const EdgesIn& verts1, const EdgesIn& verts2,
         v2Prev = v2;
     }
 }
-
-#undef PTR_VECTOR
-#undef PTR_VECTOR_ITERATOR
-#undef PTR_VECTOR_CONST_ITERATOR

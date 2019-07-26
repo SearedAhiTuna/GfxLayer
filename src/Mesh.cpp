@@ -4,10 +4,6 @@
 #include <iostream>
 #include <list>
 
-#define PTR_VECTOR(TYPE) std::vector<std::shared_ptr<TYPE>>
-#define PTR_VECTOR_ITERATOR(TYPE) PtrIterator<PTR_VECTOR(TYPE)::iterator, TYPE>
-#define PTR_VECTOR_CONST_ITERATOR(TYPE) PtrIterator<PTR_VECTOR(TYPE)::const_iterator, TYPE>
-
 Mesh::Attribute::Attribute()
 {
 }
@@ -46,7 +42,7 @@ size_t Mesh::AttribList::sizeat(const size_t& i) const
     if (i >= size())
         return 0;
 
-    return _attribs.at(i)->size();
+    return _attribs.at(i).size();
 }
 
 bool Mesh::AttribList::has(const size_t& i) const
@@ -54,7 +50,7 @@ bool Mesh::AttribList::has(const size_t& i) const
     if (i >= size())
         return false;
 
-    return _attribs.at(i)->valid();
+    return _attribs.at(i).valid();
 }
 
 Mesh::Vert::Vert(const size_t& index, Mesh& mesh) :
@@ -118,22 +114,22 @@ Mesh::VertList::VertList(Mesh& mesh) :
 
 Mesh::Vert& Mesh::VertList::operator[](const size_t& ind)
 {
-    return *_verts[ind];
+    return _verts.at(ind);
 }
 
 const Mesh::Vert& Mesh::VertList::operator[](const size_t& ind) const
 {
-    return *_verts[ind];
+    return _verts.at(ind);
 }
 
 Mesh::Vert* Mesh::VertList::operator()(const size_t& ind)
 {
-    return _verts[ind].get();
+    return &_verts.at(ind);
 }
 
 const Mesh::Vert* Mesh::VertList::operator()(const size_t& ind) const
 {
-    return _verts[ind].get();
+    return &_verts.at(ind);
 }
 
 Mesh::Vert& Mesh::VertList::emplace()
@@ -144,24 +140,24 @@ Mesh::Vert& Mesh::VertList::emplace()
     return *pVert;
 }
 
-Mesh::PTR_VECTOR_ITERATOR(Mesh::Vert) Mesh::VertList::begin()
+PTR_VECTOR_ITERATOR(Mesh::Vert) Mesh::VertList::begin()
 {
-    return PTR_VECTOR_ITERATOR(Vert)(_verts.begin());
+    return _verts.begin();
 }
 
-Mesh::PTR_VECTOR_ITERATOR(Mesh::Vert) Mesh::VertList::end()
+PTR_VECTOR_ITERATOR(Mesh::Vert) Mesh::VertList::end()
 {
-    return PTR_VECTOR_ITERATOR(Vert)(_verts.end());
+    return _verts.end();
 }
 
-Mesh::PTR_VECTOR_CONST_ITERATOR(Mesh::Vert) Mesh::VertList::begin() const
+PTR_VECTOR_CONST_ITERATOR(Mesh::Vert) Mesh::VertList::begin() const
 {
-    return PTR_VECTOR_CONST_ITERATOR(Vert)(_verts.cbegin());
+    return _verts.cbegin();
 }
 
-Mesh::PTR_VECTOR_CONST_ITERATOR(Mesh::Vert) Mesh::VertList::end() const
+PTR_VECTOR_CONST_ITERATOR(Mesh::Vert) Mesh::VertList::end() const
 {
-    return PTR_VECTOR_CONST_ITERATOR(Vert)(_verts.cend());
+    return _verts.cend();
 }
 
 Mesh::Vert& Mesh::VertList::extrude(Vert& v)
@@ -176,7 +172,7 @@ Mesh::Vert& Mesh::VertList::extrude(Vert& v)
     for (size_t i = 0; i < v.attribs.size(); ++i)
     {
         if (v.attribs.has(i))
-            nv.attribs._attribs.emplace_back(v.attribs._attribs[i]);
+            nv.attribs._attribs.emplace_back(v.attribs._attribs.at_base(i));
         else
             nv.attribs._attribs.emplace_back();
     }
@@ -270,12 +266,12 @@ Mesh::EdgeList::EdgeList(Mesh& mesh) :
 
 Mesh::Edge& Mesh::EdgeList::operator[](const size_t& ind)
 {
-    return *_edges[ind];
+    return _edges.at(ind);
 }
 
 const Mesh::Edge& Mesh::EdgeList::operator[](const size_t& ind) const
 {
-    return *_edges[ind];
+    return _edges.at(ind);
 }
 
 Mesh::Edge& Mesh::EdgeList::emplace(Vert& v1, Vert& v2)
@@ -333,24 +329,24 @@ Mesh::Edge* Mesh::EdgeList::between(const Edge& e1, const Edge& e2)
     return nullptr;
 }
 
-Mesh::PTR_VECTOR_ITERATOR(Mesh::Edge) Mesh::EdgeList::begin()
+PTR_VECTOR_ITERATOR(Mesh::Edge) Mesh::EdgeList::begin()
 {
-    return PTR_VECTOR_ITERATOR(Edge)(_edges.begin());
+    return _edges.begin();
 }
 
-Mesh::PTR_VECTOR_ITERATOR(Mesh::Edge) Mesh::EdgeList::end()
+PTR_VECTOR_ITERATOR(Mesh::Edge) Mesh::EdgeList::end()
 {
-    return PTR_VECTOR_ITERATOR(Edge)(_edges.end());
+    return _edges.end();
 }
 
-Mesh::PTR_VECTOR_CONST_ITERATOR(Mesh::Edge) Mesh::EdgeList::begin() const
+PTR_VECTOR_CONST_ITERATOR(Mesh::Edge) Mesh::EdgeList::begin() const
 {
-    return PTR_VECTOR_CONST_ITERATOR(Edge)(_edges.cbegin());
+    return _edges.cbegin();
 }
 
-Mesh::PTR_VECTOR_CONST_ITERATOR(Mesh::Edge) Mesh::EdgeList::end() const
+PTR_VECTOR_CONST_ITERATOR(Mesh::Edge) Mesh::EdgeList::end() const
 {
-    return PTR_VECTOR_CONST_ITERATOR(Edge)(_edges.cend());
+    return _edges.cend();
 }
 
 Mesh::Edge& Mesh::EdgeList::extrude(Edge& e)
@@ -441,32 +437,32 @@ Mesh::FaceList::FaceList(Mesh& mesh):
 
 Mesh::Face& Mesh::FaceList::operator[](const size_t& ind)
 {
-    return *_faces[ind];
+    return _faces.at(ind);
 }
 
 const Mesh::Face& Mesh::FaceList::operator[](const size_t& ind) const
 {
-    return *_faces[ind];
+    return _faces.at(ind);
 }
 
-Mesh::PTR_VECTOR_ITERATOR(Mesh::Face) Mesh::FaceList::begin()
+PTR_VECTOR_ITERATOR(Mesh::Face) Mesh::FaceList::begin()
 {
-    return PTR_VECTOR_ITERATOR(Face)(_faces.begin());
+    return _faces.begin();
 }
 
-Mesh::PTR_VECTOR_ITERATOR(Mesh::Face) Mesh::FaceList::end()
+PTR_VECTOR_ITERATOR(Mesh::Face) Mesh::FaceList::end()
 {
-    return PTR_VECTOR_ITERATOR(Face)(_faces.end());
+    return _faces.end();
 }
 
-Mesh::PTR_VECTOR_CONST_ITERATOR(Mesh::Face) Mesh::FaceList::begin() const
+PTR_VECTOR_CONST_ITERATOR(Mesh::Face) Mesh::FaceList::begin() const
 {
-    return PTR_VECTOR_CONST_ITERATOR(Face)(_faces.cbegin());
+    return _faces.cbegin();
 }
 
-Mesh::PTR_VECTOR_CONST_ITERATOR(Mesh::Face) Mesh::FaceList::end() const
+PTR_VECTOR_CONST_ITERATOR(Mesh::Face) Mesh::FaceList::end() const
 {
-    return PTR_VECTOR_CONST_ITERATOR(Face)(_faces.cend());
+    return _faces.cend();
 }
 
 Mesh::Face& Mesh::FaceList::extrude(Face& f)

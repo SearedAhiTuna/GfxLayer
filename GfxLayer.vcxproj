@@ -43,7 +43,6 @@
     <ClInclude Include="external\lodepng\lodepng_util.h" />
     <ClInclude Include="inc\Arc.h" />
     <ClInclude Include="inc\Camera.h" />
-    <ClInclude Include="inc\dict.h" />
     <ClInclude Include="inc\FakeGlew.h" />
     <ClInclude Include="inc\Font.h" />
     <ClInclude Include="inc\FrameCounter.h" />
@@ -70,7 +69,6 @@
     <ClInclude Include="inc\Text.h" />
     <ClInclude Include="inc\Textures.h" />
     <ClInclude Include="inc\Types.h" />
-    <ClInclude Include="inc\unique_container.h" />
     <ClInclude Include="inc\Window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -152,7 +150,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>BUILD_GFXLAYER;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew\include;$(ProjectDir)external\glfw\include;$(ProjectDir)external\glm;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew\include;$(ProjectDir)external\glfw\include;$(ProjectDir)external\glm;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype\include;$(ProjectDir)external\ExtraSTL</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -176,7 +174,7 @@ copy $(ProjectDir)external\freetype\objs\x64\Debug\freetype.dll $(TargetDir)</Co
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>BUILD_GFXLAYER;_DEBUG;_CONSOLE;IS_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew\include;$(ProjectDir)external\glfw\include;$(ProjectDir)external\glm;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew\include;$(ProjectDir)external\glfw\include;$(ProjectDir)external\glm;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype\include;$(ProjectDir)external\ExtraSTL</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -210,7 +208,7 @@ copy $(ProjectDir)external\glfw\src\Debug\glfw3.lib $(TargetDir)</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>BUILD_GFXLAYER;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew\include;$(ProjectDir)external\glfw\include;$(ProjectDir)external\glm;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew\include;$(ProjectDir)external\glfw\include;$(ProjectDir)external\glm;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype\include;$(ProjectDir)external\ExtraSTL</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -238,7 +236,7 @@ copy $(ProjectDir)external\freetype\objs\x64\Release\freetype.dll $(TargetDir)</
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>BUILD_GFXLAYER;NDEBUG;_CONSOLE;IS_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew\include;$(ProjectDir)external\glfw\include;$(ProjectDir)external\glm;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew\include;$(ProjectDir)external\glfw\include;$(ProjectDir)external\glm;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype\include;$(ProjectDir)external\ExtraSTL</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>

@@ -6,6 +6,7 @@
 #include "Font.h"
 #include "FrameCounter.h"
 #include "Graphics.h"
+#include "InternalLibs.h"
 #include "Types.h"
 #include "Model.h"
 #include "function/Parabola3D.h"

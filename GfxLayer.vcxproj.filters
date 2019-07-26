@@ -113,9 +113,6 @@
     <ClInclude Include="inc\Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\unique_container.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="inc\function\Bezier.h">
       <Filter>Header Files\Function</Filter>
     </ClInclude>
@@ -150,9 +147,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\RefCntDict.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\dict.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\Rectangle.h">

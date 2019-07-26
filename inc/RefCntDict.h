@@ -39,11 +39,11 @@ public:
         Ref(const Ref& r):
             V(r)
         {
-            dict = r.dict;
+            _dict = r._dict;
             k = r.k;
 
-            if (dict)
-                dict->inc(k);
+            if (_dict)
+                _dict->inc(k);
         }
 
         Ref& operator=(const V& v) = delete;
@@ -52,16 +52,16 @@ public:
         {
             V::operator=(r);
 
-            if (dict != r.dict)
+            if (_dict != r._dict)
             {
-                if (dict)
-                    dict->dec(k);
+                if (_dict)
+                    _dict->dec(k);
 
-                dict = r.dict;
+                _dict = r._dict;
                 k = r.k;
 
-                if (dict)
-                    dict->inc(k);
+                if (_dict)
+                    _dict->inc(k);
             }
 
             return *this;
@@ -69,15 +69,15 @@ public:
 
         ~Ref()
         {
-            if (dict)
-                dict->dec(k);
+            if (_dict)
+                _dict->dec(k);
         }
 
     private:
         friend class RefCntDict;
 
     private:
-        RefCntDict* dict{};
+        RefCntDict* _dict{};
         K k;
     };
 
@@ -95,7 +95,7 @@ public:
 
         // Create a reference
         Ref r(base[k].v);
-        r.dict = this;
+        r._dict = this;
         r.k = k;
 
         // Return a reference
@@ -129,5 +129,5 @@ private:
     }
 
 private:
-    std::dict<K, Entry> base;
+    dict<K, Entry> base;
 };
