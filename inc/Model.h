@@ -59,6 +59,8 @@ void Model::edge_tf_3d(const EdgesIn& es, const mat4& tf)
     std::list<Vert*> vs;
     verts.within_edges(es, vs);
 
+    std::cout << verts.size() << "are within these edges\n";
+
     for (Vert* v : vs)
     {
         vert_tf_3d(*v, tf);

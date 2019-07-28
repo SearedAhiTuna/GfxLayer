@@ -15,10 +15,11 @@ void main()
 {
     // Output color = color of the texture at the specified UV
     
-	color = texture(TEXTURE_SAMPLER, uv);
+	//color = texture(TEXTURE_SAMPLER, uv);
+	color = vec4(1, 1, 1, 1);
 
-	if (texture(TEXTURE_SAMPLER, uv).a < .25f)
-		discard;
+	//if (texture(TEXTURE_SAMPLER, uv).a < .25f)
+		//discard;
 
 	float light = abs(norm.z);
 	color *= vec4(vec3(1,1,1) * light, 1);

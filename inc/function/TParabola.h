@@ -7,6 +7,11 @@
 
 #include <iostream>
 
+// Parabola positions:
+// theta = 0 -> (w/2, 0)
+// theta = PI/2 -> (0, h)
+// theta = PI -> (-w/2, 0)
+
 class TParabola : public Function<vec2, GLfloat>
 {
 public:

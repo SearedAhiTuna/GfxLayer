@@ -26,6 +26,9 @@ public:
     template <typename EdgesIn, typename FacesOut>
     void connect_edges(Model& m, EdgesIn& edges1, EdgesIn& edges2, const size_t& res, FacesOut& output);
 
+    template <typename EdgesIn, typename FacesOut>
+    void connect_fan(Model& m, Model::Vert& v, EdgesIn& edges, const size_t& res, FacesOut& output);
+
 private:
     void connect_verts(Model& m, Model::Vert& v1, Model::Vert& v2, const size_t& res, std::list<Model::Vert*>& output);
 
@@ -38,22 +41,34 @@ private:
 template <typename EdgesOut>
 void Arc::generate(Model& m, const size_t& res, EdgesOut& output)
 {
-    GLfloat step = (_tf - _t0) / res;
-
     // Emplace the first vertex
     Model::Vert* prev = &m.verts.emplace((*_func)(_t0));
+    std::cout << "f(0)=" << (*_func)(_t0).x << "," << (*_func)(_t0).y << "," << (*_func)(_t0).z << std::endl;
 
-    for (size_t i = 1; i <= res; ++i)
+    // Get the step
+    GLfloat step = res > 1 ? ((_tf - _t0) / (res - 1)) : 0;
+
+    // Extrude up to the last vertex
+    for (size_t i = 1; i < res; ++i)
     {
         GLfloat t = _t0 + i * step;
+        std::cout << "t=" << t << std::endl;
 
         // Extrude the next vertex
         Model::Vert* cur = &prev->extrude();
-        cur->attribs.at<vec3>(0) = (*_func)(t);
+
+        // Set the position
+        vec3 pos = (*_func)(t);
+        cur->attribs.at<vec3>(MDL_ATT_POSITION) = pos;
+
+        std::cout << "f(t)=" << pos.x << "," << pos.y << "," << pos.z << std::endl;
 
         // Get the connecting edge
         Model::Edge* e = m.edges.between(*prev, *cur);
         output.push_back(e);
+
+        pos = cur->attribs.at<vec3>(MDL_ATT_POSITION);
+        std::cout << "pos=" << pos.x << "," << pos.y << "," << pos.z << std::endl;
 
         prev = cur;
     }

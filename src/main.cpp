@@ -54,14 +54,25 @@ void bgThread(Window* w)
     // Create a model
     Model m;
 
-    m.verts.emplace(VEC3_ORIGIN, UV_BOTTOM_LEFT);
-    m.verts.emplace(VEC3_RIGHT, UV_BOTTOM_RIGHT);
-    m.verts.emplace(VEC3_RIGHT + VEC3_UP, UV_TOP_RIGHT);
-    m.verts.emplace(VEC3_UP, UV_TOP_LEFT);
+    //m.verts.emplace(VEC3_ORIGIN, UV_BOTTOM_LEFT);
+    //m.verts.emplace(VEC3_RIGHT, UV_BOTTOM_RIGHT);
+    //m.verts.emplace(VEC3_RIGHT + VEC3_UP, UV_TOP_RIGHT);
+    //m.verts.emplace(VEC3_UP, UV_TOP_LEFT);
 
-    m.faces.emplace_verts(Verts(m.verts(0), m.verts(1), m.verts(2), m.verts(3)));
+    //m.faces.emplace_verts(Verts(m.verts(0), m.verts(1), m.verts(2), m.verts(3)));
 
-    m.generate_face_normals();
+    Arc* a1 = new Arc(new Parabola3D(.5f, .5f, VEC3_ORIGIN, PI/2*VEC3_UP), 0, PI);
+    std::list<Model::Edge*> edges1;
+    a1->generate(m, 10, edges1);
+    std::cout << "Generated " << edges1.size() << " edges\n";
+
+    std::list<Model::Edge*> edges2;
+    m.edges.extrude(edges1, edges2);
+    std::cout << "Extruded " << edges2.size() << " edges\n";
+
+    m.edge_tf_3d(edges2, translate(VEC3_RIGHT * .25f));
+
+    m.generate_vert_normals();
 
     std::cout << "Generated the normals\n";
     std::cout << m << std::endl;
@@ -71,7 +82,7 @@ void bgThread(Window* w)
     Shape s;
     m.generate_shape(s);
     s.Program(0);
-    s.TF(false, translate(VEC3_FORWARDS));
+    //s.TF(false, translate(VEC3_FORWARDS));
     s.Texture("image.png");
 
     std::cout << "Shape:\n" << s << std::endl;
@@ -91,7 +102,7 @@ void bgThread(Window* w)
     t.Program(0);
 
     // Add the text
-    w->RegisterShapes(t);
+    //w->RegisterShapes(t);
 
     // Move the camera a bit
     //w->getRenderer().getCamera().tl(true, VEC3_BACKWARDS * 1.0f);

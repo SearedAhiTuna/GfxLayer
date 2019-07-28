@@ -172,7 +172,7 @@ Mesh::Vert& Mesh::VertList::extrude(Vert& v)
     for (size_t i = 0; i < v.attribs.size(); ++i)
     {
         if (v.attribs.has(i))
-            nv.attribs._attribs.emplace_back(v.attribs._attribs.at_base(i));
+            nv.attribs._attribs.emplace_back(new Attribute(v.attribs._attribs[i]));
         else
             nv.attribs._attribs.emplace_back();
     }
