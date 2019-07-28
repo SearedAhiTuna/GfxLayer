@@ -61,22 +61,23 @@ void bgThread(Window* w)
 
     //m.faces.emplace_verts(Verts(m.verts(0), m.verts(1), m.verts(2), m.verts(3)));
 
-    Arc* a1 = new Arc(new Parabola3D(.5f, .5f, VEC3_ORIGIN, PI/2*VEC3_UP), 0, PI);
+    Arc* a1 = new Arc(new Parabola3D(.5f, .5f, VEC3_ORIGIN, PI/2*VEC3_UP), PI, PI / 2);
     std::list<Model::Edge*> edges1;
     a1->generate(m, 10, edges1);
-    std::cout << "Generated " << edges1.size() << " edges\n";
 
+    Arc* a2 = new Arc(new Parabola3D(.25f, .35f, .25f * VEC3_RIGHT, PI / 2 * VEC3_UP), PI, PI/2);
     std::list<Model::Edge*> edges2;
-    m.edges.extrude(edges1, edges2);
-    std::cout << "Extruded " << edges2.size() << " edges\n";
+    a2->generate(m, 10, edges2);
 
-    m.edge_tf_3d(edges2, translate(VEC3_RIGHT * .25f));
+    Arc* a3 = new Arc(new Parabola3D(1, 1, VEC3_ORIGIN, PI/2 * VEC3_RIGHT), 0, PI / 2);
+    std::list<Model::Face*> faces;
+    a3->connect_edges(m, edges2, edges1, 10, faces);
 
-    m.generate_vert_normals();
+    m.generate_face_normals();
 
-    std::cout << "Generated the normals\n";
-    std::cout << m << std::endl;
-    std::cout.flush();
+    //std::cout << "Generated the normals\n";
+    //std::cout << m << std::endl;
+    //std::cout.flush();
 
     // Create a shape from the model
     Shape s;
@@ -85,8 +86,8 @@ void bgThread(Window* w)
     //s.TF(false, translate(VEC3_FORWARDS));
     s.Texture("image.png");
 
-    std::cout << "Shape:\n" << s << std::endl;
-    std::cout.flush();
+    //std::cout << "Shape:\n" << s << std::endl;
+    //std::cout.flush();
 
     w->RegisterShape(s);
 

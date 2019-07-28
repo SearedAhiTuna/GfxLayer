@@ -43,7 +43,6 @@ void Arc::generate(Model& m, const size_t& res, EdgesOut& output)
 {
     // Emplace the first vertex
     Model::Vert* prev = &m.verts.emplace((*_func)(_t0));
-    std::cout << "f(0)=" << (*_func)(_t0).x << "," << (*_func)(_t0).y << "," << (*_func)(_t0).z << std::endl;
 
     // Get the step
     GLfloat step = res > 1 ? ((_tf - _t0) / (res - 1)) : 0;
@@ -52,7 +51,6 @@ void Arc::generate(Model& m, const size_t& res, EdgesOut& output)
     for (size_t i = 1; i < res; ++i)
     {
         GLfloat t = _t0 + i * step;
-        std::cout << "t=" << t << std::endl;
 
         // Extrude the next vertex
         Model::Vert* cur = &prev->extrude();
@@ -61,14 +59,9 @@ void Arc::generate(Model& m, const size_t& res, EdgesOut& output)
         vec3 pos = (*_func)(t);
         cur->attribs.at<vec3>(MDL_ATT_POSITION) = pos;
 
-        std::cout << "f(t)=" << pos.x << "," << pos.y << "," << pos.z << std::endl;
-
         // Get the connecting edge
         Model::Edge* e = m.edges.between(*prev, *cur);
         output.push_back(e);
-
-        pos = cur->attribs.at<vec3>(MDL_ATT_POSITION);
-        std::cout << "pos=" << pos.x << "," << pos.y << "," << pos.z << std::endl;
 
         prev = cur;
     }

@@ -191,7 +191,7 @@ void Model::generate_shape(Shape& shape, const GLenum& mode)
     size_t nattr = 0;
     for (const auto& pair : values)
     {
-        std::cout << "(" << pair.first << "," << (pair.second.size() / sizes[pair.first]) << ")\n";
+        //std::cout << "(" << pair.first << "," << (pair.second.size() / sizes[pair.first]) << ")\n";
 
         if (pair.first >= nattr)
             nattr = pair.first + 1;
@@ -208,13 +208,13 @@ void Model::generate_shape(Shape& shape, const GLenum& mode)
     {
         if (values.count(i))
         {
-            std::cout << "Writing " << i << "\n";
+            /*std::cout << "Writing " << i << "\n";
 
             for (const GLfloat& v : values[i])
             {
                 std::cout << " " << v;
             }
-            std::cout << "\n";
+            std::cout << "\n";*/
 
             // Get the dimensions for this attribute
             size_t ndims = sizes[i];
@@ -269,7 +269,7 @@ struct VecMapper
 
                 if (glm::length(disp) <= merge)
                 {
-                    std::cout << "Found one\n";
+                    //std::cout << "Found one\n";
                     base.emplace(v, pair);
                     return false;
                 }

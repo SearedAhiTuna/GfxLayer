@@ -81,7 +81,7 @@ void Arc::connect_verts(Model& m, Model::Vert& v1, Model::Vert& v2, const size_t
         vec3 angleBetween = angle_between(tfDisp, disp);
 
         // Rotate to be in the correct direction
-        baseTF = rotate(-length(angleBetween), normalize(angleBetween)) * baseTF;
+        baseTF = rotate(length(angleBetween), normalize(angleBetween)) * baseTF;
     }
 
     // Calculate transformation
