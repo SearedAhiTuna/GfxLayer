@@ -82,24 +82,34 @@ void Arc::connect_edges(Model& m, EdgesIn& edges1, EdgesIn& edges2, const size_t
     std::list<Model::Vert*> verts2;
     m.verts.within_edges(edges2, verts2);
 
-    std::cout << "Verts 1:\n";
-    for (Model::Vert* v : verts1)
-        std::cout << " " << *v;
-    std::cout << "\n";
-
-    std::cout << "Verts 2:\n";
-    for (Model::Vert* v : verts2)
-        std::cout << " " << *v;
-    std::cout << "\n";
-
-    std::cout.flush();
-
     std::list<Model::Vert*> prev;
 
     for (auto it1 = verts1.begin(), it2 = verts2.begin(); it1 != verts1.end(); ++it1, ++it2)
     {
         std::list<Model::Vert*> cur;
         connect_verts(m, **it1, **it2, res, cur);
+
+        if (!prev.empty())
+        {
+            m.faces.emplace_edges(prev, cur, output);
+        }
+
+        prev = cur;
+    }
+}
+
+template<typename EdgesIn, typename FacesOut>
+void Arc::connect_fan(Model& m, Model::Vert& v, EdgesIn& edges, const size_t& res, FacesOut& output)
+{
+    std::list<Model::Vert*> verts;
+    m.verts.within_edges(edges, verts);
+
+    std::list<Model::Vert*> prev;
+
+    for (auto it = verts.begin(); it != verts.end(); ++it)
+    {
+        std::list<Model::Vert*> cur;
+        connect_verts(m, v, **it, res, cur);
 
         if (!prev.empty())
         {

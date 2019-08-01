@@ -69,9 +69,12 @@ void bgThread(Window* w)
     std::list<Model::Edge*> edges2;
     a2->generate(m, 10, edges2);
 
+    Model::Vert& v = m.verts.emplace(.5f * VEC3_RIGHT);
+
     Arc* a3 = new Arc(new Parabola3D(1, 1, VEC3_ORIGIN, PI/2 * VEC3_RIGHT), 0, PI / 2);
     std::list<Model::Face*> faces;
     a3->connect_edges(m, edges2, edges1, 10, faces);
+    a3->connect_fan(m, v, edges2, 10, faces);
 
     m.generate_face_normals();
 
