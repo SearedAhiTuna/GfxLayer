@@ -61,7 +61,7 @@ public:
     class AttribList
     {
     public:
-        AttribList& operator=(const AttribList&) = delete;
+        AttribList& operator=(const AttribList& other);
 
         template <typename T>
         T& at(const size_t i);
@@ -147,6 +147,8 @@ public:
         const Vert* operator()(const size_t& ind) const;
 
         Vert& emplace();
+
+        Vert& emplace(const Vert& v);
 
         template <typename Type>
         Vert& emplace(const Type& attrib);
@@ -400,6 +402,8 @@ public:
     virtual ~Mesh();
 
     Mesh& operator=(const Mesh& other);  // Undefined
+
+    Mesh& operator+=(Mesh& other);
 
     virtual std::ostream& print(std::ostream& out) const;
     void print_verbose(std::ostream& out);

@@ -53,6 +53,8 @@ void bgThread(Window* w)
 
     // Create a model
     Model m;
+    Model m1;
+    Model m2;
 
     //m.verts.emplace(VEC3_ORIGIN, UV_BOTTOM_LEFT);
     //m.verts.emplace(VEC3_RIGHT, UV_BOTTOM_RIGHT);
@@ -63,22 +65,36 @@ void bgThread(Window* w)
 
     Arc* a1 = new Arc(new Parabola3D(.5f, .5f, VEC3_ORIGIN, PI/2*VEC3_UP), PI, PI / 2);
     std::list<Model::Edge*> edges1;
-    a1->generate(m, 10, edges1);
+    a1->generate(m1, 10, edges1);
 
     Arc* a2 = new Arc(new Parabola3D(.25f, .35f, .25f * VEC3_RIGHT, PI / 2 * VEC3_UP), PI, PI/2);
     std::list<Model::Edge*> edges2;
-    a2->generate(m, 10, edges2);
+    a2->generate(m1, 10, edges2);
+    std::list<Model::Edge*> edges3;
+    a2->generate(m2, 10, edges3);
 
-    Model::Vert& v = m.verts.emplace(.5f * VEC3_RIGHT);
+    Model::Vert& v = m2.verts.emplace(.5f * VEC3_RIGHT);
 
     Arc* a3 = new Arc(new Parabola3D(1, 1, VEC3_ORIGIN, PI/2 * VEC3_RIGHT), 0, PI / 2);
     std::list<Model::Face*> faces;
-    a3->connect_edges(m, edges2, edges1, 10, faces);
-    a3->connect_fan(m, v, edges2, 10, faces);
+    a3->connect_edges(m1, edges2, edges1, 10, faces);
+    a3->connect_fan(m2, v, edges3, 10, faces);
+
+    m += m1;
+    m += m2;
 
     m.generate_face_normals();
+    //m2.generate_face_normals();
 
-    //std::cout << "Generated the normals\n";
+    //std::cout << "m1=\n";
+    //std::cout << m1 << std::endl;
+    //std::cout.flush();
+
+    //std::cout << "m2=\n";
+    //std::cout << m2 << std::endl;
+    //std::cout.flush();
+
+    //std::cout << "m=\n";
     //std::cout << m << std::endl;
     //std::cout.flush();
 

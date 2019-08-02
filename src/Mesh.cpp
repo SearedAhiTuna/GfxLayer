@@ -32,6 +32,24 @@ size_t Mesh::Attribute::size() const
     return _size;
 }
 
+Mesh::AttribList& Mesh::AttribList::operator=(const AttribList& other)
+{
+    _attribs.reserve(other.size());
+    for (size_t i = 0; i < other.size(); ++i)
+    {
+        if (other.has(i))
+        {
+            _attribs.emplace_back(new Attribute(other._attribs.at(i)));
+        }
+        else
+        {
+            _attribs.emplace_back(new Attribute());
+        }
+    }
+
+    return *this;
+}
+
 size_t Mesh::AttribList::size() const
 {
     return _attribs.size();
@@ -138,6 +156,21 @@ Mesh::Vert& Mesh::VertList::emplace()
     _verts.emplace_back(pVert);
 
     return *pVert;
+}
+
+Mesh::Vert& Mesh::VertList::emplace(const Vert& v)
+{
+    // TODO: insert return statement here
+    Vert& nv = emplace();
+    for (size_t i = 0; i < v.attribs.size(); ++i)
+    {
+        if (v.attribs.has(i))
+        {
+            nv.attribs = v.attribs;
+        }
+    }
+
+    return nv;
 }
 
 REF_VECTOR_ITERATOR(Mesh::Vert) Mesh::VertList::begin()
@@ -485,6 +518,48 @@ Mesh::Mesh():
 
 Mesh::~Mesh()
 {
+}
+
+Mesh& Mesh::operator+=(Mesh& other)
+{
+    std::map<Vert*, Vert*> vmap;
+
+    for (Vert& v : other.verts)
+    {
+        Vert& nv = verts.emplace(v);
+        vmap[&v] = &nv;
+    }
+
+    std::map<Edge*, Edge*> emap;
+
+    for (Edge& e : other.edges)
+    {
+        std::vector<Vert*> vs;
+        vs.reserve(2);
+        e.adjacent_verts(vs);
+
+        Vert& nv1 = *vmap[vs[0]];
+        Vert& nv2 = *vmap[vs[1]];
+
+        Edge& ne = edges.emplace(nv1, nv2);
+        emap[&e] = &ne;
+    }
+
+    for (Face& f : other.faces)
+    {
+        std::list<Edge*> es;
+        f.directly_adjacent_edges(es);
+
+        std::list<Edge*> nes;
+        for (Edge* e : es)
+        {
+            nes.push_back(emap[e]);
+        }
+
+        faces.emplace_edges(nes);
+    }
+
+    return *this;
 }
 
 std::ostream& Mesh::print(std::ostream& out) const
