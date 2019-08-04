@@ -8,11 +8,12 @@ static vec3 angle_between(const vec3& v1, const vec3& v2)
     GLfloat num = dot(v1, v2);
     GLfloat denom = length(v1) * length(v2);
 
-    GLfloat angleScalar = num / denom;
+    GLfloat cosTheta = num / denom;
+    GLfloat theta = acosf(cosTheta);
 
     vec3 crossProd = cross(v1, v2);
 
-    return angleScalar * normalize(crossProd);
+    return theta * normalize(crossProd);
 }
 
 Arc::Arc(FunctionR1R3* func, GLfloat t0, GLfloat tf):
@@ -20,6 +21,11 @@ Arc::Arc(FunctionR1R3* func, GLfloat t0, GLfloat tf):
     _t0(t0),
     _tf(tf)
 {
+}
+
+vec3 Arc::func(const GLfloat& t)
+{
+    return (*_func)(t);
 }
 
 void Arc::generate(Model& m, const size_t& res)
@@ -49,8 +55,13 @@ void Arc::connect_verts(Model& m, Model::Vert& v1, Model::Vert& v2, const size_t
     // Attempt to connect by scaling each axis
     vec3 scVec(1,1,1);
 
-    for (length_t i = 0; i != scVec.length(); ++i)
+    // Keep track of which dimensions cannot be scaled
+    vec3 zeroAxis;
+
+    for (length_t i = 0; i != 3; ++i)
     {
+        zeroAxis[i] = (myDisp[i] == 0) ? 0.0f : 1.0f;
+
         if (myDisp[i] != 0)
         {
             if (disp[i] == 0)
@@ -70,18 +81,24 @@ void Arc::connect_verts(Model& m, Model::Vert& v1, Model::Vert& v2, const size_t
     // Apply extra transformation
     if (extra)
     {
-        // Get the extra scale
-        GLfloat lenScale = length(disp) / length(tfDisp);
+        // Get headings along the yz plane
+        vec3 heading = vec3(0, 1, 1) * disp;
+        vec3 myHeading = vec3(0, 1, 1) * myDisp;
 
-        // Scale so the displacement is the correct length
-        baseTF = scale(vec3(1,1,1) * lenScale) * baseTF;
-        tfDisp = TF(baseTF, myDisp);
+        // Get the angle to rotate
+        vec3 angBetween = angle_between(myHeading, heading);
 
-        // Get the angle between the current displacement and the target
-        vec3 angleBetween = angle_between(tfDisp, disp);
+        // Get the perpendicular scale factor
+        GLfloat perpScale = length(heading) / length(myHeading);
 
-        // Rotate to be in the correct direction
-        baseTF = rotate(length(angleBetween), normalize(angleBetween)) * baseTF;
+        // Get the parallel scale factor
+        GLfloat parScale = length(disp - heading) / length(myDisp - myHeading);
+
+        // Rotate about the x axis
+        baseTF = rotate(length(angBetween), vec3(1, 0, 0));
+
+        // Scale to the correct size
+        baseTF = scale(vec3(parScale, perpScale, perpScale)) * baseTF;
     }
 
     // Calculate transformation
@@ -94,10 +111,10 @@ void Arc::connect_verts(Model& m, Model::Vert& v1, Model::Vert& v2, const size_t
     output.emplace_back(prev);
 
     // Get the step
-    GLfloat step = res > 1 ? ((_tf - _t0) / (res - 1)) : 0;
+    GLfloat step = (_tf - _t0) / (res - 1);
 
     // Extrude up to the last vertex
-    for (size_t i = 1; i < res; ++i)
+    for (size_t i = 1; i < res - 1; ++i)
     {
         GLfloat t = _t0 + i * step;
 

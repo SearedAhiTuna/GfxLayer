@@ -18,6 +18,8 @@ private:
 public:
     Arc(FunctionR1R3* func, GLfloat t0 = 0, GLfloat tf = 1);
 
+    vec3 func(const GLfloat& t);
+
     void generate(Model& m, const size_t& res);
 
     template <typename EdgesOut>

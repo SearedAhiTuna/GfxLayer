@@ -63,25 +63,20 @@ void bgThread(Window* w)
 
     //m.faces.emplace_verts(Verts(m.verts(0), m.verts(1), m.verts(2), m.verts(3)));
 
-    Arc* a1 = new Arc(new Parabola3D(.5f, .5f, VEC3_ORIGIN, PI/2*VEC3_UP), PI, PI / 2);
+    Arc* a1 = new Arc(new Bezier({vec3(0,0,.5), vec3(0,.5,.5), vec3(0,.5,0)}));
     std::list<Model::Edge*> edges1;
-    a1->generate(m1, 10, edges1);
+    a1->generate(m1, 2, edges1);
 
-    Arc* a2 = new Arc(new Parabola3D(.25f, .35f, .25f * VEC3_RIGHT, PI / 2 * VEC3_UP), PI, PI/2);
+    Arc* a2 = new Arc(new Bezier({ vec3(.5,0,.5), vec3(.5,.5,.5), vec3(.5,.5,0) }));
     std::list<Model::Edge*> edges2;
-    a2->generate(m1, 10, edges2);
-    std::list<Model::Edge*> edges3;
-    a2->generate(m2, 10, edges3);
+    a2->generate(m1, 2, edges2);
 
-    Model::Vert& v = m2.verts.emplace(.5f * VEC3_RIGHT);
-
-    Arc* a3 = new Arc(new Parabola3D(1, 1, VEC3_ORIGIN, PI/2 * VEC3_RIGHT), 0, PI / 2);
+    Arc* a3 = new Arc(new Parabola3D(1, 1), 0, PI / 2);
     std::list<Model::Face*> faces;
-    a3->connect_edges(m1, edges2, edges1, 10, faces);
-    a3->connect_fan(m2, v, edges3, 10, faces);
+
+    a3->connect_edges(m1, edges2, edges1, 2, faces);
 
     m += m1;
-    m += m2;
 
     m.generate_face_normals();
     //m2.generate_face_normals();
@@ -94,9 +89,9 @@ void bgThread(Window* w)
     //std::cout << m2 << std::endl;
     //std::cout.flush();
 
-    //std::cout << "m=\n";
-    //std::cout << m << std::endl;
-    //std::cout.flush();
+    std::cout << "m=\n";
+    std::cout << m << std::endl;
+    std::cout.flush();
 
     // Create a shape from the model
     Shape s;
@@ -105,7 +100,7 @@ void bgThread(Window* w)
     //s.TF(false, translate(VEC3_FORWARDS));
     s.Texture("image.png");
 
-    //std::cout << "Shape:\n" << s << std::endl;
+    std::cout << "Shape:\n" << s << std::endl;
     //std::cout.flush();
 
     w->RegisterShape(s);
