@@ -31,6 +31,7 @@ public:
         vec sum;
 
         size_t n = degree();
+
         for (size_t i = 0; i <= n; ++i)
         {
             const vec& v = std::vector<vec>::at(i);

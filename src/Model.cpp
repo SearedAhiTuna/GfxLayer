@@ -8,6 +8,14 @@
 #include <unordered_map>
 #include <unordered_set>
 
+void Model::tf_3d(const mat4& tf)
+{
+    for (Vert& v : verts)
+    {
+        vert_tf_3d(v, tf);
+    }
+}
+
 void Model::vert_tf_3d(Vert& v, const mat4& tf)
 {
     vec3& pos = v.attribs.at<vec3>(MDL_ATT_POSITION);

@@ -15,6 +15,8 @@ class Shape;
 class Model : public Mesh
 {
 public:
+    void tf_3d(const mat4& tf);
+
     void vert_tf_3d(Vert& v, const mat4& tf);
 
     template <typename VertsIn>
