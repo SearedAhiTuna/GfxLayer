@@ -176,6 +176,12 @@
     <ClInclude Include="inc\FakeGlew.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="inc\function\Ellipse.h">
+      <Filter>Header Files\Function</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\function\Ellipse3D.h">
+      <Filter>Header Files\Function</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\simple.vs">

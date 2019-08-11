@@ -47,6 +47,8 @@
     <ClInclude Include="inc\Font.h" />
     <ClInclude Include="inc\FrameCounter.h" />
     <ClInclude Include="inc\function\Bezier.h" />
+    <ClInclude Include="inc\function\Ellipse.h" />
+    <ClInclude Include="inc\function\Ellipse3D.h" />
     <ClInclude Include="inc\function\Function.h" />
     <ClInclude Include="inc\function\Parabola.h" />
     <ClInclude Include="inc\function\Parabola3D.h" />
