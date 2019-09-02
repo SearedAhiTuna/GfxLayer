@@ -13,7 +13,7 @@ Text::Text(Font& fnt, const vec3& hor, const vec3& ver, const std::string text)
     for (const char& c : text)
     {
         Letter l = fnt.get(c);
-        std::cout << "Texture = " << l.tex << "\n";
+        //std::cout << "Texture = " << l.tex << "\n";
 
         vec3 v1 = (l.dims.x / height) * hor;
         vec3 v2 = (l.dims.y / height) * ver;
@@ -33,7 +33,7 @@ Text::Text(Font& fnt, const vec3& hor, const vec3& ver, const std::string text)
         {
             GLuint kern = fnt.kerning(prev, c);
             offset += (kern / height) * hor;
-            std::cout << "Kern=" << kern << "\n";
+            //std::cout << "Kern=" << kern << "\n";
         }
 
         r.TF(true, translate(offset));

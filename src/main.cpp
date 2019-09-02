@@ -65,16 +65,19 @@ void bgThread(Window* w)
 
     Arc* a1 = new Arc(new Bezier({vec3(0,0,.5), vec3(0,.5,.5), vec3(0,.5,0)}));
     std::list<Model::Edge*> edges1;
-    a1->generate(m1, 2, edges1);
+    a1->generate(m1, 5, edges1);
 
-    Arc* a2 = new Arc(new Bezier({ vec3(.5,0,.5), vec3(.5,.5,.5), vec3(.5,.5,0) }));
+    Arc* a2 = new Arc(new Bezier({ vec3(.5,0,.25), vec3(.5,.25,.25), vec3(.5,.25,0) }));
     std::list<Model::Edge*> edges2;
-    a2->generate(m1, 2, edges2);
+    a2->generate(m1, 5, edges2);
 
     Arc* a3 = new Arc(new Parabola3D(1, 1), 0, PI / 2);
     std::list<Model::Face*> faces;
 
-    a3->connect_edges(m1, edges2, edges1, 2, faces);
+    auto& v = m1.verts.emplace(vec3(.75, 0, 0));
+
+    a3->connect_edges(m1, edges2, edges1, 5, VEC3_RIGHT, faces);
+    a3->connect_fan(m1, v, edges2, 10, VEC3_RIGHT, faces);
 
     m += m1;
 
@@ -89,9 +92,9 @@ void bgThread(Window* w)
     //std::cout << m2 << std::endl;
     //std::cout.flush();
 
-    std::cout << "m=\n";
-    std::cout << m << std::endl;
-    std::cout.flush();
+    //std::cout << "m=\n";
+    //std::cout << m << std::endl;
+    //std::cout.flush();
 
     // Create a shape from the model
     Shape s;
@@ -100,7 +103,7 @@ void bgThread(Window* w)
     //s.TF(false, translate(VEC3_FORWARDS));
     s.Texture("image.png");
 
-    std::cout << "Shape:\n" << s << std::endl;
+    //std::cout << "Shape:\n" << s << std::endl;
     //std::cout.flush();
 
     w->RegisterShape(s);
@@ -123,6 +126,7 @@ void bgThread(Window* w)
     //w->getRenderer().getCamera().tl(true, VEC3_BACKWARDS * 1.0f);
     //w->getRenderer().getCamera().lookAt(VEC3_ORIGIN, false);
     w->Camera().follow(true, 1.0f);
+    w->Camera().strafe(VEC3_RIGHT);
     //w->Camera().follow(true, VEC3_UP * .5f);
     //w->Camera().rot(true, PI / 4, VEC3_LEFT);
 

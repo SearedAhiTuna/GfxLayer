@@ -83,16 +83,16 @@ struct FontInfo
 
         FT_GlyphSlotRec* glyph = face->glyph;
 
-        std::cout << "Index = " << glyph->glyph_index << "\n";
-        std::cout << "Left = " << glyph->bitmap_left << "\n";
-        std::cout << "Top = " << glyph->bitmap_top << "\n";
-        std::cout << "Advance x = " << glyph->advance.x << "\n";
-        std::cout << "Advance y = " << glyph->advance.y << "\n";
+        //std::cout << "Index = " << glyph->glyph_index << "\n";
+        //std::cout << "Left = " << glyph->bitmap_left << "\n";
+        //std::cout << "Top = " << glyph->bitmap_top << "\n";
+        //std::cout << "Advance x = " << glyph->advance.x << "\n";
+        //std::cout << "Advance y = " << glyph->advance.y << "\n";
 
         FT_Bitmap& bitmap = glyph->bitmap;
 
-        std::cout << "Width = " << bitmap.width << "\n";
-        std::cout << "Rows = " << bitmap.rows << "\n";
+        //std::cout << "Width = " << bitmap.width << "\n";
+        //std::cout << "Rows = " << bitmap.rows << "\n";
 
         memcpy(dst, bitmap.buffer, (size_t)bitmap.rows * (size_t)bitmap.pitch);
         dims.x = bitmap.width;
