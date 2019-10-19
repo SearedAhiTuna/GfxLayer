@@ -10,8 +10,8 @@ public:
     Ellipse3D(const Ellipse& base, const vec3& center = vec3(0, 0, 0), const vec3& xaxis = vec3(1, 0, 0), const vec3& yaxis = vec3(0, 1, 0)) :
         _base(base),
         _center(center),
-        _xaxis(normalize(xaxis)),
-        _yaxis(normalize(yaxis))
+        _xaxis(xaxis),
+        _yaxis(yaxis)
     {
     }
 

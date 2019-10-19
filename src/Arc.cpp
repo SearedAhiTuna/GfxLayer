@@ -45,8 +45,8 @@ static vec3 rect_to_cyl(const vec3& point, const vec3& axisZ)
         // Keep track for next time
         prevAxisZ = axisZ;
 
-        std::cout << "AXIS Z = " << COUT_VEC3(axisZ) << std::endl;
-        std::cout << "AXIS R = " << COUT_VEC3(axisR) << std::endl;
+        //std::cout << "AXIS Z = " << COUT_VEC3(axisZ) << std::endl;
+        //std::cout << "AXIS R = " << COUT_VEC3(axisR) << std::endl;
     }
 
     // Get tangent (along z axis) and normal (perp to z axis)
@@ -233,7 +233,7 @@ void Arc::connect_verts(Model& m, Model::Vert& v1, Model::Vert& v2, const size_t
 void Arc::connect_verts_rotate(Model& m, Model::Vert& v1, Model::Vert& v2,
                                const size_t& res, const vec3& axis, std::list<Model::Vert*>& output)
 {
-    std::cout << "---connect_verts_rotate---\n";
+    //std::cout << "---connect_verts_rotate---\n";
 
     // Get displacement of connector function
     vec3 myStart = (*_func)(_t0);
@@ -241,8 +241,8 @@ void Arc::connect_verts_rotate(Model& m, Model::Vert& v1, Model::Vert& v2,
     vec3 myDisp = myEnd - myStart;
     vec3 myDispCyl = rect_to_cyl(myDisp, axis);
 
-    std::cout << "myDisp=" << COUT_VEC3(myDisp) << std::endl;
-    std::cout << "myDispCyl=R" << COUT_VEC3(myDispCyl) << std::endl;
+    //std::cout << "myDisp=" << COUT_VEC3(myDisp) << std::endl;
+    //std::cout << "myDispCyl=R" << COUT_VEC3(myDispCyl) << std::endl;
 
     // Get displacement from source to destination
     vec3 start = v1.attribs.at<vec3>(MDL_ATT_POSITION);
@@ -250,17 +250,17 @@ void Arc::connect_verts_rotate(Model& m, Model::Vert& v1, Model::Vert& v2,
     vec3 disp = end - start;
     vec3 dispCyl = rect_to_cyl(disp, axis);
 
-    std::cout << "disp=" << COUT_VEC3(disp) << std::endl;
-    std::cout << "dispCyl=R" << COUT_VEC3(dispCyl) << std::endl;
+    //std::cout << "disp=" << COUT_VEC3(disp) << std::endl;
+    //std::cout << "dispCyl=R" << COUT_VEC3(dispCyl) << std::endl;
 
     // Get transformation in cylindrical coords
     GLfloat sR = dispCyl.RADIUS / myDispCyl.RADIUS;
     GLfloat dAngle = dispCyl.ANGLE - myDispCyl.ANGLE;
     GLfloat sZ = dispCyl.z / myDispCyl.z;
 
-    std::cout << "sR=" << sR << std::endl;
-    std::cout << "dAngle=" << dAngle << std::endl;
-    std::cout << "sZ=" << sZ << std::endl;
+    //std::cout << "sR=" << sR << std::endl;
+    //std::cout << "dAngle=" << dAngle << std::endl;
+    //std::cout << "sZ=" << sZ << std::endl;
 
     mat4 tfRotCyl = translate(vec3(0, dAngle, 0));
     mat4 tfScaleCyl = scale(vec3(sR, 1, sZ));
@@ -284,19 +284,19 @@ void Arc::connect_verts_rotate(Model& m, Model::Vert& v1, Model::Vert& v2,
 
         // Get the vertex position
         vec3 valRect = (*_func)(t);
-        std::cout << "val: " << COUT_VEC3(valRect);
+        //std::cout << "val: " << COUT_VEC3(valRect);
         valRect -= myStart;
-        std::cout << " -> " << COUT_VEC3(valRect);
+        //std::cout << " -> " << COUT_VEC3(valRect);
 
         vec4 valCyl = vec4(rect_to_cyl(valRect, axis), 1);
-        std::cout << " -> R" << COUT_VEC3(valCyl);
+        //std::cout << " -> R" << COUT_VEC3(valCyl);
         valCyl = tfCyl * valCyl;
-        std::cout << " -> R" << COUT_VEC3(valCyl);
+        //std::cout << " -> R" << COUT_VEC3(valCyl);
 
         valRect = cyl_to_rect(valCyl.xyz, axis);
-        std::cout << " -> " << COUT_VEC3(valRect);
+        //std::cout << " -> " << COUT_VEC3(valRect);
         valRect += start;
-        std::cout << " -> " << COUT_VEC3(valRect) << std::endl;
+        //std::cout << " -> " << COUT_VEC3(valRect) << std::endl;
 
         // Set the vertex position
         cur->attribs.at<vec3>(MDL_ATT_POSITION) = valRect;
