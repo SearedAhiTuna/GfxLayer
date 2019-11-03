@@ -19,8 +19,8 @@ public:
     {
         if (_u == 0 && _v == 0)
         {
-            float x = _u + _w * cosf(theta);
-            float y = _v + _h * sinf(theta);
+            float x = _u + _w/2 * cosf(theta);
+            float y = _v + _h/2 * sinf(theta);
 
             return vec2(x, y);
         }

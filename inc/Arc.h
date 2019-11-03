@@ -2,6 +2,7 @@
 #pragma once
 
 #include "function/Function.h"
+#include "function/FuncSum.h"
 #include "Types.h"
 #include "Model.h"
 
@@ -38,6 +39,10 @@ public:
     template <typename EdgesIn, typename FacesOut>
     void connect_fan(Model& m, Model::Vert& v, EdgesIn& edges,
                      const size_t& res, const vec3& axis, FacesOut& output);
+
+    template <typename EdgesIn, typename FacesOut>
+    void connect_edges_gradient(Model& m, EdgesIn& edges1, EdgesIn& edges2, Arc& other,
+                                const size_t& res, const vec3& axis, FacesOut& output);
 
 private:
     void connect_verts(Model& m, Model::Vert& v1, Model::Vert& v2, const size_t& res, std::list<Model::Vert*>& output);
@@ -185,5 +190,46 @@ void Arc::connect_fan(Model& m, Model::Vert& v, EdgesIn& edges,
         }
 
         prev = cur;
+    }
+}
+
+template <typename EdgesIn, typename FacesOut>
+void Arc::connect_edges_gradient(Model& m, EdgesIn& edges1, EdgesIn& edges2, Arc& other,
+                                 const size_t& res, const vec3& axis, FacesOut& output)
+{
+    if (edges1.size() != edges2.size())
+    {
+        // Bad args
+        return;
+    }
+
+    std::list<Model::Vert*> verts1;
+    m.verts.within_edges(edges1, verts1);
+
+    std::list<Model::Vert*> verts2;
+    m.verts.within_edges(edges2, verts2);
+
+    std::list<Model::Vert*> prev;
+
+    GLfloat weight = 0;
+    GLfloat weightInc = 1.0f / edges1.size();
+
+    for (auto it1 = verts1.begin(), it2 = verts2.begin(); it1 != verts1.end(); ++it1, ++it2)
+    {
+        std::list<Model::Vert*> cur;
+
+        FuncSum<vec3, GLfloat>* funcSum = new FuncSum<vec3, GLfloat>(*_func, *other._func, weight);
+        Arc arcSum(funcSum, _t0, _tf);
+
+        arcSum.connect_verts_rotate(m, **it1, **it2, res, axis, cur);
+
+        if (!prev.empty())
+        {
+            m.faces.emplace_edges(prev, cur, output);
+        }
+
+        prev = cur;
+
+        weight += weightInc;
     }
 }
