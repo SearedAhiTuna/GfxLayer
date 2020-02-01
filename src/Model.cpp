@@ -2,11 +2,44 @@
 #include "Model.h"
 #include "Shape.h"
 
+#include <glm/gtx/transform.hpp>
+
 #include <list>
 #include <map>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+
+Model::Model():
+    Mesh()
+{
+}
+
+Model::Model(Model& m):
+    Mesh()
+{
+    *this = m;
+}
+
+Model& Model::operator=(Model& m)
+{
+    Mesh::operator=(m);
+
+    if (_useFaceNormals)
+        generate_face_normals();
+
+    return *this;
+}
+
+Model& Model::operator+=(Model& m)
+{
+    Mesh::operator+=(m);
+
+    if (_useFaceNormals)
+        generate_face_normals();
+
+    return *this;
+}
 
 void Model::tf_3d(const mat4& tf)
 {
@@ -382,4 +415,16 @@ void Model::export_obj(std::ostream& os, const GLfloat& merge)
 
 void Model::import_obj(std::istream& is)
 {
+}
+
+void Model::mirror_x()
+{
+    Model* pm = new Model(*this);
+    glm::mat4 mat = glm::scale(vec3(-1.0f, 1.0f, 1.0f));
+
+    pm->tf_3d(mat);
+
+    *this += *pm;
+
+    delete pm;
 }

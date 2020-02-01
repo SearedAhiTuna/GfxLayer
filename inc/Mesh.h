@@ -398,10 +398,10 @@ public:
 
 public:
     Mesh();
-    Mesh(const Mesh* other);  // Undefined
+    Mesh(Mesh& other);  // Undefined
     virtual ~Mesh();
 
-    Mesh& operator=(const Mesh& other);  // Undefined
+    Mesh& operator=(Mesh& other);  // Undefined
 
     Mesh& operator+=(Mesh& other);
 

@@ -15,6 +15,12 @@ class Shape;
 class Model : public Mesh
 {
 public:
+    Model();
+    Model(Model& m);
+    
+    Model& operator=(Model& m);
+    Model& operator+=(Model& m);
+
     void tf_3d(const mat4& tf);
 
     void vert_tf_3d(Vert& v, const mat4& tf);
@@ -40,6 +46,8 @@ public:
 
     void export_obj(std::ostream& os, const GLfloat& merge = -1);
     void import_obj(std::istream& is);
+
+    void mirror_x();
 
 private:
     bool _useFaceNormals{};

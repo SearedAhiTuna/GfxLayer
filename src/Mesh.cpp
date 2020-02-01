@@ -516,8 +516,25 @@ Mesh::Mesh():
 {
 }
 
+Mesh::Mesh(Mesh& other) :
+    verts(*this),
+    edges(*this),
+    faces(*this)
+{
+    *this = other;
+}
+
 Mesh::~Mesh()
 {
+}
+
+Mesh& Mesh::operator=(Mesh& other)
+{
+    verts._verts.clear();
+    edges._edges.clear();
+    faces._faces.clear();
+
+    return *this += other;
 }
 
 Mesh& Mesh::operator+=(Mesh& other)
