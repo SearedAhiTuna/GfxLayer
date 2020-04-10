@@ -13,11 +13,13 @@
 
 class Arc
 {
-private:
+public:
     typedef Function<vec3, GLfloat> FunctionR1R3;
 
 public:
     Arc(FunctionR1R3* func, GLfloat t0 = 0, GLfloat tf = 1);
+
+    ~Arc();
 
     vec3 func(const GLfloat& t);
 
@@ -51,7 +53,7 @@ private:
                               const size_t& res, const vec3& axis, std::list<Model::Vert*>& output);
 
 private:
-    std::unique_ptr<FunctionR1R3> _func;
+    FunctionR1R3* _func;
     GLfloat _t0;
     GLfloat _tf;
 };

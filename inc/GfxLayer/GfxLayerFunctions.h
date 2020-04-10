@@ -4,6 +4,8 @@
 #include "function/Bezier.h"
 #include "function/Ellipse.h"
 #include "function/Ellipse3D.h"
+#include "function/FuncSum.h"
+#include "function/FuncTf.h"
 #include "function/Function.h"
 #include "function/Parabola.h"
 #include "function/Polynomial.h"

@@ -117,6 +117,12 @@ Arc::Arc(FunctionR1R3* func, GLfloat t0, GLfloat tf):
 {
 }
 
+Arc::~Arc()
+{
+    if (_func)
+        delete _func;
+}
+
 vec3 Arc::func(const GLfloat& t)
 {
     return (*_func)(t);

@@ -50,6 +50,7 @@
     <ClInclude Include="inc\function\Ellipse.h" />
     <ClInclude Include="inc\function\Ellipse3D.h" />
     <ClInclude Include="inc\function\FuncSum.h" />
+    <ClInclude Include="inc\function\FuncTf.h" />
     <ClInclude Include="inc\function\Function.h" />
     <ClInclude Include="inc\function\Parabola.h" />
     <ClInclude Include="inc\function\Parabola3D.h" />

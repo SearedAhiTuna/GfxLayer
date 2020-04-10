@@ -185,6 +185,9 @@
     <ClInclude Include="inc\function\FuncSum.h">
       <Filter>Header Files\Function</Filter>
     </ClInclude>
+    <ClInclude Include="inc\function\FuncTf.h">
+      <Filter>Header Files\Function</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\simple.vs">
