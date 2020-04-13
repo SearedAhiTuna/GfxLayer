@@ -1,761 +1,346 @@
+#include "..\inc\Mesh.h"
 
-#include "Mesh.h"
-
-#include <iostream>
-#include <list>
-
-Mesh::Attribute::Attribute()
+Mesh::Mesh(NormalGeneration normals):
+    mNormals(normals)
 {
 }
 
-Mesh::Attribute::Attribute(const Attribute& other)
+int Mesh::EmplaceVert(const vec3& pos)
 {
-    _size = other._size;
-    data = new char[_size];
-
-    memcpy(data, other.data, _size);
+    mVerts.emplace_back(pos);
+    return (int)mVerts.size() - 1;
 }
 
-Mesh::Attribute::~Attribute()
+int Mesh::EmplaceFace(const std::list<int>& verts)
 {
-    if (data)
-        delete[] data;
-}
+    // Emplace face
+    mFaces.emplace_back();
+    int f = (int)mFaces.size() - 1;
 
-bool Mesh::Attribute::valid() const
-{
-    return data != nullptr;
-}
-
-size_t Mesh::Attribute::size() const
-{
-    return _size;
-}
-
-Mesh::AttribList& Mesh::AttribList::operator=(const AttribList& other)
-{
-    _attribs.reserve(other.size());
-    for (size_t i = 0; i < other.size(); ++i)
+    // Add verts
+    for (int v : verts)
     {
-        if (other.has(i))
+        // Add to face
+        if (v >= 0 && v < mVerts.size())
+            mFaces.back().emplace_back(v);
+
+        // Add face to reverse
+        mFacesReverse[v].emplace_back(f);
+    }
+
+    // Return face index
+    return f;
+}
+
+int Mesh::ExtrudeVert(int v, glm::mat4 tf)
+{
+    // New vertex
+    int newV = EmplaceVert();
+    mVerts[newV] = mVerts[v];
+
+    // Transform
+    vec4 pos = vec4(mVerts[v].pos, 1);
+    pos = tf * pos;
+    mVerts[newV].pos = pos.xyz;
+
+    return newV;
+}
+
+void Mesh::ExtrudeVerts(const std::list<int>& verts, glm::mat4 tf, std::list<int>* outVerts)
+{
+    // Extrude a series of rectangular faces
+    int v0, v1, v2, v3;
+
+    // Start with the first vert
+    v0 = verts.front();
+    v3 = ExtrudeVert(v0, tf);
+    if (outVerts)
+        outVerts->emplace_back(v3);
+
+    // For each subsequent vert
+    for (auto it = ++verts.begin(); it != verts.end(); ++it)
+    {
+        // Get the next vert
+        v1 = *it;
+
+        // Extrude
+        v2 = ExtrudeVert(v1, tf);
+        if (outVerts)
+            outVerts->emplace_back(v2);
+
+        // Fill in with a face (generate normal with right hand rule)
+        EmplaceFace({ v0, v1, v2, v3 });
+
+        // Set the previous
+        v0 = v1;
+        v3 = v2;
+    }
+}
+
+vec3 Mesh::VertNormal(int v) const
+{
+    vec3 normal = VEC3_ORIGIN;
+
+    // Add up all adjacent face normals
+    for (int f : mFacesReverse.at(v))
+    {
+        normal += FaceNormal(f);
+    }
+
+    // Return normalized
+    return glm::normalize(normal);
+}
+
+vec3 Mesh::FaceNormal(int f) const
+{
+    if (mFaces.at(f).size() < 3)  // Not a real face
+        return VEC3_ORIGIN;
+
+    // Get three vertices
+    auto it = mFaces.at(f).begin();
+    int v1 = *(it++);
+    int v2 = *(it++);
+    int v3 = *(it++);
+
+    // Get the positions
+    vec3 p1 = mVerts.at(v1).pos;
+    vec3 p2 = mVerts.at(v2).pos;
+    vec3 p3 = mVerts.at(v3).pos;
+
+    // Get two sides
+    vec3 side1 = p1 - p2;
+    vec3 side2 = p3 - p2;
+
+    // Cross product to get the normal
+    vec3 normal = glm::cross(side2, side1);
+
+    // Normalize before returning
+    return glm::normalize(normal);
+}
+
+const vec3& Mesh::VertPos(int v) const
+{
+    return mVerts.at(v).pos;
+}
+
+void Mesh::VertPos(int v, const vec3& pos)
+{
+    mVerts[v].pos = pos;
+}
+
+const vec2& Mesh::VertUV(int v) const
+{
+    return mVerts.at(v).uv;
+}
+
+void Mesh::VertUV(int v, const vec2& uv)
+{
+    mTextured = true;
+    mVerts[v].uv = uv;
+}
+
+#define OBJ(X) (X+1)
+
+std::ostream& Mesh::ToObj(std::ostream& out, bool nl) const
+{
+    out << "# verts";
+    for (const auto& v : mVerts)
+    {
+        out << "\nv " << v.pos.x
+            << " " << v.pos.y
+            << " " << v.pos.z;
+    }
+
+    if (mTextured)
+    {
+        for (const auto& v : mVerts)
         {
-            _attribs.emplace_back(new Attribute(other._attribs.at(i)));
-        }
-        else
-        {
-            _attribs.emplace_back(new Attribute());
-        }
-    }
-
-    return *this;
-}
-
-size_t Mesh::AttribList::size() const
-{
-    return _attribs.size();
-}
-
-size_t Mesh::AttribList::sizeat(const size_t& i) const
-{
-    if (i >= size())
-        return 0;
-
-    return _attribs.at(i).size();
-}
-
-bool Mesh::AttribList::has(const size_t& i) const
-{
-    if (i >= size())
-        return false;
-
-    return _attribs.at(i).valid();
-}
-
-Mesh::Vert::Vert(const size_t& index, Mesh& mesh) :
-    _index(index),
-    _mesh(mesh)
-{
-}
-
-bool Mesh::Vert::operator==(const Vert& other) const
-{
-    return _index == other._index;
-}
-
-bool Mesh::Vert::operator!=(const Vert& other) const
-{
-    return !(*this == other);
-}
-
-bool Mesh::Vert::adjacent_to(const Vert& v) const
-{
-    for (Edge* e : _edges)
-    {
-        if (e->adjacent_to(v))
-            return true;
-    }
-
-    return false;
-}
-
-bool Mesh::Vert::adjacent_to(const Edge& e) const
-{
-    for (Edge* _e : _edges)
-    {
-        if (_e == &e)
-            return true;
-    }
-
-    return false;
-}
-
-bool Mesh::Vert::adjacent_to(const Face& f) const
-{
-    for (Edge* _e : _edges)
-    {
-        if (_e->directly_adjacent_to(f))
-            return true;
-    }
-
-    return false;
-}
-
-Mesh::Vert& Mesh::Vert::extrude()
-{
-    return _mesh.verts.extrude(*this);
-}
-
-Mesh::VertList::VertList(Mesh& mesh) :
-    _mesh(mesh)
-{
-}
-
-Mesh::Vert& Mesh::VertList::operator[](const size_t& ind)
-{
-    return _verts.at(ind);
-}
-
-const Mesh::Vert& Mesh::VertList::operator[](const size_t& ind) const
-{
-    return _verts.at(ind);
-}
-
-Mesh::Vert* Mesh::VertList::operator()(const size_t& ind)
-{
-    return &_verts.at(ind);
-}
-
-const Mesh::Vert* Mesh::VertList::operator()(const size_t& ind) const
-{
-    return &_verts.at(ind);
-}
-
-Mesh::Vert& Mesh::VertList::emplace()
-{
-    Vert* pVert = new Vert(_verts.size(), _mesh);
-    _verts.emplace_back(pVert);
-
-    return *pVert;
-}
-
-Mesh::Vert& Mesh::VertList::emplace(const Vert& v)
-{
-    // TODO: insert return statement here
-    Vert& nv = emplace();
-    for (size_t i = 0; i < v.attribs.size(); ++i)
-    {
-        if (v.attribs.has(i))
-        {
-            nv.attribs = v.attribs;
+            out << "\nvt " << v.uv.x
+                << " " << v.uv.y;
         }
     }
 
-    return nv;
-}
-
-REF_VECTOR_ITERATOR(Mesh::Vert) Mesh::VertList::begin()
-{
-    return _verts.begin();
-}
-
-REF_VECTOR_ITERATOR(Mesh::Vert) Mesh::VertList::end()
-{
-    return _verts.end();
-}
-
-REF_VECTOR_CONST_ITERATOR(Mesh::Vert) Mesh::VertList::begin() const
-{
-    return _verts.cbegin();
-}
-
-REF_VECTOR_CONST_ITERATOR(Mesh::Vert) Mesh::VertList::end() const
-{
-    return _verts.cend();
-}
-
-Mesh::Vert& Mesh::VertList::extrude(Vert& v)
-{
-    // Create a new vertex
-    Vert &nv = emplace();
-
-    // Create an edge connecting the two verts
-    _mesh.edges.emplace(v, nv);
-
-    // Copy the attributes to the new vertex
-    for (size_t i = 0; i < v.attribs.size(); ++i)
+    if (mNormals == NORMALS_PER_FACE)
     {
-        if (v.attribs.has(i))
-            nv.attribs._attribs.emplace_back(new Attribute(v.attribs._attribs[i]));
-        else
-            nv.attribs._attribs.emplace_back();
-    }
+        out << "\n# normals (per face)";
 
-    // Return the new vertex
-    return nv;
-}
-
-Mesh::Edge::Edge(const size_t& index, Mesh& mesh, Vert& v1, Vert& v2) :
-    _index(index),
-    _mesh(mesh),
-    _v1(&v1),
-    _v2(&v2)
-{
-}
-
-bool Mesh::Edge::operator==(const Edge& other) const
-{
-    return _index == other._index;
-}
-
-bool Mesh::Edge::operator!=(const Edge& other) const
-{
-    return !(*this == other);
-}
-
-bool Mesh::Edge::adjacent_to(const Vert& v) const
-{
-    return *_v1 == v || *_v2 == v;
-}
-
-bool Mesh::Edge::adjacent_to(const Edge& e) const
-{
-    return _v1->adjacent_to(e) || _v2->adjacent_to(e);
-}
-
-bool Mesh::Edge::adjacent_to(const Face& f) const
-{
-    return _v1->adjacent_to(f) || _v2->adjacent_to(f);
-}
-
-bool Mesh::Edge::directly_adjacent_to(const Face& f) const
-{
-    for (Face* _f : _faces)
-    {
-        if (*_f == f)
-            return true;
-    }
-
-    return false;
-}
-
-Mesh::Vert& Mesh::Edge::opposite_vert(const Vert& v)
-{
-    if (v == *_v1)
-        return *_v2;
-    else
-        return *_v1;
-}
-
-Mesh::Vert& Mesh::Edge::opposite_vert(const Edge& e)
-{
-    if (_v1->adjacent_to(e))
-        return *_v2;
-    else
-        return *_v1;
-}
-
-Mesh::Face* Mesh::Edge::opposite_face(const Face& f)
-{
-    if (_faces.size() != 2)
-        return nullptr;
-    
-    if (f == *_faces[0])
-        return _faces[1];
-    else if (f == *_faces[1])
-        return _faces[0];
-    else
-        return nullptr;
-}
-
-Mesh::Edge& Mesh::Edge::extrude()
-{
-    return _mesh.edges.extrude(*this);
-}
-
-Mesh::EdgeList::EdgeList(Mesh& mesh) :
-    _mesh(mesh)
-{
-}
-
-Mesh::Edge& Mesh::EdgeList::operator[](const size_t& ind)
-{
-    return _edges.at(ind);
-}
-
-const Mesh::Edge& Mesh::EdgeList::operator[](const size_t& ind) const
-{
-    return _edges.at(ind);
-}
-
-Mesh::Edge& Mesh::EdgeList::emplace(Vert& v1, Vert& v2)
-{
-    // Check if there is already an edge
-    Edge* pEdge = between(v1, v2);
-
-    // If there is not an edge, create a new one
-    if (!pEdge)
-    {
-        pEdge = new Edge(_edges.size(), _mesh, v1, v2);
-        _edges.emplace_back(pEdge);
-
-        // Connect the vertices
-        v1._edges.emplace(pEdge);
-        v2._edges.emplace(pEdge);
-    }
-
-    return *pEdge;
-}
-
-Mesh::Edge* Mesh::EdgeList::between(const Vert& v1, const Vert& v2)
-{
-    for (Edge* e : v1._edges)
-    {
-        if (e->opposite_vert(v1) == v2)
+        for (int f = 0; f < mFaces.size(); ++f)
         {
-            return e;
+            vec3 normal = FaceNormal(f);
+            out << "\nvn " << normal.x
+                << " " << normal.y
+                << " " << normal.z;
+        }
+    }
+    else if (mNormals == NORMALS_PER_VERTEX)
+    {
+        out << "\n# normals (per vertex)";
+
+        for (int v = 0; v < mVerts.size(); ++v)
+        {
+            vec3 normal = VertNormal(v);
+            out << "\nvn " << normal.x
+                << " " << normal.y
+                << " " << normal.z;
         }
     }
 
-    return nullptr;
-}
-
-Mesh::Edge* Mesh::EdgeList::between(const Edge& e1, const Edge& e2)
-{
-    Edge* conn = nullptr;
-
-    conn = between(*e1._v1, *e2._v1);
-    if (conn)
-        return conn;
-    
-    conn = between(*e1._v1, *e2._v2);
-    if (conn)
-        return conn;
-    
-    conn = between(*e1._v2, *e2._v1);
-    if (conn)
-        return conn;
-    
-    conn = between(*e1._v2, *e2._v2);
-    if (conn)
-        return conn;
-    
-    return nullptr;
-}
-
-REF_VECTOR_ITERATOR(Mesh::Edge) Mesh::EdgeList::begin()
-{
-    return _edges.begin();
-}
-
-REF_VECTOR_ITERATOR(Mesh::Edge) Mesh::EdgeList::end()
-{
-    return _edges.end();
-}
-
-REF_VECTOR_CONST_ITERATOR(Mesh::Edge) Mesh::EdgeList::begin() const
-{
-    return _edges.cbegin();
-}
-
-REF_VECTOR_CONST_ITERATOR(Mesh::Edge) Mesh::EdgeList::end() const
-{
-    return _edges.cend();
-}
-
-Mesh::Edge& Mesh::EdgeList::extrude(Edge& e)
-{
-    // Extrude from both vertices
-    Vert& nv1 = e._v1->extrude();
-    Vert& nv2 = e._v2->extrude();
-
-    // Connect the vertices with an edge
-    Edge& ne = emplace(nv1, nv2);
-
-    // Connect all vertices with a face
-    _mesh.faces.emplace_verts(Verts(&nv1, &nv2, e._v2, e._v1));
-
-    // Return the connecting edge
-    return ne;
-}
-
-Mesh::Face::Face(const size_t& index, Mesh& mesh) :
-    _index(index),
-    _mesh(mesh)
-{
-}
-
-bool Mesh::Face::operator==(const Face& other) const
-{
-    return _index == other._index;
-}
-
-bool Mesh::Face::operator!=(const Face& other) const
-{
-    return !(*this == other);
-}
-
-bool Mesh::Face::adjacent_to(const Vert& v) const
-{
-    for (Edge* _e : _edges)
+    out << "\n# faces";
+    int f = 0;
+    for (const auto& verts : mFaces)
     {
-        if (_e->adjacent_to(v))
-            return true;
-    }
+        out << "\nf";
 
-    return false;
-}
-
-bool Mesh::Face::adjacent_to(const Edge& e) const
-{
-    for (Edge* _e : _edges)
-    {
-        if (*_e == e)
-            return true;
-    }
-
-    return false;
-}
-
-bool Mesh::Face::adjacent_to(const Face& f) const
-{
-    for (Edge* _e : _edges)
-    {
-        if (_e->adjacent_to(f))
-            return true;
-    }
-
-    return false;
-}
-
-bool Mesh::Face::directly_adjacent_to(const Face& f) const
-{
-    for (Edge* _e : _edges)
-    {
-        if (_e->directly_adjacent_to(f))
-            return true;
-    }
-
-    return false;
-}
-
-Mesh::Face& Mesh::Face::extrude()
-{
-    return _mesh.faces.extrude(*this);
-}
-
-Mesh::FaceList::FaceList(Mesh& mesh):
-    _mesh(mesh)
-{
-}
-
-Mesh::Face& Mesh::FaceList::operator[](const size_t& ind)
-{
-    return _faces.at(ind);
-}
-
-const Mesh::Face& Mesh::FaceList::operator[](const size_t& ind) const
-{
-    return _faces.at(ind);
-}
-
-REF_VECTOR_ITERATOR(Mesh::Face) Mesh::FaceList::begin()
-{
-    return _faces.begin();
-}
-
-REF_VECTOR_ITERATOR(Mesh::Face) Mesh::FaceList::end()
-{
-    return _faces.end();
-}
-
-REF_VECTOR_CONST_ITERATOR(Mesh::Face) Mesh::FaceList::begin() const
-{
-    return _faces.cbegin();
-}
-
-REF_VECTOR_CONST_ITERATOR(Mesh::Face) Mesh::FaceList::end() const
-{
-    return _faces.cend();
-}
-
-Mesh::Face& Mesh::FaceList::extrude(Face& f)
-{
-    std::list<Edge*> es;
-    std::list<Edge*> nes;
-
-    f.directly_adjacent_edges(es);
-    _mesh.edges.extrude(es, nes);
-
-    return emplace_edges(nes);
-}
-
-Mesh::Mesh():
-    verts(*this),
-    edges(*this),
-    faces(*this)
-{
-}
-
-Mesh::Mesh(Mesh& other) :
-    verts(*this),
-    edges(*this),
-    faces(*this)
-{
-    *this = other;
-}
-
-Mesh::~Mesh()
-{
-}
-
-Mesh& Mesh::operator=(Mesh& other)
-{
-    verts._verts.clear();
-    edges._edges.clear();
-    faces._faces.clear();
-
-    return *this += other;
-}
-
-Mesh& Mesh::operator+=(Mesh& other)
-{
-    std::map<Vert*, Vert*> vmap;
-
-    for (Vert& v : other.verts)
-    {
-        Vert& nv = verts.emplace(v);
-        vmap[&v] = &nv;
-    }
-
-    std::map<Edge*, Edge*> emap;
-
-    for (Edge& e : other.edges)
-    {
-        std::vector<Vert*> vs;
-        vs.reserve(2);
-        e.adjacent_verts(vs);
-
-        Vert& nv1 = *vmap[vs[0]];
-        Vert& nv2 = *vmap[vs[1]];
-
-        Edge& ne = edges.emplace(nv1, nv2);
-        emap[&e] = &ne;
-    }
-
-    for (Face& f : other.faces)
-    {
-        std::list<Edge*> es;
-        f.directly_adjacent_edges(es);
-
-        std::list<Edge*> nes;
-        for (Edge* e : es)
+        for (int v : verts)
         {
-            nes.push_back(emap[e]);
+            // Vertex index
+            out << " " << OBJ(v);
+
+            if (mTextured || mNormals != NO_NORMALS)
+            {
+                out << "/";
+            }
+
+            if (mTextured)
+            {
+                out << " " << OBJ(v);
+            }
+
+            if (mNormals == NORMALS_PER_FACE)
+            {
+                out << "/" << OBJ(f);
+            }
+            else if (mNormals == NORMALS_PER_VERTEX)
+            {
+                out << "/" << OBJ(v);
+            }
         }
 
-        faces.emplace_edges(nes);
+        ++f;
     }
 
-    return *this;
-}
-
-std::ostream& Mesh::print(std::ostream& out) const
-{
-    int index = 0;
-    for (const auto& v : verts)
-    {
-        out << v << ":";
-
-        for (Edge* const e : v._edges)
-        {
-            out << " " << *e;
-        }
+    if (nl)
         out << "\n";
-    }
-
-    index = 0;
-    for (const auto& e : edges)
-    {
-        out << e << ":";
-
-        out << " " << *e._v1;
-        out << " " << *e._v2;
-
-        out << " /";
-
-        for (Face* const f : e._faces)
-        {
-            out << " " << *f;
-        }
-
-        out << "\n";
-    }
-
-    index = 0;
-    for (const auto& f : faces)
-    {
-        out << f<< ":";
-
-        for (Edge* const e : f._edges)
-        {
-            out << " " << *e;
-        }
-        out << "\n";
-    }
 
     return out;
 }
 
-void Mesh::print_verbose(std::ostream& out)
+#define EMPLACE_MULTIPLE(LIST, SRC, AMOUNT) \
+    { for (int j = 0; j < (AMOUNT); ++j) (LIST).emplace_back((SRC)[j]); }
+
+void Mesh::ToShape(Shape& s, int posAtt, int uvAtt, int normAtt) const
 {
-    for (Vert& v : verts)
+    if (mFaces.empty())  // No faces
+        return;
+
+    // Make space for all attribute buffers
+    std::list<GLfloat> posVals;
+    std::list<GLfloat> uvVals;
+    std::list<GLfloat> normVals;
+
+    // For each face
+    int f = 0;
+    for (const auto& vs : mFaces)
     {
-        out << v << ":";
+        // We need to turn a face into its component triangles
+        // We can do this using the pattern
+        // face = {0, 1, 2, 3, 4, ...}
+        // triangles = {0, 1, 2}, {0, 2, 3}, {0, 3, 4}, ...
 
-        // Show adjacent verts
-        std::list<Vert*> vs;
-        v.adjacent_verts(vs);
-        for (Vert* _v : vs)
-            out << " " << *_v;
-        
-        out << " /";
+        // Triangle vertices
+        int v[3];
+        v[0] = vs.front();  // First vertex is always used
+        v[1] = -1;
+        v[2] = -1;
 
-        // Show adjacent edges
-        std::list<Edge*> es;
-        v.adjacent_edges(es);
-        for (Edge* _e : es)
-            out << " " << *_e;
+        // Iterate
+        for (auto it = ++vs.begin(); it != vs.end(); ++it)
+        {
+            // Get the next vert
+            v[1] = v[2];
+            v[2] = *it;
 
-        out << " /";
+            // If we have a full triangle
+            if (v[0] >= 0 && v[1] >= 0 && v[2] >= 0)
+            {
+                if (posAtt != -1)
+                {
+                    for (int index : v)  // Add the position of each vert
+                    {
+                        vec3 pos = VertPos(index);
+                        EMPLACE_MULTIPLE(posVals, pos, 3);
+                    }
+                }
 
-        // Show adjacent faces
-        std::list<Face*> fs;
-        v.adjacent_faces(fs);
-        for (Face* _f : fs)
-            out << " " << *_f;
+                if (uvAtt != -1)
+                {
+                    for (int index : v)  // Add the UV of each vert
+                    {
+                        vec2 uv = VertUV(index);
+                        EMPLACE_MULTIPLE(uvVals, uv, 2);
+                    }
+                }
 
-        out << "\n";
-    }
+                if (normAtt != -1)
+                {
+                    for (int index : v)  // Add the normal of each vert
+                    {
+                        if (mNormals == NORMALS_PER_FACE)
+                        {
+                            vec3 norm = FaceNormal(f);
+                            EMPLACE_MULTIPLE(normVals, norm, 3);
+                        }
+                        else if (mNormals == NORMALS_PER_VERTEX)
+                        {
+                            vec3 norm = VertNormal(index);
+                            EMPLACE_MULTIPLE(normVals, norm, 3);
+                        }
+                        else
+                        {
+                            EMPLACE_MULTIPLE(normVals, VEC3_ORIGIN, 3);
+                        }
+                    }
+                }
+            }
+        }
 
-    for (Edge& e : edges)
+        // Increment f
+        ++f;
+
+    }  // for (const auto& vs : mFaces)
+
+    // Resize the provided shape
+    s = Shape(posVals.size() / 3, GL_TRIANGLES);
+
+    // Get the total number of attributes for the shape
+    int nattr = glm::max(posAtt, glm::max(uvAtt, normAtt));
+
+    // For each attribute
+    for (int n = 0; n < nattr; ++n)
     {
-        out << e << ":";
-
-        // Show adjacent verts
-        std::list<Vert*> vs;
-        e.adjacent_verts(vs);
-        for (Vert* _v : vs)
-            out << " " << *_v;
-        
-        out << " /";
-        
-        // Show adjacent edges
-        std::list<Edge*> es;
-        e.adjacent_edges(es);
-        for (Edge* _e : es)
-            out << " " << *_e;
-        
-        out << " /";
-
-        // Show adjacent faces
-        std::list<Face*> fs;
-        e.adjacent_faces(fs);
-        for (Face* _f : fs)
-            out << " " << *_f;
-
-        out << " /";
-
-        // Show directly adjacent faces
-        fs.clear();
-        e.directly_adjacent_faces(fs);
-        for (Face* _f : fs)
-            out << " " << *_f;
-
-        out << "\n";
+        if (n == posAtt)
+        {
+            // Write the position buffer
+            auto buf = s.GenBuffer(3);
+            buf.WriteRangeRaw(posVals);
+        }
+        else if (n == uvAtt)
+        {
+            // Write the UV buffer
+            auto buf = s.GenBuffer(2);
+            buf.WriteRangeRaw(uvVals);
+        }
+        else if (n == normAtt)
+        {
+            // Write the normal buffer
+            auto buf = s.GenBuffer(3);
+            buf.WriteRangeRaw(normVals);
+        }
+        else  // Attribute not filled
+        {
+            // Generate an empty buffer
+            auto buf = s.GenBuffer(1);
+            buf.Clear(0);
+        }
     }
-
-    for (Face& f : faces)
-    {
-        out << f << ":";
-
-        // Show adjacent verts
-        std::list<Vert*> vs;
-        f.adjacent_verts(vs);
-        for (Vert* _v : vs)
-            out << " " << *_v;
-        
-        out << " /";
-        
-        // Show adjacent edges
-        std::list<Edge*> es;
-        f.adjacent_edges(es);
-        for (Edge* _e : es)
-            out << " " << *_e;
-        
-        out << " /";
-
-        // Show directly adjacent edges
-        es.clear();
-        f.directly_adjacent_edges(es);
-        for (Edge* _e : es)
-            out << " " << *_e;
-        
-        out << " /";
-
-        // Show adjacent faces
-        std::list<Face*> fs;
-        f.adjacent_faces(fs);
-        for (Face* _f : fs)
-            out << " " << *_f;
-
-        out << " /";
-
-        // Show directly adjacent faces
-        fs.clear();
-        f.directly_adjacent_faces(fs);
-        for (Face* _f : fs)
-            out << " " << *_f;
-
-        out << "\n";
-    }
-}
-
-std::ostream& operator<<(std::ostream& out, const Mesh::Vert& v)
-{
-    return v.print(out);
-}
-
-std::ostream& operator<<(std::ostream& out, const Mesh::Edge& e)
-{
-    return e.print(out);
-}
-
-std::ostream& operator<<(std::ostream& out, const Mesh::Face& f)
-{
-    return f.print(out);
-}
-
-std::ostream& operator<<(std::ostream& out, const Mesh& m)
-{
-    return m.print(out);
 }

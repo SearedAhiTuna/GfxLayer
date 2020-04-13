@@ -21,14 +21,12 @@
   <ItemGroup>
     <ClCompile Include="external\lodepng\lodepng.cpp" />
     <ClCompile Include="external\lodepng\lodepng_util.cpp" />
-    <ClCompile Include="src\Arc.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Font.cpp" />
     <ClCompile Include="src\FrameCounter.cpp" />
     <ClCompile Include="src\Graphics.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
-    <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\Mouse.cpp" />
     <ClCompile Include="src\Program.cpp" />
     <ClCompile Include="src\Rectangle.cpp" />
@@ -41,28 +39,15 @@
   <ItemGroup>
     <ClInclude Include="external\lodepng\lodepng.h" />
     <ClInclude Include="external\lodepng\lodepng_util.h" />
-    <ClInclude Include="inc\Arc.h" />
     <ClInclude Include="inc\Camera.h" />
     <ClInclude Include="inc\FakeGlew.h" />
     <ClInclude Include="inc\Font.h" />
     <ClInclude Include="inc\FrameCounter.h" />
-    <ClInclude Include="inc\function\Bezier.h" />
-    <ClInclude Include="inc\function\Ellipse.h" />
-    <ClInclude Include="inc\function\Ellipse3D.h" />
-    <ClInclude Include="inc\function\FuncSum.h" />
-    <ClInclude Include="inc\function\FuncTf.h" />
-    <ClInclude Include="inc\function\Function.h" />
-    <ClInclude Include="inc\function\Parabola.h" />
-    <ClInclude Include="inc\function\Parabola3D.h" />
-    <ClInclude Include="inc\function\Polynomial.h" />
-    <ClInclude Include="inc\function\TParabola.h" />
     <ClInclude Include="inc\GfxLayer\GfxLayerBase.h" />
-    <ClInclude Include="inc\GfxLayer\GfxLayerFunctions.h" />
     <ClInclude Include="inc\GfxLayer\GfxLayerShapes.h" />
     <ClInclude Include="inc\Graphics.h" />
     <ClInclude Include="inc\InternalLibs.h" />
     <ClInclude Include="inc\Mesh.h" />
-    <ClInclude Include="inc\Model.h" />
     <ClInclude Include="inc\Mouse.h" />
     <ClInclude Include="inc\Program.h" />
     <ClInclude Include="inc\Rectangle.h" />

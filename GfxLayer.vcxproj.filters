@@ -19,9 +19,6 @@
     <Filter Include="lodepng">
       <UniqueIdentifier>{73914802-919e-4f84-93eb-cf127aef1f06}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Function">
-      <UniqueIdentifier>{1accc629-75de-4a93-859b-7b370e1c29c6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Library Includes">
       <UniqueIdentifier>{263bff8e-4db9-4ea7-bdf3-5c87fbab3659}</UniqueIdentifier>
     </Filter>
@@ -55,12 +52,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Arc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\FrameCounter.cpp">
@@ -110,27 +101,6 @@
     <ClInclude Include="inc\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\function\Bezier.h">
-      <Filter>Header Files\Function</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\function\Function.h">
-      <Filter>Header Files\Function</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\function\Parabola.h">
-      <Filter>Header Files\Function</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\function\Polynomial.h">
-      <Filter>Header Files\Function</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\function\TParabola.h">
-      <Filter>Header Files\Function</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\Arc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="inc\FrameCounter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -155,17 +125,11 @@
     <ClInclude Include="inc\Text.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\GfxLayer\GfxLayerFunctions.h">
-      <Filter>Header Files\Library Includes</Filter>
-    </ClInclude>
     <ClInclude Include="inc\GfxLayer\GfxLayerShapes.h">
       <Filter>Header Files\Library Includes</Filter>
     </ClInclude>
     <ClInclude Include="inc\GfxLayer\GfxLayerBase.h">
       <Filter>Header Files\Library Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\function\Parabola3D.h">
-      <Filter>Header Files\Function</Filter>
     </ClInclude>
     <ClInclude Include="inc\Types.h">
       <Filter>Header Files</Filter>
@@ -175,18 +139,6 @@
     </ClInclude>
     <ClInclude Include="inc\FakeGlew.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\function\Ellipse.h">
-      <Filter>Header Files\Function</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\function\Ellipse3D.h">
-      <Filter>Header Files\Function</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\function\FuncSum.h">
-      <Filter>Header Files\Function</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\function\FuncTf.h">
-      <Filter>Header Files\Function</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

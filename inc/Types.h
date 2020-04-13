@@ -26,6 +26,10 @@ using namespace glm;
 #define VEC3_TOWARDS_ME vec3(0, 0, 1)
 #define VEC3_INTO_SCREEN vec3(0, 0, -1)
 
+#define VEC3_X_AXIS vec3(1, 0, 0)
+#define VEC3_Y_AXIS vec3(0, 1, 0)
+#define VEC3_Z_AXIS vec3(0, 0, 1)
+
 #define UV_TOP_LEFT vec2(0, 0)
 #define UV_BOTTOM_LEFT vec2(0, 1)
 #define UV_TOP_RIGHT vec2(1, 0)
@@ -40,3 +44,20 @@ using namespace glm;
 extern const GLfloat PI;
 
 struct GLFWwindow;
+
+#include <iostream>
+
+inline std::ostream& operator<<(std::ostream& out, const vec2& vec)
+{
+    return out << "(" << vec.x << "," << vec.y << ")";
+}
+
+inline std::ostream& operator<<(std::ostream& out, const vec3& vec)
+{
+    return out << "(" << vec.x << "," << vec.y << "," << vec.z << ")";
+}
+
+inline std::ostream& operator<<(std::ostream& out, const vec4& vec)
+{
+    return out << "(" << vec.x << "," << vec.y << "," << vec.z << ")";
+}
