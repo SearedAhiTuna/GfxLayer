@@ -6,7 +6,9 @@
 
 //#include <iostream>
 
+#pragma warning(push, 0)
 #include "lodepng.h"
+#pragma warning(pop)
 
 static GLuint loadPNG(const std::string& fn, const bool& alpha)
 {

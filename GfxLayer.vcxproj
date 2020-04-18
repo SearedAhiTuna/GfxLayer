@@ -19,8 +19,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="external\lodepng\lodepng.cpp" />
-    <ClCompile Include="external\lodepng\lodepng_util.cpp" />
+    <ClCompile Include="external\lodepng\lodepng.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release-Lib|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug-Lib|x64'">TurnOffAllWarnings</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="external\lodepng\lodepng_util.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release-Lib|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug-Lib|x64'">TurnOffAllWarnings</WarningLevel>
+    </ClCompile>
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Font.cpp" />
     <ClCompile Include="src\FrameCounter.cpp" />
@@ -141,6 +151,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew\include;$(ProjectDir)external\glfw\include;$(ProjectDir)external\glm;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype\include;$(ProjectDir)external\ExtraSTL</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -165,6 +176,7 @@ copy $(ProjectDir)external\freetype\objs\x64\Debug\freetype.dll $(TargetDir)</Co
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew\include;$(ProjectDir)external\glfw\include;$(ProjectDir)external\glm;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype\include;$(ProjectDir)external\ExtraSTL</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -199,6 +211,7 @@ copy $(ProjectDir)external\glfw\src\Debug\glfw3.lib $(TargetDir)</Command>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew\include;$(ProjectDir)external\glfw\include;$(ProjectDir)external\glm;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype\include;$(ProjectDir)external\ExtraSTL</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -227,6 +240,7 @@ copy $(ProjectDir)external\freetype\objs\x64\Release\freetype.dll $(TargetDir)</
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)inc;$(ProjectDir)external\glew\include;$(ProjectDir)external\glfw\include;$(ProjectDir)external\glm;$(ProjectDir)external\lodepng;$(ProjectDir)external\freetype\include;$(ProjectDir)external\ExtraSTL</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
