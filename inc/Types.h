@@ -41,6 +41,9 @@ using namespace glm;
 #define VEC2_LEFT vec2(-1, 0)
 #define VEC2_RIGHT vec2(1, 0)
 
+#define MAT3_IDENT mat3()
+#define MAT4_IDENT mat4()
+
 extern const GLfloat PI;
 
 struct GLFWwindow;

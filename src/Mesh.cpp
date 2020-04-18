@@ -313,7 +313,7 @@ void Mesh::ToShape(Shape& s, int posAtt, int uvAtt, int normAtt) const
     s = Shape(posVals.size() / 3, GL_TRIANGLES);
 
     // Get the total number of attributes for the shape
-    int nattr = glm::max(posAtt, glm::max(uvAtt, normAtt));
+    int nattr = glm::max(posAtt, glm::max(uvAtt, normAtt)) + 1;
 
     // For each attribute
     for (int n = 0; n < nattr; ++n)
