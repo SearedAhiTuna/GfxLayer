@@ -70,7 +70,11 @@ public:
     // Extrude
     //--------
     int ExtrudeVert(int v, glm::mat4 tf = glm::mat4());
-    void ExtrudeVerts(const std::list<int>& verts, glm::mat4 tf = glm::mat4(), std::list<int>* outVerts = nullptr);
+    void ExtrudeVerts(const std::list<int>& verts,
+                      const glm::mat4& tf = glm::mat4(),
+                      std::list<int>* outVerts = nullptr,
+                      bool mergeStart = false,
+                      bool mergeEnd = false);
 
     //------------------
     // Normal Generation

@@ -130,15 +130,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Lib|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-Lib|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -161,7 +165,9 @@
     </Link>
     <PreBuildEvent>
       <Command>echo Copying Debug DLLs
+
 copy $(ProjectDir)external\glew\bin\Debug\glew32d.dll $(TargetDir)
+
 copy $(ProjectDir)external\freetype\objs\x64\Debug\freetype.dll $(TargetDir)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -185,11 +191,8 @@ copy $(ProjectDir)external\freetype\objs\x64\Debug\freetype.dll $(TargetDir)</Co
       <AdditionalLibraryDirectories>$(ProjectDir)external\glew\lib;$(ProjectDir)external\glfw\src;$(ProjectDir)external\freetype\objs\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>echo Copying Debug DLLs
-
-copy $(ProjectDir)external\glew\bin\Debug\glew32d.dll $(TargetDir)
-
-copy $(ProjectDir)external\freetype\objs\x64\Debug\freetype.dll $(TargetDir)</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>echo Copying Debug libs
@@ -223,7 +226,9 @@ copy $(ProjectDir)external\glfw\src\Debug\glfw3.lib $(TargetDir)</Command>
     </Link>
     <PreBuildEvent>
       <Command>echo Copying Release DLLs
+
 copy $(ProjectDir)external\glew\bin\Release\glew32.dll $(TargetDir)
+
 copy $(ProjectDir)external\freetype\objs\x64\Release\freetype.dll $(TargetDir)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -251,9 +256,8 @@ copy $(ProjectDir)external\freetype\objs\x64\Release\freetype.dll $(TargetDir)</
       <AdditionalLibraryDirectories>$(ProjectDir)external\glew\lib;$(ProjectDir)external\glfw\src;$(ProjectDir)external\freetype\objs\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>echo Copying Release DLLs
-copy $(ProjectDir)external\glew\bin\Release\glew32.dll $(TargetDir)
-copy $(ProjectDir)external\freetype\objs\x64\Release\freetype.dll $(TargetDir)</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>echo Copying Release libs

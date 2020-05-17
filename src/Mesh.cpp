@@ -46,30 +46,80 @@ int Mesh::ExtrudeVert(int v, glm::mat4 tf)
     return newV;
 }
 
-void Mesh::ExtrudeVerts(const std::list<int>& verts, glm::mat4 tf, std::list<int>* outVerts)
+void Mesh::ExtrudeVerts(const std::list<int>& verts,
+                      const glm::mat4& tf,
+                      std::list<int>* outVerts,
+                      bool mergeStart,
+                      bool mergeEnd)
 {
     // Extrude a series of rectangular faces
     int v0, v1, v2, v3;
 
     // Start with the first vert
     v0 = verts.front();
-    v3 = ExtrudeVert(v0, tf);
-    if (outVerts)
-        outVerts->emplace_back(v3);
+    if (!mergeStart)
+    {
+        // Extrude
+        v3 = ExtrudeVert(v0, tf);
+        if (outVerts)
+            outVerts->emplace_back(v3);
+    }
+    else
+    {
+        v3 = -1;
+        if (outVerts)
+            outVerts->emplace_back(v0);
+    }
 
     // For each subsequent vert
+    bool first = mergeStart;
+    bool last = false;
     for (auto it = ++verts.begin(); it != verts.end(); ++it)
     {
+        if (mergeEnd)
+        {
+            // Check for last
+            auto nextIt = it;
+            last = (++nextIt == verts.end());
+        }
+
         // Get the next vert
         v1 = *it;
 
-        // Extrude
-        v2 = ExtrudeVert(v1, tf);
-        if (outVerts)
-            outVerts->emplace_back(v2);
+        if (!last)
+        {
+            // Extrude
+            v2 = ExtrudeVert(v1, tf);
+            if (outVerts)
+                outVerts->emplace_back(v2);
+        }
+        else
+        {
+            v2 = -1;
+            if (outVerts)
+                outVerts->emplace_back(v1);
+        }
 
-        // Fill in with a face (generate normal with right hand rule)
-        EmplaceFace({ v0, v1, v2, v3 });
+        if (first)
+        {
+            // Fill in with a face (generate normal with right hand rule)
+            // This face is triangular and doesn't use v3
+            EmplaceFace({ v0, v1, v2 });
+
+            // Reset first
+            first = false;
+        }
+        else if (!last)
+        {
+            // Fill in with a face (generate normal with right hand rule)
+            EmplaceFace({ v0, v1, v2, v3 });
+        }
+        else  // Last
+        {
+            // Fill in with a face (generate normal with right hand rule)
+            // This face is triangular and doesn't use v2
+            EmplaceFace({ v0, v1, v3 });
+        }
 
         // Set the previous
         v0 = v1;
