@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Camera.h"
+#include "DeltaCounter.h"
 #include "Font.h"
 #include "FrameCounter.h"
 #include "Graphics.h"

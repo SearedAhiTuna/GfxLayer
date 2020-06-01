@@ -1,8 +1,73 @@
-#include "..\inc\Mesh.h"
+
+#include "Mesh.h"
+#include "DeltaCounter.h"
+
+static DeltaCounter perfCounter;
 
 Mesh::Mesh(NormalGeneration normals):
     mNormals(normals)
 {
+}
+
+Mesh::Mesh(const Mesh& other, glm::mat4 tf):
+    mNormals(other.mNormals)
+{
+    mTextured = other.mTextured;
+
+    mVerts = other.mVerts;
+
+    mFaces = other.mFaces;
+    mFacesReverse = other.mFacesReverse;
+
+    if (tf != glm::mat4())
+    {
+        for (auto& v : mVerts)
+        {
+            vec4 pos = vec4(v.pos, 1);
+            pos = tf * pos;
+            v.pos = pos.xyz;
+        }
+    }
+}
+
+void Mesh::Reflect(float thresh)
+{
+    // Original sizes
+    size_t oldNumVerts = mVerts.size();
+    size_t oldNumFaces = mFaces.size();
+
+    // Map reflected vertices to original vertices
+    std::vector<int> mappings(oldNumVerts, -1);
+
+    // Create any new verts needed
+    for (size_t v = 0; v < oldNumVerts; ++v)
+    {
+        if (abs(mVerts[v].pos.x) < thresh)
+        {
+            mappings[v] = (int)v;
+        }
+        else
+        {
+            int newV = EmplaceVert();
+            mVerts[newV] = mVerts[v];
+            mVerts[newV].pos.x *= -1;
+            mappings[v] = newV;
+        }
+    }
+
+    // Fill in the faces
+    for (size_t f = 0; f < oldNumFaces; ++f)
+    {
+        std::list<int> newV;
+        const std::list<int>& oldV = mFaces[f];
+
+        for (int v : oldV)
+        {
+            newV.push_front(mappings[v]);
+        }
+
+        EmplaceFace(newV);
+    }
 }
 
 int Mesh::EmplaceVert(const vec3& pos)
@@ -125,6 +190,58 @@ void Mesh::ExtrudeVerts(const std::list<int>& verts,
         v0 = v1;
         v3 = v2;
     }
+}
+
+void Mesh::ExtrudeFan(int v, size_t num, std::list<int>* outVerts)
+{
+    // Extrude a series of triangular faces
+    int v0, v1, v2;
+
+    // Start with the first vert
+    v0 = v;
+    v2 = EmplaceVert();
+    if (outVerts)
+        outVerts->emplace_back(v2);
+
+    // For each subsequent vert
+    for (size_t i = 1; i < num; ++i)
+    {
+        // Get the next vert
+        v1 = EmplaceVert();
+        if (outVerts)
+            outVerts->emplace_back(v1);
+
+        // Fill in with a face (generate normal with right hand rule)
+        EmplaceFace({ v0, v1, v2 });
+
+        // Set the previous
+        v2 = v1;
+    }
+}
+
+int Mesh::ExtrudeFunnel(const std::list<int>& verts)
+{
+    // Extrude a series of triangular faces
+    int v0, v1, v2;
+
+    // Start with the first vert
+    v0 = verts.front();
+    v2 = EmplaceVert();
+
+    // For each subsequent vert
+    for (auto it = ++verts.begin(); it != verts.end(); ++it)
+    {
+        // Get the next vert
+        v1 = *it;
+
+        // Fill in with a face (generate normal with right hand rule)
+        EmplaceFace({ v0, v1, v2 });
+
+        // Set the previous
+        v0 = v1;
+    }
+
+    return v2;
 }
 
 vec3 Mesh::VertNormal(int v) const
@@ -283,6 +400,8 @@ void Mesh::ToShape(Shape& s, int posAtt, int uvAtt, int normAtt) const
     if (mFaces.empty())  // No faces
         return;
 
+    perfCounter.Start();
+
     // Make space for all attribute buffers
     std::list<GLfloat> posVals;
     std::list<GLfloat> uvVals;
@@ -393,4 +512,7 @@ void Mesh::ToShape(Shape& s, int posAtt, int uvAtt, int normAtt) const
             buf.Clear(0);
         }
     }
+
+    float time = perfCounter.Stop();
+    std::cout << __func__ << ": time = " << time << "\n";
 }

@@ -10,6 +10,8 @@
 #include <utility>
 #include <vector>
 
+#define MESH_VERT_MERGE_THRESHOLD .001
+
 class Mesh
 {
 private:
@@ -54,6 +56,12 @@ public:
 
 public:
     Mesh(NormalGeneration normals = NO_NORMALS);
+    Mesh(const Mesh& other, glm::mat4 tf = glm::mat4());
+
+    //-----------
+    // Transformation
+    //-----------
+    void Reflect(float thresh = MESH_VERT_MERGE_THRESHOLD);
 
     //--------
     // Emplace
@@ -75,6 +83,10 @@ public:
                       std::list<int>* outVerts = nullptr,
                       bool mergeStart = false,
                       bool mergeEnd = false);
+    void ExtrudeFan(int v,
+                    size_t num,
+                    std::list<int>* outVerts = nullptr);
+    int ExtrudeFunnel(const std::list<int>& verts);
 
     //------------------
     // Normal Generation

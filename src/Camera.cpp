@@ -40,7 +40,7 @@ void Camera::orthogonal(const GLfloat& width, const GLfloat & height)
 {
     std::lock_guard<std::mutex> lk(matMutex);
 
-    pMat = glm::scale(vec3(width / 2.0f, height / 2.0f, 1.0f));
+    pMat = glm::scale(vec3(2.0f / width, 2.0f / height, -0.5f));
 }
 
 mat4 Camera::getV()
